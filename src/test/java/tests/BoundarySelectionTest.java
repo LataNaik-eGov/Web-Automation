@@ -57,5 +57,6 @@ public class BoundarySelectionTest extends BednetDraftCampaignTest {
         // Step 4: Select fourth boundary level
         boundaryPage.clickfourthlevel();
         page.waitForTimeout(2000);
+
     }
 }

@@ -7,7 +7,7 @@ import pages.BoundarySelectionPage;
 
 public class BoundarySelectionTest extends BednetDraftCampaignTest {
 
-    private BoundarySelectionPage boundaryPage;
+    protected BoundarySelectionPage boundaryPage;
 
     @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToCreateCampaign")
     public void navigateToBoundarySelection() {

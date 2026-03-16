@@ -1,9 +1,9 @@
 package pages;
 
+import java.time.LocalDate;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
-import java.time.LocalDate;
 
 public class ConfigureDeliveryRulesPage {
 
@@ -19,12 +19,12 @@ public class ConfigureDeliveryRulesPage {
     public ConfigureDeliveryRulesPage(Page page) {
 
         this.page = page;
-        this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Configure Delivery"));
+        this.configureDeliveryButton = page.locator("#campaign-details-page-button-delivery-strategy");
         this.startDateInput = page.locator("input[placeholder='Start date']");
         this.endDateInput = page.locator("input[placeholder='End date']");
-        this.endDateInput = page.locator("input[placeholder='End date']");
-        this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
-        this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        this.nextButton = page.locator("#campaign-setup-campaign-standalone-setup-campaign-field-primary");
+        this.submitButton = page.locator("#campaign-setup-campaign-standalone-setup-campaign-field-primary");
+       
     }
 
     // --- Actions ---

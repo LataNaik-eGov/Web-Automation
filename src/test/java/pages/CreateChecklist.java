@@ -59,6 +59,7 @@ public class CreateChecklist {
         page.mouse().wheel(0, 500);
         page.waitForTimeout(1000);
         createCampaign.click();
+        page.waitForTimeout(1000);
         goMyCampaign.click();
     }
 }

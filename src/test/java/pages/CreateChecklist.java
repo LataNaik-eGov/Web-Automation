@@ -1,12 +1,8 @@
 package pages;
 
-import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.microsoft.playwright.options.MouseButton;
 
 public class CreateChecklist {
 
@@ -17,35 +13,52 @@ public class CreateChecklist {
     private Locator configureList;
     private Locator configureChecklist;
     private Locator confirmChecklist;
+    private Locator backToHomepage;
+    private Locator createCampaign;
+    private Locator goMyCampaign;
 
-     // Create campaign
-
-    public CreateChecklistPage(Page page) {
+    public CreateChecklist(Page page) {
         this.page = page;
         this.createChecklist = page.locator("#campaign-details-page-button-checklist");
-        this.configureList = page.locator(".digit-button-secondary.medium");
+        this.configureList = page.locator(".digit-button-secondary.medium").first();
         this.configureChecklist = page.locator("#campaign-checklist-create-standalone-form-field-primary");
         this.confirmChecklist = page.locator(".digit-button-primary.large");
+        this.backToHomepage = page.locator(".digit-button-primary.large");
+        this.createCampaign = page.locator("#campaign-details-page-final-save-campaign");
+         this.goMyCampaign = page.locator(".digit-button-primary.large");
     }
 
     // --- Actions ---
 
-    public void clickUploadData() {
-        uploadDataButton.click();
+    public void clickCreateChecklist() {
+        createChecklist.click();
         page.waitForTimeout(1000);
     }
 
-    public Download downloadTemplate() {
-        Download download = page.waitForDownload(() -> {
-            downloadTemplateButton.click();
-        });
+    public void clickConfigureList() {
+        configureList.click();
         page.waitForTimeout(1000);
-        return download;
     }
 
-    public void uploadFile(String filePath) {
-        dragAndDropLabel.setInputFiles(Paths.get(filePath));
+    public void clickConfigureChecklist() {
+        configureChecklist.click();
         page.waitForTimeout(1000);
-        submit.click();
+    }
+
+    public void clickConfirmChecklist() {
+        confirmChecklist.click();
+        page.waitForTimeout(1000);
+    }
+
+    public void clickBackToHomepage() {
+        backToHomepage.click();
+        page.waitForTimeout(1000);
+    }
+
+    public void clickCreateCampaign() {
+        page.mouse().wheel(0, 500);
+        page.waitForTimeout(1000);
+        createCampaign.click();
+        goMyCampaign.click();
     }
 }

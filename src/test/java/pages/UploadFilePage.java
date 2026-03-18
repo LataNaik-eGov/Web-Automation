@@ -43,7 +43,7 @@ public class UploadFilePage {
 
     public void uploadFile(String filePath) {
         dragAndDropLabel.setInputFiles(Paths.get(filePath));
-        page.waitForTimeout(1000);
+        page.waitForTimeout(3000);
         submit.click();
     }
 }

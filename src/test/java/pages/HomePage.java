@@ -50,9 +50,10 @@ public class HomePage extends BasePage {
      * Go to Search Complaint page.
      * (Add SearchComplaintPage class when needed)
      */
-    public void goToSearchComplaint() {
+    public ComplaintPage goToSearchComplaint() {
         searchComplaintBtn.click();
         waitForPageLoad();
+        return new ComplaintPage(page);
     }
 
     /**

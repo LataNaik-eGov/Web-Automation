@@ -43,64 +43,64 @@ public class AppConfigurationPage {
 
     public void clickSetUpMobileApp() {
         setUpMobileAppButton.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
     }
 
     public void clickSaveConfiguration() {
         saveConfigurationButton.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
     }
 
     public void configureRegistrationAndDelivery() {
         registrationAndDelivery.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void configureCloseHousehold() {
         closeHousehold.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void configureComplaints() {
         complaints.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void configureInventory() {
         inventory.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void configureStockReconciliation() {
         stockReconciliation.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void configureReports() {
         reports.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void configurePermissionHandler() {
         permissionHandler.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void clickConfigureExact() {
         configureExactButton.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 
     public void clickGoBack() {
         goBackButton.click();
-        page.waitForTimeout(1000);
+        page.waitForTimeout(2000);
     }
 }

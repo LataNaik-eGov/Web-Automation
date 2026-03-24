@@ -2,205 +2,230 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
+
+import java.nio.file.Paths;
+import java.util.regex.Pattern;
+
+import utils.ConfigReader;
 
 /**
  * Page Object for Complaint Form.
- *
- * Usage:
- *   ComplaintPage complaint = new ComplaintPage(page);
- *   complaint.fillForm("Water Leakage", "India", "Pipe broken in bathroom");
- *   complaint.submit();
- *
- *   // Or with fluent navigation from HomePage:
- *   HomePage home = new HomePage(page);
- *   home.goToCreateComplaint().fillForm("Water Leakage", "India", "Issue description");
  */
 public class ComplaintPage extends BasePage {
 
-    // ==================== LOCATORS ====================
-    // Dropdowns
-    private final String complaintTypeDropdown = ".digit-dropdown-employee-select-wrap ";
-    private final String countryDropdown = ".digit-dropdown-employee-select-wrap >> nth=1";
-    private final String dropdownOption = ".main-option";
+    // Create complaint locators
+    private final Locator complaintTypeDropdown;
+    private final Locator complaintDateInput;
+    private final Locator countryDropdown;
+    private final Locator stateDropdown;
+    private final Locator lgaDropdown;
+    private final Locator wardDropdown;
+    private final Locator villageDropdown;
+    private final Locator areaDropdown;
+    private final Locator complainantRadio;
+    private final Locator descriptionField;
+    private final Locator fileInput;
+    private final Locator submitButton;
 
-    // Date Picker
-    private final String dateInput = "input[name='ComplaintDate']";
-    private final String todayDate = ".react-datepicker__day--today";
+    // Confirmation locator
+    private final Locator complaintNumberLabel;
+    private final Locator backToComplaintsInbox;
 
-    // Radio & Other Fields
-    private final String radioButtons = ".digit-radio-btn-checkmark";
-    private final String descriptionField = "textarea[name='description']";
-    private final String fileInput = "input[type='file']";
-    private final String submitButton = ".digit-submit-bar";
+    // Search, resolve & reject complaint locators
+    private final Locator complaintNumberInput;
+    private final Locator searchButton;
+    private final Locator takeActionButton;
+    private final Locator resolveOption;
+    private final Locator rejectOption;
+    private final Locator rejectionReasonDropdown;
+    private final Locator employeeComments;
 
     public ComplaintPage(Page page) {
         super(page);
+        this.complaintTypeDropdown = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Complaint Type"));
+        this.complaintDateInput = page.locator("input[name=\"ComplaintDate\"]");
+        this.countryDropdown = page.getByRole(AriaRole.TEXTBOX).nth(3);
+        this.stateDropdown = page.getByRole(AriaRole.TEXTBOX).nth(4);
+        this.lgaDropdown = page.getByRole(AriaRole.TEXTBOX).nth(5);
+        this.wardDropdown = page.locator("input[type=\"text\"]").nth(5);
+        this.villageDropdown = page.locator("div:nth-child(5) > .digit-text-input-field-without-card > .digit-dropdown-employee-select-wrap > .digit-dropdown-select > .digit-dropdown-employee-select-wrap--elipses");
+        this.areaDropdown = page.locator("div:nth-child(6) > .digit-text-input-field-without-card > .digit-dropdown-employee-select-wrap > .digit-dropdown-select > .digit-dropdown-employee-select-wrap--elipses");
+        this.complainantRadio = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("Are you raising a complaint"));
+        this.descriptionField = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Complaint description"));
+        this.fileInput = page.locator("input[type=\"file\"]");
+        this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        this.complaintNumberLabel = page.locator(".digit-panel-response");
+        this.backToComplaintsInbox = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search Complaint"));
+        this.complaintNumberInput = page.locator("input[name=\"complaintNumber\"]");
+        this.searchButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search").setExact(true));
+        this.takeActionButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Take Action"));
+        this.resolveOption = page.getByText("Resolve");
+        this.rejectOption = page.getByText("Reject");
+        this.rejectionReasonDropdown = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Rejection Reason"));
+        this.employeeComments = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Employee Comments"));
     }
 
     // ==================== MAIN ACTIONS ====================
 
-    /**
-     * Fill the complaint form with provided details.
-     *
-     * @param complaintType Type of complaint (e.g., "Water Leakage")
-     * @param country       Country name (e.g., "India")
-     * @param description   Description of the complaint
-     * @return this ComplaintPage for method chaining
-     */
-    public ComplaintPage fillForm(String complaintType, String country, String description) {
-        selectComplaintType(complaintType);
-        selectTodayDate();
-        selectCountry(country);
-        selectFirstRadioOption();
+    public String fillForm(String date, String description) {
+        // Wait for page auto-refresh to complete before interacting
+        waitForVisible(complaintTypeDropdown);
+        wait(10000);
+        page.waitForLoadState();
+        waitForVisible(complaintTypeDropdown);
+        selectComplaintType();
+        selectDate(date);
+        selectCountry();
+        selectState();
+        selectLGA();
+        selectWard();
+        selectVillage();
+        selectArea();
+        selectComplainant();
         enterDescription(description);
+        clickSubmit();
+        return getComplaintNumber();
+    }
+
+    public String getComplaintNumber() {
+        waitForVisible(complaintNumberLabel);
+        return complaintNumberLabel.textContent().trim();
+    }
+
+    public void clickBackToComplaintsInbox() {
+        backToComplaintsInbox.click();
+    }
+
+    // ==================== INDIVIDUAL ACTIONS ====================
+
+    public void selectComplaintType() {
+        complaintTypeDropdown.click();
+        complaintTypeDropdown.click();
+        wait(1000);
+        page.getByText("Performance Issue: Dept-").click();
+    }
+
+    public void selectDate(String date) {
+        complaintDateInput.fill(date);
+    }
+
+    public void selectCountry() {
+        countryDropdown.click();
+        wait(1000);
+        page.locator("div").filter(new Locator.FilterOptions().setHasText(Pattern.compile("^" + ConfigReader.get("COUNTRY") + "$"))).nth(3).click();
+    }
+
+    public void selectState() {
+        stateDropdown.click();
+        wait(1000);
+        page.getByText(ConfigReader.get("STATE")).click();
+    }
+
+    public void selectLGA() {
+        lgaDropdown.click();
+        wait(1000);
+        page.getByText(ConfigReader.get("LGA")).click();
+    }
+
+    public void selectWard() {
+        wardDropdown.click();
+        wait(1000);
+        page.getByText(ConfigReader.get("WARD")).click();
+    }
+
+    public void selectVillage() {
+        villageDropdown.click();
+        wait(1000);
+        page.getByText(ConfigReader.get("VILLAGE")).click();
+    }
+
+    public void selectArea() {
+        areaDropdown.click();
+        wait(1000);
+        page.getByText(ConfigReader.get("AREA")).click();
+    }
+
+    public void selectComplainant() {
+        complainantRadio.check();
+    }
+
+    public void enterDescription(String description) {
+        descriptionField.click();
+        descriptionField.fill(description);
+    }
+
+    public void uploadFile(String filePath) {
+        fileInput.setInputFiles(Paths.get(filePath));
+    }
+
+    public void clickSubmit() {
+        submitButton.click();
+    }
+
+    // ==================== SEARCH & RESOLVE ====================
+
+    public ComplaintPage searchAndResolve(String complaintNumber, String comments) {
+        searchComplaint(complaintNumber);
+        openComplaint(complaintNumber);
+        resolve(comments);
         return this;
     }
 
-    /**
-     * Fill form by selecting options using their position (0-based index).
-     *
-     * @param complaintIndex Index of complaint type option
-     * @param countryIndex   Index of country option
-     * @param radioIndex     Index of radio button
-     * @param description    Description text
-     * @return this ComplaintPage for method chaining
-     */
-    public ComplaintPage fillFormByIndex(int complaintIndex, int countryIndex, int radioIndex, String description) {
-        selectComplaintTypeByIndex(complaintIndex);
-        selectTodayDate();
-        selectCountryByIndex(countryIndex);
-        selectRadioByIndex(radioIndex);
-        enterDescription(description);
+    public void searchComplaint(String complaintNumber) {
+        complaintNumberInput.click();
+        complaintNumberInput.fill(complaintNumber);
+        searchButton.click();
+    }
+
+    public void openComplaint(String complaintNumber) {
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(complaintNumber)).click();
+    }
+
+    public void takeAction() {
+        takeActionButton.click();
+    }
+
+    public void clickResolve() {
+        resolveOption.click();
+    }
+
+    public void enterComments(String comments) {
+        employeeComments.click();
+        employeeComments.fill(comments);
+    }
+
+    public void resolve(String comments) {
+        takeAction();
+        clickResolve();
+        enterComments(comments);
+        clickSubmit();
+    }
+
+    // ==================== REJECT ====================
+
+    public ComplaintPage searchAndReject(String complaintNumber, String comments) {
+        searchComplaint(complaintNumber);
+        openComplaint(complaintNumber);
+        reject(comments);
         return this;
     }
 
-    /**
-     * Fill form and submit with optional file attachment.
-     *
-     * @param complaintType Type of complaint
-     * @param country       Country name
-     * @param description   Description text
-     * @param filePath      Path to attachment file (can be null)
-     */
-    public void fillAndSubmit(String complaintType, String country, String description, String filePath) {
-        fillForm(complaintType, country, description);
-
-        if (filePath != null && !filePath.isEmpty()) {
-            uploadFile(filePath);
-        }
-
-        submit();
+    public void clickReject() {
+        rejectOption.click();
     }
 
-    /**
-     * Submit the complaint form.
-     */
-    public void submit() {
-        form.click(submitButton);
-        waitForPageLoad();
+    public void selectRejectionReason() {
+        rejectionReasonDropdown.click();
+        wait(1000);
+        page.getByText("CS_REJECTION__REASON3").click();
     }
 
-    // ==================== INDIVIDUAL FIELD METHODS ====================
-
-    /**
-     * Select complaint type by visible text.
-     */
-    public ComplaintPage selectComplaintType(String complaintType) {
-        form.click(complaintTypeDropdown);
-        page.getByText(complaintType).click();
-        return this;
-    }
-
-    /**
-     * Select complaint type by index (0 = first option).
-     */
-    public ComplaintPage selectComplaintTypeByIndex(int index) {
-        form.click(complaintTypeDropdown);
-        page.locator(dropdownOption).nth(index).click();
-        return this;
-    }
-
-    /**
-     * Select country by visible text.
-     */
-    public ComplaintPage selectCountry(String country) {
-        form.click(countryDropdown);
-        page.getByText(country).click();
-        return this;
-    }
-
-    /**
-     * Select country by index (0 = first option).
-     */
-    public ComplaintPage selectCountryByIndex(int index) {
-        form.click(countryDropdown);
-        page.locator(dropdownOption).nth(index).click();
-        return this;
-    }
-
-    /**
-     * Select today's date from the date picker.
-     */
-    public ComplaintPage selectTodayDate() {
-        form.click(dateInput);
-        form.click(todayDate);
-        return this;
-    }
-
-    /**
-     * Select a specific day from the date picker.
-     *
-     * @param day Day number (1-31)
-     */
-    public ComplaintPage selectDate(int day) {
-        form.click(dateInput);
-        page.locator(".react-datepicker__day:not(.react-datepicker__day--outside-month)")
-                .getByText(String.valueOf(day), new Locator.GetByTextOptions().setExact(true))
-                .first()
-                .click();
-        return this;
-    }
-
-    /**
-     * Select first radio button option.
-     */
-    public ComplaintPage selectFirstRadioOption() {
-        page.locator(radioButtons).first().click();
-        return this;
-    }
-
-    /**
-     * Select radio button by index (0 = first option).
-     */
-    public ComplaintPage selectRadioByIndex(int index) {
-        page.locator(radioButtons).nth(index).click();
-        return this;
-    }
-
-    /**
-     * Enter complaint description.
-     */
-    public ComplaintPage enterDescription(String description) {
-        form.enterText(descriptionField, description);
-        return this;
-    }
-
-    /**
-     * Upload an attachment file.
-     *
-     * @param filePath Full path to the file
-     */
-    public ComplaintPage uploadFile(String filePath) {
-        form.uploadFile(fileInput, filePath);
-        return this;
-    }
-
-    // ==================== VERIFICATION ====================
-
-    /**
-     * Check if complaint form is displayed.
-     */
-    public boolean isFormDisplayed() {
-        return page.locator(complaintTypeDropdown).isVisible();
+    public void reject(String comments) {
+        takeAction();
+        clickReject();
+        selectRejectionReason();
+        enterComments(comments);
+        clickSubmit();
     }
 }

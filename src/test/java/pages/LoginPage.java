@@ -2,6 +2,7 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
 /**
  * Page Object for Login Page.
@@ -24,7 +25,7 @@ public class LoginPage extends BasePage {
         super(page);
         this.usernameInput = page.locator("input[name='username']");
         this.passwordInput = page.locator("input[name='password']");
-        this.tenantDropdown = page.locator("#user-login-core_common_city");
+        this.tenantDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));
         this.tenantOption = page.locator(".main-option");
         this.privacyCheckbox = page.locator("#privacy-component-check");
         this.loginButton = page.locator("#formcomposer-submit-action");
@@ -83,12 +84,14 @@ public class LoginPage extends BasePage {
 
     public void selectFirstTenant() {
         tenantDropdown.click();
+        wait(1000);
         tenantOption.first().click();
     }
 
     public void selectTenant(String tenantName) {
         tenantDropdown.click();
-        page.getByText(tenantName).click();
+        wait(1000);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(tenantName)).click();
     }
 
     public void acceptPrivacyPolicy() {

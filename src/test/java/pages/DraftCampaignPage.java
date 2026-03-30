@@ -22,7 +22,7 @@ public class DraftCampaignPage {
 
     private static final Map<String, String> CAMPAIGN_DISPLAY_NAMES = Map.of(
             "BEDNET", "Bednet Distribution",
-            "MR-DN", "MR-DN"
+            "MR-DN", "Seasonal Malaria Chemoprevention (SMC)"
     );
 
     public DraftCampaignPage(Page page) {

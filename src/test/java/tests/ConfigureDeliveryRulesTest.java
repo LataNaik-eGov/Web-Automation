@@ -39,12 +39,8 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        // Step 2: Fill start date for Distribution 1
-        deliveryRulesPage.fillStartDate();
-        page.waitForTimeout(1000);
-
-        // Step 3: Fill end date for Distribution 1
-        deliveryRulesPage.fillEndDate();
+        // Step 2: Fill dates (BEDNET: 1 start/end, MR-DN: 3 cycles with 1-week gaps)
+        deliveryRulesPage.fillDates();
         page.waitForTimeout(1000);
 
         // Step 4: Click Next

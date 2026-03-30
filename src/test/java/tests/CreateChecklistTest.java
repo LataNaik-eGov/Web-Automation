@@ -27,7 +27,13 @@ public class CreateChecklistTest extends UploadFileTest {
         Assert.assertNotNull(download, "Template download should have started");
         page.waitForTimeout(2000);
 
-        String templateFile = ConfigReader.getTemplateFileName();
+        String baseUrl = ConfigReader.get("BASE_URL");
+        String templateFile;
+        if (baseUrl != null && baseUrl.contains("bauchi")) {
+            templateFile = "bauchi-unifiedtemplate.xlsx";
+        } else {
+            templateFile = ConfigReader.getTemplateFileName();
+        }
         URL resource = getClass().getClassLoader().getResource(templateFile);
         Assert.assertNotNull(resource, templateFile + " should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();

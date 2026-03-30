@@ -67,7 +67,13 @@ public class UploadFileTest extends AppConfigurationTest {
         page.waitForTimeout(2000);
 
         // Step 3: Upload filled file from resources
-        String templateFile = ConfigReader.getTemplateFileName();
+        String baseUrl = ConfigReader.get("BASE_URL");
+        String templateFile;
+        if (baseUrl != null && baseUrl.contains("bauchi")) {
+            templateFile = "bauchi-unifiedtemplate.xlsx";
+        } else {
+            templateFile = ConfigReader.getTemplateFileName();
+        }
         URL resource = getClass().getClassLoader().getResource(templateFile);
         Assert.assertNotNull(resource, templateFile + " should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();

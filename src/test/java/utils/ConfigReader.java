@@ -30,4 +30,11 @@ public class ConfigReader {
     public static String get(String key) {
         return config.get(key);
     }
+
+    public static String getTemplateFileName() {
+        String baseUrl = get("BASE_URL");
+        String prefix = baseUrl != null && baseUrl.contains("demo") ? "demo" : "uat";
+        String campaignType = get("CAMPAIGN_TYPE");
+        return prefix + "_" + campaignType + "-unifiedtemplate.xlsx";
+    }
 }

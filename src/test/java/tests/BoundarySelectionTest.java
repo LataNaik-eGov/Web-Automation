@@ -5,14 +5,14 @@ import org.testng.annotations.Test;
 
 import pages.BoundarySelectionPage;
 
-public class BoundarySelectionTest extends BednetDraftCampaignTest {
+public class BoundarySelectionTest extends DraftCampaignTest {
 
     protected BoundarySelectionPage boundaryPage;
 
     @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToCreateCampaign")
     public void navigateToBoundarySelection() {
         draftPage.clickCampaignTypeDropdown();
-        draftPage.clickBednetDropdown();
+        draftPage.selectCampaignType();
         draftPage.clickNext();
         page.waitForLoadState();
         page.waitForTimeout(2000);
@@ -38,7 +38,7 @@ public class BoundarySelectionTest extends BednetDraftCampaignTest {
 
     @Override
     @Test(enabled = false)
-    public void verifyBednetDraftCampaignFlow() {}
+    public void verifyDraftCampaignFlow() {}
 
     @Test(groups = {"regression"})
     public void verifyBoundarySelection() {

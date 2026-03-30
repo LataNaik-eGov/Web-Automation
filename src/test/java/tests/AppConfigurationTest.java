@@ -16,10 +16,7 @@ public class AppConfigurationTest extends ConfigureDeliveryRulesTest {
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        deliveryRulesPage.fillStartDate();
-        page.waitForTimeout(1000);
-
-        deliveryRulesPage.fillEndDate();
+        deliveryRulesPage.fillDates();
         page.waitForTimeout(1000);
 
         deliveryRulesPage.clickNext();

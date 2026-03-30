@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import pages.UploadFilePage;
+import utils.ConfigReader;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -66,8 +67,9 @@ public class UploadFileTest extends AppConfigurationTest {
         page.waitForTimeout(2000);
 
         // Step 3: Upload filled file from resources
-        URL resource = getClass().getClassLoader().getResource("uploadFile.xlsx");
-        Assert.assertNotNull(resource, "uploadFile.xlsx should exist in test resources");
+        String templateFile = ConfigReader.getTemplateFileName();
+        URL resource = getClass().getClassLoader().getResource(templateFile);
+        Assert.assertNotNull(resource, templateFile + " should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();
         uploadFilePage.uploadFile(filePath);
         page.waitForTimeout(2000);

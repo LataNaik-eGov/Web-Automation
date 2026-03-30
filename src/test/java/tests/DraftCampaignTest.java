@@ -4,11 +4,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import pages.BednetDraftCampaignPage;
+import pages.DraftCampaignPage;
 
-public class BednetDraftCampaignTest extends CampaignLandingTest {
+public class DraftCampaignTest extends CampaignLandingTest {
 
-    protected BednetDraftCampaignPage draftPage;
+    protected DraftCampaignPage draftPage;
 
     @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToLandingPage")
     public void navigateToCreateCampaign() {
@@ -21,7 +21,7 @@ public class BednetDraftCampaignTest extends CampaignLandingTest {
         page.waitForLoadState();
         page.waitForTimeout(3000);
 
-        draftPage = new BednetDraftCampaignPage(page);
+        draftPage = new DraftCampaignPage(page);
     }
 
     @Override
@@ -29,18 +29,18 @@ public class BednetDraftCampaignTest extends CampaignLandingTest {
     public void verifyCreateCampaignFromScratch() {}
 
     @Test(groups = {"regression"})
-    public void verifyBednetDraftCampaignFlow() {
-        // Step 1: Click campaign type dropdown and verify Bednet Distribution is visible
+    public void verifyDraftCampaignFlow() {
+        // Step 1: Click campaign type dropdown and verify option is visible
         draftPage.clickCampaignTypeDropdown();
-        Assert.assertTrue(draftPage.isBednetDistributionVisible(),
-                "Bednet Distribution option should be visible after clicking the campaign type dropdown");
+        Assert.assertTrue(draftPage.isCampaignTypeVisible(),
+                draftPage.getCampaignDisplayName() + " option should be visible after clicking the campaign type dropdown");
 
-        // Step 2: Select Bednet Distribution and click Next
-        draftPage.clickBednetDropdown();
+        // Step 2: Select campaign type and click Next
+        draftPage.selectCampaignType();
         draftPage.clickNext();
         page.waitForLoadState();
         Assert.assertTrue(page.url().contains("create-campaign"),
-                "Should remain on create campaign flow after selecting Bednet Distribution and clicking Next");
+                "Should remain on create campaign flow after selecting campaign type and clicking Next");
 
         // Step 3: Enter campaign name and click Next
         page.waitForTimeout(2000);

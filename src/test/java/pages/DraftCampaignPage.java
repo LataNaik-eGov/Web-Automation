@@ -2,33 +2,39 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import java.time.LocalDate;
+import utils.ConfigReader;
 
-public class BednetDraftCampaignPage {
+import java.time.LocalDate;
+import java.util.Map;
+
+public class DraftCampaignPage {
 
     private Page page;
 
-    // Campaign template step elements
     private Locator campaignTypeDropdown;
-    private Locator bednetDropdown;
     private Locator nextButton;
     private Locator campaignName;
     private Locator startDateInput;
     private Locator endDateInput;
 
-    public BednetDraftCampaignPage(Page page) {
-    
+    private final String campaignType;
+    private final String campaignDisplayName;
+
+    private static final Map<String, String> CAMPAIGN_DISPLAY_NAMES = Map.of(
+            "BEDNET", "Bednet Distribution",
+            "MR-DN", "MR-DN"
+    );
+
+    public DraftCampaignPage(Page page) {
         this.page = page;
-        // this.campaignTypeDropdown = page.getByRole(AriaRole.BUTTON,
-        //         new Page.GetByRoleOptions().setName("Select an option"));
-        this.campaignTypeDropdown=page.locator("#campaign-create-campaign-standalone-hcm_select_campaign_type-field");
-        this.bednetDropdown = page.locator("div.digit-dropdown-item").nth(1);
+        this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
+        this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
+
+        this.campaignTypeDropdown = page.locator("#campaign-create-campaign-standalone-hcm_select_campaign_type-field");
         this.nextButton = page.locator("#campaign-create-campaign-formcomposer-setup-campaign-primary-submit-btn");
         this.campaignName = page.locator("input[name='CampaignName']");
-        // this.startDateInput = page.locator("input[placeholder='Start date']");
-        this.startDateInput=page.locator("input.digit-employeeCard-input").nth(0);
-        this.endDateInput=page.locator("input.digit-employeeCard-input").nth(1);
-        // this.endDateInput = page.locator("input[placeholder='End date']");
+        this.startDateInput = page.locator("input.digit-employeeCard-input").nth(0);
+        this.endDateInput = page.locator("input.digit-employeeCard-input").nth(1);
     }
 
     // --- Actions ---
@@ -38,9 +44,13 @@ public class BednetDraftCampaignPage {
         page.waitForTimeout(1000);
     }
 
-    public void clickBednetDropdown() {
-        bednetDropdown.click(new Locator.ClickOptions().setForce(true));
+    public void selectCampaignType() {
+        page.getByText(campaignDisplayName).click(new Locator.ClickOptions().setForce(true));
         page.waitForTimeout(1000);
+    }
+
+    public boolean isCampaignTypeVisible() {
+        return page.getByText(campaignDisplayName).isVisible();
     }
 
     public void clickNext() {
@@ -49,7 +59,7 @@ public class BednetDraftCampaignPage {
 
     public void clearAndEnterDynamicCampaignName() {
         campaignName.clear();
-        String dynamicName = "BednetCampaign" + java.time.LocalDateTime.now()
+        String dynamicName = campaignType + "Campaign" + java.time.LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         campaignName.fill(dynamicName);
     }
@@ -58,7 +68,6 @@ public class BednetDraftCampaignPage {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         startDateInput.click();
         page.waitForTimeout(500);
-        // Pick the day from the calendar popup
         page.locator(".react-datepicker__day--0" + String.format("%02d", tomorrow.getDayOfMonth())
                 + ":not(.react-datepicker__day--outside-month)").first().click();
         page.waitForTimeout(500);
@@ -68,10 +77,8 @@ public class BednetDraftCampaignPage {
         LocalDate oneMonthLater = LocalDate.now().plusMonths(1);
         endDateInput.click();
         page.waitForTimeout(500);
-        // Navigate to next month in calendar
         page.locator(".react-datepicker__navigation--next").click();
         page.waitForTimeout(500);
-        // Pick the day from the calendar popup
         page.locator(".react-datepicker__day--0" + String.format("%02d", oneMonthLater.getDayOfMonth())
                 + ":not(.react-datepicker__day--outside-month)").first().click();
         page.waitForTimeout(500);
@@ -82,8 +89,8 @@ public class BednetDraftCampaignPage {
         fillEndDate();
     }
 
-    public boolean isBednetDistributionVisible() {
-        return page.getByText("Bednet Distribution").isVisible();
+    public String getCampaignDisplayName() {
+        return campaignDisplayName;
     }
 
     public String getStartDateValue() {

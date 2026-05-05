@@ -66,6 +66,16 @@ public class BaseTest {
         String browserChannel = ConfigReader.get("BROWSER");
         if (browserChannel == null) browserChannel = "chrome";
 
+        // Display environment info
+        System.out.println("==========================================");
+        System.out.println("  TEST EXECUTION ENVIRONMENT (BaseTest)");
+        System.out.println("==========================================");
+        System.out.println("BASE_URL: " + ConfigReader.get("BASE_URL"));
+        System.out.println("USERNAME: " + ConfigReader.get("USERNAME"));
+        System.out.println("BROWSER: " + browserChannel);
+        System.out.println("HEADLESS: " + headless);
+        System.out.println("==========================================");
+
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                 .setHeadless(headless)
                 .setChannel(browserChannel)

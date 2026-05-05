@@ -167,6 +167,25 @@ jobs:
           echo "Generated .env file:"
           cat .env | sed 's/PASSWORD=.*/PASSWORD=***/'
 
+      - name: Display environment info
+        run: |
+          echo "=========================================="
+          echo "  TEST EXECUTION ENVIRONMENT"
+          echo "=========================================="
+          echo "Environment: ${{ github.event.inputs.environment || 'DEMO' }}"
+          echo "Test Groups: ${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"
+          if [ -n "${{ github.event.inputs.test_class }}" ]; then
+            echo "Test Class: ${{ github.event.inputs.test_class }}"
+          fi
+          if [ -n "${{ github.event.inputs.test_method }}" ]; then
+            echo "Test Method: ${{ github.event.inputs.test_method }}"
+          fi
+          echo ""
+          echo "Configuration (from .env):"
+          grep -E "^(BASE_URL|BROWSER|HEADLESS|USERNAME|COUNTRY|STATE)" .env || echo "No .env file found"
+          echo "=========================================="
+          echo ""
+
       - name: Run tests
         run: mvn test
         env:

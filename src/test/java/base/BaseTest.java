@@ -59,11 +59,12 @@ public class BaseTest {
     public void setup() {
         playwright = Playwright.create();
 
-        // Get config with fallback: system property -> env variable -> .env file
-        String headlessStr = getConfig("HEADLESS", "false");
-        boolean headless = Boolean.parseBoolean(headlessStr);
+        // Read config from .env file via ConfigReader (works for local and CI)
+        String headlessStr = ConfigReader.get("HEADLESS");
+        boolean headless = Boolean.parseBoolean(headlessStr != null ? headlessStr : "false");
 
-        String browserChannel = getConfig("BROWSER", "chrome");
+        String browserChannel = ConfigReader.get("BROWSER");
+        if (browserChannel == null) browserChannel = "chrome";
 
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                 .setHeadless(headless)
@@ -80,33 +81,17 @@ public class BaseTest {
         screenshot = new ScreenshotHelper(page);
 
         // Navigate to app and login
-        String baseUrl = getConfig("BASE_URL", null);
-        String username = getConfig("USERNAME", null);
-        String password = getConfig("PASSWORD", null);
+        String baseUrl = ConfigReader.get("BASE_URL");
+        String username = ConfigReader.get("USERNAME");
+        String password = ConfigReader.get("PASSWORD");
 
         if (baseUrl == null || username == null || password == null) {
-            throw new RuntimeException("Missing required config: BASE_URL, USERNAME, or PASSWORD not set");
+            throw new RuntimeException("Missing required config in .env file: BASE_URL, USERNAME, or PASSWORD not set");
         }
 
         page.navigate(baseUrl, new Page.NavigateOptions().setTimeout(60000));
         LoginPage loginPage = new LoginPage(page);
         homePage = loginPage.login(username, password);
-    }
-
-    private String getConfig(String key, String defaultValue) {
-        // Check system property first
-        String value = System.getProperty(key);
-        if (value != null && !value.isEmpty()) return value;
-
-        // Check environment variable
-        value = System.getenv(key);
-        if (value != null && !value.isEmpty()) return value;
-
-        // Fall back to .env file via ConfigReader
-        value = ConfigReader.get(key);
-        if (value != null && !value.isEmpty()) return value;
-
-        return defaultValue;
     }
 
     @AfterMethod

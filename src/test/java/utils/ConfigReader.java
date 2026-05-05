@@ -45,23 +45,7 @@ public class ConfigReader {
     }
 
     public static String get(String key) {
-        String value = System.getProperty(key);
-        if (value != null && !value.isEmpty()) {
-            System.out.println("ConfigReader: Got " + key + " from system property");
-            return value;
-        }
-        value = System.getenv(key);
-        if (value != null && !value.isEmpty()) {
-            System.out.println("ConfigReader: Got " + key + " from environment variable");
-            return value;
-        }
-        value = config.get(key);
-        if (value != null) {
-            System.out.println("ConfigReader: Got " + key + " from .env file");
-        } else {
-            System.out.println("ConfigReader: Key " + key + " not found");
-        }
-        return value;
+        return config.get(key);
     }
 
     public static String getTemplateFileName() {

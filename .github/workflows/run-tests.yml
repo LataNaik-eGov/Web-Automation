@@ -147,31 +147,40 @@ jobs:
 
       - name: Run tests
         run: |
+          # Create .env file for ConfigReader to read
           if [ "${{ github.event.inputs.environment || 'DEMO' }}" = "UAT" ]; then
-            export BASE_URL="${{ secrets.UAT_BASE_URL }}"
-            export USERNAME="${{ secrets.UAT_USERNAME }}"
-            export PASSWORD="${{ secrets.UAT_PASSWORD }}"
-            export COUNTRY="${{ secrets.UAT_COUNTRY }}"
-            export STATE="${{ secrets.UAT_STATE }}"
-            export LGA="${{ secrets.UAT_LGA }}"
-            export WARD="${{ secrets.UAT_WARD }}"
-            export VILLAGE="${{ secrets.UAT_VILLAGE }}"
-            export AREA="${{ secrets.UAT_AREA }}"
+            cat > .env <<EOF
+BASE_URL=${{ secrets.UAT_BASE_URL }}
+BROWSER=chromium
+HEADLESS=true
+USERNAME=${{ secrets.UAT_USERNAME }}
+PASSWORD=${{ secrets.UAT_PASSWORD }}
+COUNTRY=${{ secrets.UAT_COUNTRY }}
+STATE=${{ secrets.UAT_STATE }}
+LGA=${{ secrets.UAT_LGA }}
+WARD=${{ secrets.UAT_WARD }}
+VILLAGE=${{ secrets.UAT_VILLAGE }}
+AREA=${{ secrets.UAT_AREA }}
+EOF
           else
-            export BASE_URL="${{ secrets.DEMO_BASE_URL }}"
-            export USERNAME="${{ secrets.DEMO_USERNAME }}"
-            export PASSWORD="${{ secrets.DEMO_PASSWORD }}"
-            export COUNTRY="${{ secrets.DEMO_COUNTRY }}"
-            export STATE="${{ secrets.DEMO_STATE }}"
-            export LGA="${{ secrets.DEMO_LGA }}"
-            export WARD="${{ secrets.DEMO_WARD }}"
-            export VILLAGE="${{ secrets.DEMO_VILLAGE }}"
-            export AREA="${{ secrets.DEMO_AREA }}"
+            cat > .env <<EOF
+BASE_URL=${{ secrets.DEMO_BASE_URL }}
+BROWSER=chromium
+HEADLESS=true
+USERNAME=${{ secrets.DEMO_USERNAME }}
+PASSWORD=${{ secrets.DEMO_PASSWORD }}
+COUNTRY=${{ secrets.DEMO_COUNTRY }}
+STATE=${{ secrets.DEMO_STATE }}
+LGA=${{ secrets.DEMO_LGA }}
+WARD=${{ secrets.DEMO_WARD }}
+VILLAGE=${{ secrets.DEMO_VILLAGE }}
+AREA=${{ secrets.DEMO_AREA }}
+EOF
           fi
           
-          echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
-          echo "Debug: USERNAME is set: $([ -n "$USERNAME" ] && echo 'YES' || echo 'NO')"
+          echo "Generated .env file:"
+          cat .env | sed 's/PASSWORD=.*/PASSWORD=***/'
           
-          mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}" -DBASE_URL="$BASE_URL" -DUSERNAME="$USERNAME" -DPASSWORD="$PASSWORD" -DCOUNTRY="$COUNTRY" -DSTATE="$STATE" -DLGA="$LGA" -DWARD="$WARD" -DVILLAGE="$VILLAGE" -DAREA="$AREA" -DHEADLESS=true -DBROWSER=chromium
+          mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"
         env:
           CI: true

@@ -11,7 +11,7 @@ public class EmployeeInboxTest extends BaseTest {
     // ---------------------------------------------------------------
     // Test Case 1 — Edit Employee
     // ---------------------------------------------------------------
-    @Test(priority = 1)
+    @Test(priority = 1, groups = { "payments-ui" })
     public void editEmployee() {
         EmployeeInboxPage searchPage = nav.goToSearchEmployee();
 
@@ -39,7 +39,7 @@ public class EmployeeInboxTest extends BaseTest {
     // ---------------------------------------------------------------
     // Test Case 2 — Deactivate Employee
     // ---------------------------------------------------------------
-    @Test(priority = 2)
+    @Test(priority = 2, groups = { "payments-ui" })
     public void deactivateEmployee() {
         EmployeeInboxPage searchPage = nav.goToSearchEmployee();
 
@@ -65,7 +65,7 @@ public class EmployeeInboxTest extends BaseTest {
     // ---------------------------------------------------------------
     // Test Case 3 — Search and Verify Employee Appears in Results
     // ---------------------------------------------------------------
-    @Test(priority = 3)
+    @Test(priority = 3, groups = { "payments-ui" })
     public void searchAndVerifyEmployee() {
         String empId = ConfigReader.get("search.emp.id");
 

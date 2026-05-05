@@ -35,7 +35,7 @@ public class AppConfigurationTest extends ConfigureDeliveryRulesTest {
     @Test(enabled = false)
     public void verifyConfigureDeliveryRules() {}
 
-    @Test(groups = {"regression"})
+    @Test(groups = {"regression", "workbench-ui"})
     public void verifyAppConfiguration() {
         // Step 1: Click Set Up Mobile App
         appConfigPage.clickSetUpMobileApp();

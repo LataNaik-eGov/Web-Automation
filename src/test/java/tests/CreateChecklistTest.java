@@ -47,7 +47,7 @@ public class CreateChecklistTest extends UploadFileTest {
     @Test(enabled = false)
     public void verifyUploadFile() {}
 
-    @Test(groups = {"regression"})
+    @Test(groups = {"regression", "workbench-ui"})
     public void verifyCreateChecklist() {
         // Step 1: Click Create Checklist
         createChecklistPage.clickCreateChecklist();

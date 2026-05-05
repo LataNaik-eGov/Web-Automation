@@ -28,7 +28,7 @@ public class DraftCampaignTest extends CampaignLandingTest {
     @Test(enabled = false)
     public void verifyCreateCampaignFromScratch() {}
 
-    @Test(groups = {"regression"})
+    @Test(groups = {"regression", "workbench-ui"})
     public void verifyDraftCampaignFlow() {
         // Step 1: Click campaign type dropdown and verify option is visible
         draftPage.clickCampaignTypeDropdown();

@@ -32,7 +32,7 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
     @Test(enabled = false)
     public void verifyBoundarySelection() {}
 
-    @Test(groups = {"regression"})
+    @Test(groups = {"regression", "workbench-ui"})
     public void verifyConfigureDeliveryRules() {
         // Step 1: Click Configure Delivery button on campaign dashboard
         deliveryRulesPage.clickConfigureDelivery();

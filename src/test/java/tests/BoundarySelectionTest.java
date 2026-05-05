@@ -40,7 +40,7 @@ public class BoundarySelectionTest extends DraftCampaignTest {
     @Test(enabled = false)
     public void verifyDraftCampaignFlow() {}
 
-    @Test(groups = {"regression"})
+    @Test(groups = {"regression", "workbench-ui"})
     public void verifyBoundarySelection() {
         // Step 1: Select first boundary level
         boundaryPage.clickfirstlevel();

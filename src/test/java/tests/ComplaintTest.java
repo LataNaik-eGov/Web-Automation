@@ -16,14 +16,14 @@ public class ComplaintTest extends BaseTest {
         return complaint.fillForm(today, "not working");
     }
 
-    @Test
+    @Test(groups = {"payments-ui"})
     public void createComplaint() {
         String complaintNumber = createAndCaptureComplaint();
         Assert.assertNotNull(complaintNumber, "Complaint number should be visible after creation");
         Assert.assertTrue(complaintNumber.startsWith("PGR-"), "Complaint number should start with PGR-");
     }
 
-    @Test
+    @Test(groups = {"payments-ui"})
     public void resolveComplaint() {
         String complaintNumber = createAndCaptureComplaint();
 
@@ -33,7 +33,7 @@ public class ComplaintTest extends BaseTest {
         complaint.searchAndResolve(complaintNumber, "Resolved");
     }
 
-    @Test
+    @Test(groups = {"payments-ui"})
     public void rejectComplaint() {
         String complaintNumber = createAndCaptureComplaint();
 

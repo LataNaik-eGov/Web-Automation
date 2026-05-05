@@ -8,7 +8,7 @@ import pages.HomePage;
 
 public class HomeTest extends BaseTest {
 
-    @Test
+    @Test(groups = {"payments-ui", "workbench-ui"})
     public void navigateToCreateComplaint() {
        
         HomePage homePage = new HomePage(page);

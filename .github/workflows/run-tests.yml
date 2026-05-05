@@ -64,17 +64,76 @@ jobs:
       - name: Create testng.xml
         run: |
           cat > testng.xml <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Web Automation Suite" verbose="1">
-    <test name="All Tests">
-        <packages>
-            <package name="tests.*"/>
-        </packages>
-    </test>
-</suite>
-EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+          <suite name="Web Automation Suite" verbose="1">
+              <test name="All Tests">
+                  <packages>
+                      <package name="tests.*"/>
+                  </packages>
+              </test>
+          </suite>
+          EOF
           cat testng.xml
+
+      - name: Create .env file
+        env:
+          ENV_NAME: ${{ github.event.inputs.environment || 'DEMO' }}
+          UAT_BASE_URL: ${{ secrets.UAT_BASE_URL }}
+          DEMO_BASE_URL: ${{ secrets.DEMO_BASE_URL }}
+          UAT_USERNAME: ${{ secrets.UAT_USERNAME }}
+          DEMO_USERNAME: ${{ secrets.DEMO_USERNAME }}
+          UAT_PASSWORD: ${{ secrets.UAT_PASSWORD }}
+          DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
+          UAT_COUNTRY: ${{ secrets.UAT_COUNTRY }}
+          DEMO_COUNTRY: ${{ secrets.DEMO_COUNTRY }}
+          UAT_STATE: ${{ secrets.UAT_STATE }}
+          DEMO_STATE: ${{ secrets.DEMO_STATE }}
+          UAT_LGA: ${{ secrets.UAT_LGA }}
+          DEMO_LGA: ${{ secrets.DEMO_LGA }}
+          UAT_WARD: ${{ secrets.UAT_WARD }}
+          DEMO_WARD: ${{ secrets.DEMO_WARD }}
+          UAT_VILLAGE: ${{ secrets.UAT_VILLAGE }}
+          DEMO_VILLAGE: ${{ secrets.DEMO_VILLAGE }}
+          UAT_AREA: ${{ secrets.UAT_AREA }}
+          DEMO_AREA: ${{ secrets.DEMO_AREA }}
+        run: |
+          if [ "$ENV_NAME" = "UAT" ]; then
+            BASE_URL="$UAT_BASE_URL"
+            USERNAME="$UAT_USERNAME"
+            PASSWORD="$UAT_PASSWORD"
+            COUNTRY="$UAT_COUNTRY"
+            STATE="$UAT_STATE"
+            LGA="$UAT_LGA"
+            WARD="$UAT_WARD"
+            VILLAGE="$UAT_VILLAGE"
+            AREA="$UAT_AREA"
+          else
+            BASE_URL="$DEMO_BASE_URL"
+            USERNAME="$DEMO_USERNAME"
+            PASSWORD="$DEMO_PASSWORD"
+            COUNTRY="$DEMO_COUNTRY"
+            STATE="$DEMO_STATE"
+            LGA="$DEMO_LGA"
+            WARD="$DEMO_WARD"
+            VILLAGE="$DEMO_VILLAGE"
+            AREA="$DEMO_AREA"
+          fi
+          
+          cat > .env <<EOF
+          BASE_URL=$BASE_URL
+          BROWSER=chromium
+          HEADLESS=true
+          USERNAME=$USERNAME
+          PASSWORD=$PASSWORD
+          COUNTRY=$COUNTRY
+          STATE=$STATE
+          LGA=$LGA
+          WARD=$WARD
+          VILLAGE=$VILLAGE
+          AREA=$AREA
+          EOF
+          cat .env
 
       - name: Run tests
         run: mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"

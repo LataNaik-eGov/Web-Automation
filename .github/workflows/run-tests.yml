@@ -75,8 +75,33 @@ jobs:
           echo '</suite>' >> testng.xml
           cat testng.xml
 
+      - name: Create .env file
+        run: |
+          cat > .env <<EOF
+          BASE_URL=${{ secrets.BASE_URL }}
+          BROWSER=${{ secrets.BROWSER || 'chromium' }}
+          HEADLESS=true
+          USERNAME=${{ secrets.USERNAME }}
+          PASSWORD=${{ secrets.PASSWORD }}
+          COUNTRY=${{ secrets.COUNTRY }}
+          STATE=${{ secrets.STATE }}
+          LGA=${{ secrets.LGA }}
+          WARD=${{ secrets.WARD }}
+          VILLAGE=${{ secrets.VILLAGE }}
+          AREA=${{ secrets.AREA }}
+          EOF
+
       - name: Run tests
         run: mvn test
         env:
           CI: true
           HEADLESS: true
+          BASE_URL: ${{ secrets.BASE_URL }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          COUNTRY: ${{ secrets.COUNTRY }}
+          STATE: ${{ secrets.STATE }}
+          LGA: ${{ secrets.LGA }}
+          WARD: ${{ secrets.WARD }}
+          VILLAGE: ${{ secrets.VILLAGE }}
+          AREA: ${{ secrets.AREA }}

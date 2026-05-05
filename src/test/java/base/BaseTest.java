@@ -57,12 +57,19 @@ public class BaseTest {
 
     @BeforeMethod
     public void setup() {
+        // Read config at runtime, not from static ConfigReader
+        String headlessStr = System.getProperty("HEADLESS", System.getenv("HEADLESS"));
+        boolean headless = Boolean.parseBoolean(headlessStr);
+        
+        String browserChannel = System.getProperty("BROWSER", System.getenv("BROWSER"));
+        if (browserChannel == null) browserChannel = "chrome";
+        
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                .setHeadless(Boolean.parseBoolean(ConfigReader.get("HEADLESS")))
-                .setChannel("chrome")
+                .setHeadless(headless)
+                .setChannel(browserChannel)
                 .setArgs(Arrays.asList("--disable-dev-shm-usage", "--no-sandbox", "--start-maximized")));
-
+        
         context = browser.newContext(new Browser.NewContextOptions().setViewportSize(null));
         page = context.newPage();
         page.setDefaultTimeout(60000);
@@ -73,9 +80,17 @@ public class BaseTest {
         screenshot = new ScreenshotHelper(page);
 
         // Navigate to app and login
-        page.navigate(ConfigReader.get("BASE_URL"), new Page.NavigateOptions().setTimeout(60000));
+        String baseUrl = System.getProperty("BASE_URL", System.getenv("BASE_URL"));
+        String username = System.getProperty("USERNAME", System.getenv("USERNAME"));
+        String password = System.getProperty("PASSWORD", System.getenv("PASSWORD"));
+        
+        if (baseUrl == null || username == null || password == null) {
+            throw new RuntimeException("Missing required config: BASE_URL, USERNAME, or PASSWORD not set");
+        }
+        
+        page.navigate(baseUrl, new Page.NavigateOptions().setTimeout(60000));
         LoginPage loginPage = new LoginPage(page);
-        homePage = loginPage.login(ConfigReader.get("USERNAME"), ConfigReader.get("PASSWORD"));
+        homePage = loginPage.login(username, password);
     }
 
     @AfterMethod

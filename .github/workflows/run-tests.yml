@@ -146,6 +146,32 @@ jobs:
           grep "^BASE_URL=" .env || echo "BASE_URL not found"
 
       - name: Run tests
-        run: mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}" -X
+        run: |
+          if [ "${{ github.event.inputs.environment || 'DEMO' }}" = "UAT" ]; then
+            export BASE_URL="${{ secrets.UAT_BASE_URL }}"
+            export USERNAME="${{ secrets.UAT_USERNAME }}"
+            export PASSWORD="${{ secrets.UAT_PASSWORD }}"
+            export COUNTRY="${{ secrets.UAT_COUNTRY }}"
+            export STATE="${{ secrets.UAT_STATE }}"
+            export LGA="${{ secrets.UAT_LGA }}"
+            export WARD="${{ secrets.UAT_WARD }}"
+            export VILLAGE="${{ secrets.UAT_VILLAGE }}"
+            export AREA="${{ secrets.UAT_AREA }}"
+          else
+            export BASE_URL="${{ secrets.DEMO_BASE_URL }}"
+            export USERNAME="${{ secrets.DEMO_USERNAME }}"
+            export PASSWORD="${{ secrets.DEMO_PASSWORD }}"
+            export COUNTRY="${{ secrets.DEMO_COUNTRY }}"
+            export STATE="${{ secrets.DEMO_STATE }}"
+            export LGA="${{ secrets.DEMO_LGA }}"
+            export WARD="${{ secrets.DEMO_WARD }}"
+            export VILLAGE="${{ secrets.DEMO_VILLAGE }}"
+            export AREA="${{ secrets.DEMO_AREA }}"
+          fi
+          
+          echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
+          echo "Debug: USERNAME is set: $([ -n "$USERNAME" ] && echo 'YES' || echo 'NO')"
+          
+          mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}" -DBASE_URL="$BASE_URL" -DUSERNAME="$USERNAME" -DPASSWORD="$PASSWORD" -DCOUNTRY="$COUNTRY" -DSTATE="$STATE" -DLGA="$LGA" -DWARD="$WARD" -DVILLAGE="$VILLAGE" -DAREA="$AREA" -DHEADLESS=true -DBROWSER=chromium
         env:
           CI: true

@@ -64,19 +64,6 @@ jobs:
       - name: Create testng.xml for groups
         run: |
           GROUPS="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"
-          
-          # Find test classes that contain the specified groups
-          CLASSES=""
-          for group in $(echo $GROUPS | tr ',' ' '); do
-            FILES=$(grep -l "@Test.*groups.*$group\|groups.*=.*$group" src/test/java/tests/*.java 2>/dev/null || true)
-            for file in $FILES; do
-              class=$(basename "$file" .java)
-              if [[ ! "$CLASSES" =~ "$class" ]]; then
-                CLASSES="$CLASSES $class"
-              fi
-            done
-          done
-          
           echo '<?xml version="1.0" encoding="UTF-8"?>' > testng.xml
           echo '<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">' >> testng.xml
           echo '<suite name="Web Automation Suite" verbose="1">' >> testng.xml
@@ -89,11 +76,9 @@ jobs:
           done
           echo '            </run>' >> testng.xml
           echo '        </groups>' >> testng.xml
-          echo '        <classes>' >> testng.xml
-          for class in $CLASSES; do
-            echo "            <class name=\"tests.$class\" />" >> testng.xml
-          done
-          echo '        </classes>' >> testng.xml
+          echo '        <packages>' >> testng.xml
+          echo '            <package name="tests.*"/>' >> testng.xml
+          echo '        </packages>' >> testng.xml
           echo '    </test>' >> testng.xml
           echo '</suite>' >> testng.xml
           cat testng.xml

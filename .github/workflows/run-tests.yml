@@ -30,6 +30,7 @@ jobs:
         run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps chromium"
 
       - name: Run tests
-        run: mvn test -Dgroups="payments-ui,workbench-ui"
+        run: mvn test -Dgroups="payments-ui,workbench-ui" -DHEADLESS=true
         env:
           CI: true
+          HEADLESS: true

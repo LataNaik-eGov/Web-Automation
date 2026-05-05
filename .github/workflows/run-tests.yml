@@ -33,6 +33,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
+    environment: ${{ github.event.inputs.environment || 'DEMO' }}
 
     steps:
       - name: Checkout code
@@ -118,54 +119,59 @@ jobs:
 
       - name: Create .env file
         env:
-          ENV_NAME: ${{ github.event.inputs.environment || 'DEMO' }}
-          UAT_BASE_URL: ${{ secrets.UAT_BASE_URL }}
-          DEMO_BASE_URL: ${{ secrets.DEMO_BASE_URL }}
-          UAT_USERNAME: ${{ secrets.UAT_USERNAME }}
-          DEMO_USERNAME: ${{ secrets.DEMO_USERNAME }}
-          UAT_PASSWORD: ${{ secrets.UAT_PASSWORD }}
-          DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
-          UAT_COUNTRY: ${{ secrets.UAT_COUNTRY }}
-          DEMO_COUNTRY: ${{ secrets.DEMO_COUNTRY }}
-          UAT_STATE: ${{ secrets.UAT_STATE }}
-          DEMO_STATE: ${{ secrets.DEMO_STATE }}
-          UAT_LGA: ${{ secrets.UAT_LGA }}
-          DEMO_LGA: ${{ secrets.DEMO_LGA }}
-          UAT_WARD: ${{ secrets.UAT_WARD }}
-          DEMO_WARD: ${{ secrets.DEMO_WARD }}
-          UAT_VILLAGE: ${{ secrets.UAT_VILLAGE }}
-          DEMO_VILLAGE: ${{ secrets.DEMO_VILLAGE }}
-          UAT_AREA: ${{ secrets.UAT_AREA }}
-          DEMO_AREA: ${{ secrets.DEMO_AREA }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          BROWSER: ${{ secrets.BROWSER }}
+          HEADLESS: ${{ secrets.HEADLESS }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          COUNTRY: ${{ secrets.COUNTRY }}
+          STATE: ${{ secrets.STATE }}
+          LGA: ${{ secrets.LGA }}
+          WARD: ${{ secrets.WARD }}
+          VILLAGE: ${{ secrets.VILLAGE }}
+          AREA: ${{ secrets.AREA }}
         run: |
-          if [ "$ENV_NAME" = "UAT" ]; then
-            echo "BASE_URL=$UAT_BASE_URL" > .env
-            echo "BROWSER=chromium" >> .env
-            echo "HEADLESS=true" >> .env
-            echo "USERNAME=$UAT_USERNAME" >> .env
-            echo "PASSWORD=$UAT_PASSWORD" >> .env
-            echo "COUNTRY=$UAT_COUNTRY" >> .env
-            echo "STATE=$UAT_STATE" >> .env
-            echo "LGA=$UAT_LGA" >> .env
-            echo "WARD=$UAT_WARD" >> .env
-            echo "VILLAGE=$UAT_VILLAGE" >> .env
-            echo "AREA=$UAT_AREA" >> .env
-          else
-            echo "BASE_URL=$DEMO_BASE_URL" > .env
-            echo "BROWSER=chromium" >> .env
-            echo "HEADLESS=true" >> .env
-            echo "USERNAME=$DEMO_USERNAME" >> .env
-            echo "PASSWORD=$DEMO_PASSWORD" >> .env
-            echo "COUNTRY=$DEMO_COUNTRY" >> .env
-            echo "STATE=$DEMO_STATE" >> .env
-            echo "LGA=$DEMO_LGA" >> .env
-            echo "WARD=$DEMO_WARD" >> .env
-            echo "VILLAGE=$DEMO_VILLAGE" >> .env
-            echo "AREA=$DEMO_AREA" >> .env
-          fi
-          
+          echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
+
+          echo "Using ${{ github.event.inputs.environment || 'DEMO' }} environment"
+          cat > .env <<EOF
+BASE_URL=$BASE_URL
+BROWSER=${BROWSER:-chromium}
+HEADLESS=${HEADLESS:-true}
+USERNAME=$USERNAME
+PASSWORD=$PASSWORD
+COUNTRY=$COUNTRY
+STATE=$STATE
+LGA=$LGA
+WARD=$WARD
+VILLAGE=$VILLAGE
+AREA=$AREA
+EOF
+
           echo "Generated .env file:"
           cat .env | sed 's/PASSWORD=.*/PASSWORD=***/'
+          echo ""
+          echo "Verify .env file exists:"
+          ls -la .env
+
+      - name: Validate .env file
+        run: |
+          echo "Validating .env file..."
+          missing=0
+          for key in BASE_URL USERNAME COUNTRY STATE; do
+            value=$(grep "^$key=" .env | cut -d'=' -f2)
+            if [ -z "$value" ]; then
+              echo "ERROR: $key is empty in .env file"
+              missing=1
+            else
+              echo "OK: $key is set"
+            fi
+          done
+          if [ $missing -eq 1 ]; then
+            echo "FAILED: Required environment variables are missing. Check GitHub secrets."
+            exit 1
+          fi
+          echo "Validation passed."
 
       - name: Display environment info
         run: |

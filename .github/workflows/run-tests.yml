@@ -135,7 +135,17 @@ jobs:
           EOF
           cat .env
 
+      - name: Verify .env file
+        run: |
+          echo "Checking .env file exists:"
+          ls -la .env
+          echo "Contents of .env (without password):"
+          cat .env | sed 's/PASSWORD=.*/PASSWORD=***/'
+          echo ""
+          echo "Checking if BASE_URL is set:"
+          grep "^BASE_URL=" .env || echo "BASE_URL not found"
+
       - name: Run tests
-        run: mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"
+        run: mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}" -X
         env:
           CI: true

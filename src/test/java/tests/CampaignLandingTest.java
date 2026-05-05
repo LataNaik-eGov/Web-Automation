@@ -10,7 +10,7 @@ public class CampaignLandingTest extends BaseTest {
 
     protected CampaignLandingPage landingPage;
 
-    @BeforeMethod(alwaysRun = true, dependsOnMethods = "setup")
+    @BeforeMethod(alwaysRun = true)
     public void navigateToLandingPage() {
         landingPage = new CampaignLandingPage(page);
     }

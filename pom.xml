@@ -46,6 +46,7 @@
           <suiteXmlFiles>
             <suiteXmlFile>testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+          <test>${test.class}</test>
           <groups>${test.groups}</groups>
         </configuration>
       </plugin>

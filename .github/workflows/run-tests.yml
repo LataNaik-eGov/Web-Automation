@@ -11,6 +11,14 @@ on:
         description: 'Test groups to run (comma-separated, e.g., payments-ui,workbench-ui)'
         required: false
         default: 'payments-ui,workbench-ui'
+      test_class:
+        description: 'Specific test class to run (e.g., tests.LoginTest)'
+        required: false
+        default: ''
+      test_method:
+        description: 'Specific test method to run (e.g., verifyUserCanLogin)'
+        required: false
+        default: ''
       environment:
         description: 'Environment to use (UAT or DEMO)'
         required: false
@@ -63,92 +71,66 @@ jobs:
 
       - name: Create testng.xml
         run: |
-          cat > testng.xml <<'EOF'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-          <suite name="Web Automation Suite" verbose="1">
-              <test name="All Tests">
-                  <packages>
-                      <package name="tests.*"/>
-                  </packages>
-              </test>
-          </suite>
-          EOF
+          TEST_CLASS="${{ github.event.inputs.test_class }}"
+          TEST_METHOD="${{ github.event.inputs.test_method }}"
+
+          # If specific test class provided, create targeted testng.xml
+          if [ -n "$TEST_CLASS" ]; then
+            cat > testng.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Web Automation Suite" verbose="1">
+    <test name="Individual Test">
+        <classes>
+            <class name="$TEST_CLASS">
+EOF
+            if [ -n "$TEST_METHOD" ]; then
+              cat >> testng.xml <<EOF
+                <methods>
+                    <include name="$TEST_METHOD" />
+                </methods>
+EOF
+            fi
+            cat >> testng.xml <<EOF
+            </class>
+        </classes>
+    </test>
+</suite>
+EOF
+          else
+            # Create testng.xml for groups
+            GROUPS="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"
+            cat > testng.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Web Automation Suite" verbose="1">
+    <test name="Group Tests">
+        <groups>
+            <run>
+EOF
+            IFS=',' read -ra GROUP_ARRAY <<< "$GROUPS"
+            for group in "${GROUP_ARRAY[@]}"; do
+              group=$(echo "$group" | tr -d ' ')
+              echo "                <include name=\"$group\" />" >> testng.xml
+            done
+            cat >> testng.xml <<EOF
+            </run>
+        </groups>
+        <packages>
+            <package name="tests.*"/>
+        </packages>
+    </test>
+</suite>
+EOF
+          fi
+          echo "Generated testng.xml:"
           cat testng.xml
 
       - name: Create .env file
-        env:
-          ENV_NAME: ${{ github.event.inputs.environment || 'DEMO' }}
-          UAT_BASE_URL: ${{ secrets.UAT_BASE_URL }}
-          DEMO_BASE_URL: ${{ secrets.DEMO_BASE_URL }}
-          UAT_USERNAME: ${{ secrets.UAT_USERNAME }}
-          DEMO_USERNAME: ${{ secrets.DEMO_USERNAME }}
-          UAT_PASSWORD: ${{ secrets.UAT_PASSWORD }}
-          DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
-          UAT_COUNTRY: ${{ secrets.UAT_COUNTRY }}
-          DEMO_COUNTRY: ${{ secrets.DEMO_COUNTRY }}
-          UAT_STATE: ${{ secrets.UAT_STATE }}
-          DEMO_STATE: ${{ secrets.DEMO_STATE }}
-          UAT_LGA: ${{ secrets.UAT_LGA }}
-          DEMO_LGA: ${{ secrets.DEMO_LGA }}
-          UAT_WARD: ${{ secrets.UAT_WARD }}
-          DEMO_WARD: ${{ secrets.DEMO_WARD }}
-          UAT_VILLAGE: ${{ secrets.UAT_VILLAGE }}
-          DEMO_VILLAGE: ${{ secrets.DEMO_VILLAGE }}
-          UAT_AREA: ${{ secrets.UAT_AREA }}
-          DEMO_AREA: ${{ secrets.DEMO_AREA }}
         run: |
+          ENV_NAME="${{ github.event.inputs.environment || 'DEMO' }}"
+
           if [ "$ENV_NAME" = "UAT" ]; then
-            BASE_URL="$UAT_BASE_URL"
-            USERNAME="$UAT_USERNAME"
-            PASSWORD="$UAT_PASSWORD"
-            COUNTRY="$UAT_COUNTRY"
-            STATE="$UAT_STATE"
-            LGA="$UAT_LGA"
-            WARD="$UAT_WARD"
-            VILLAGE="$UAT_VILLAGE"
-            AREA="$UAT_AREA"
-          else
-            BASE_URL="$DEMO_BASE_URL"
-            USERNAME="$DEMO_USERNAME"
-            PASSWORD="$DEMO_PASSWORD"
-            COUNTRY="$DEMO_COUNTRY"
-            STATE="$DEMO_STATE"
-            LGA="$DEMO_LGA"
-            WARD="$DEMO_WARD"
-            VILLAGE="$DEMO_VILLAGE"
-            AREA="$DEMO_AREA"
-          fi
-          
-          cat > .env <<EOF
-          BASE_URL=$BASE_URL
-          BROWSER=chromium
-          HEADLESS=true
-          USERNAME=$USERNAME
-          PASSWORD=$PASSWORD
-          COUNTRY=$COUNTRY
-          STATE=$STATE
-          LGA=$LGA
-          WARD=$WARD
-          VILLAGE=$VILLAGE
-          AREA=$AREA
-          EOF
-          cat .env
-
-      - name: Verify .env file
-        run: |
-          echo "Checking .env file exists:"
-          ls -la .env
-          echo "Contents of .env (without password):"
-          cat .env | sed 's/PASSWORD=.*/PASSWORD=***/'
-          echo ""
-          echo "Checking if BASE_URL is set:"
-          grep "^BASE_URL=" .env || echo "BASE_URL not found"
-
-      - name: Run tests
-        run: |
-          # Create .env file for ConfigReader to read
-          if [ "${{ github.event.inputs.environment || 'DEMO' }}" = "UAT" ]; then
             cat > .env <<EOF
 BASE_URL=${{ secrets.UAT_BASE_URL }}
 BROWSER=chromium
@@ -177,10 +159,11 @@ VILLAGE=${{ secrets.DEMO_VILLAGE }}
 AREA=${{ secrets.DEMO_AREA }}
 EOF
           fi
-          
+
           echo "Generated .env file:"
           cat .env | sed 's/PASSWORD=.*/PASSWORD=***/'
-          
-          mvn test -Dtest.groups="${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"
+
+      - name: Run tests
+        run: mvn test
         env:
           CI: true

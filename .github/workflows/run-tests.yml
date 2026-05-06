@@ -122,14 +122,14 @@ jobs:
           BASE_URL: ${{ secrets.BASE_URL }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
-          BROWSER: ${{ vars.BROWSER }}
-          HEADLESS: ${{ vars.HEADLESS }}
-          COUNTRY: ${{ vars.COUNTRY }}
-          STATE: ${{ vars.STATE }}
-          LGA: ${{ vars.LGA }}
-          WARD: ${{ vars.WARD }}
-          VILLAGE: ${{ vars.VILLAGE }}
-          AREA: ${{ vars.AREA }}
+          BROWSER: ${{ vars.BROWSER || secrets.BROWSER }}
+          HEADLESS: ${{ vars.HEADLESS || secrets.HEADLESS }}
+          COUNTRY: ${{ vars.COUNTRY || secrets.COUNTRY }}
+          STATE: ${{ vars.STATE || secrets.STATE }}
+          LGA: ${{ vars.LGA || secrets.LGA }}
+          WARD: ${{ vars.WARD || secrets.WARD }}
+          VILLAGE: ${{ vars.VILLAGE || secrets.VILLAGE }}
+          AREA: ${{ vars.AREA || secrets.AREA }}
         run: |
           echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
 

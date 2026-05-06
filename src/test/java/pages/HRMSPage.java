@@ -2,13 +2,10 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import utils.FormHelper;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class HRMSPage extends BasePage {
-
-    private final FormHelper form;
 
     // --- Login Details ---
     private final String employeeId = "input[title='Please provide a valid and unique Username']";
@@ -42,7 +39,6 @@ public class HRMSPage extends BasePage {
 
     public HRMSPage(Page page) {
         super(page);
-        this.form = new FormHelper(page);
     }
 
     public HRMSPage fillLoginDetails(String empId, String pwd) {

@@ -42,9 +42,7 @@ public class NavigationHelper {
         return new HomePage(page);
     }
 
-
-
-public HRMSPage goToCreateEmployee() {
+    public HRMSPage goToCreateEmployee() {
         if (page.locator(".digit-topbar-home").isVisible()) {
             page.locator(".digit-topbar-home").click();
         }

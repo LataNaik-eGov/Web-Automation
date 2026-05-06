@@ -2,13 +2,10 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import utils.FormHelper;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class EmployeeInboxPage extends BasePage {
-
-    private final FormHelper form;
 
     // --- Search ---
     private final String searchInput = "input[name='codes']";
@@ -35,7 +32,6 @@ public class EmployeeInboxPage extends BasePage {
 
     public EmployeeInboxPage(Page page) {
         super(page);
-        this.form = new FormHelper(page);
     }
 
     // ---------------------------------------------------------------

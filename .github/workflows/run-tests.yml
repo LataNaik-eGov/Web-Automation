@@ -120,36 +120,36 @@ jobs:
       - name: Create .env file
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
-          BROWSER: ${{ secrets.BROWSER }}
-          HEADLESS: ${{ secrets.HEADLESS }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
-          COUNTRY: ${{ secrets.COUNTRY }}
-          STATE: ${{ secrets.STATE }}
-          LGA: ${{ secrets.LGA }}
-          WARD: ${{ secrets.WARD }}
-          VILLAGE: ${{ secrets.VILLAGE }}
-          AREA: ${{ secrets.AREA }}
+          BROWSER: ${{ vars.BROWSER || secrets.BROWSER }}
+          HEADLESS: ${{ vars.HEADLESS || secrets.HEADLESS }}
+          COUNTRY: ${{ vars.COUNTRY || secrets.COUNTRY }}
+          STATE: ${{ vars.STATE || secrets.STATE }}
+          LGA: ${{ vars.LGA || secrets.LGA }}
+          WARD: ${{ vars.WARD || secrets.WARD }}
+          VILLAGE: ${{ vars.VILLAGE || secrets.VILLAGE }}
+          AREA: ${{ vars.AREA || secrets.AREA }}
         run: |
           echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
 
           echo "Using ${{ github.event.inputs.environment || 'DEMO' }} environment"
-          cat > .env <<EOF
-BASE_URL=$BASE_URL
-BROWSER=${BROWSER:-chromium}
-HEADLESS=${HEADLESS:-true}
-USERNAME=$USERNAME
-PASSWORD=$PASSWORD
-COUNTRY=$COUNTRY
-STATE=$STATE
-LGA=$LGA
-WARD=$WARD
-VILLAGE=$VILLAGE
-AREA=$AREA
-EOF
+          {
+            echo "BASE_URL=$BASE_URL"
+            echo "BROWSER=${BROWSER:-chromium}"
+            echo "HEADLESS=${HEADLESS:-true}"
+            echo "USERNAME=$USERNAME"
+            echo "PASSWORD=$PASSWORD"
+            echo "COUNTRY=$COUNTRY"
+            echo "STATE=$STATE"
+            echo "LGA=$LGA"
+            echo "WARD=$WARD"
+            echo "VILLAGE=$VILLAGE"
+            echo "AREA=$AREA"
+          } > .env
 
           echo "Generated .env file:"
-          cat .env | sed 's/PASSWORD=.*/PASSWORD=***/'
+          cat .env | sed 's/PASSWORD=.*/PASSWORD=***/' | sed 's/USERNAME=.*/USERNAME=***/' | sed 's/BASE_URL=.*/BASE_URL=***/'
           echo ""
           echo "Verify .env file exists:"
           ls -la .env

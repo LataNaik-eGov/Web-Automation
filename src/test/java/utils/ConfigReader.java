@@ -45,7 +45,8 @@ public class ConfigReader {
     }
 
     public static String get(String key) {
-        return config.get(key);
+        String value = config.get(key);
+        return value != null ? value : System.getenv(key);
     }
 
     public static String getTemplateFileName() {

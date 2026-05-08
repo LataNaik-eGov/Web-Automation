@@ -3,7 +3,7 @@ package tests;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import base.BaseTest;
+import base.BaseTest;z
 import pages.CampaignLandingPage;
 
 public class CampaignLandingTest extends BaseTest {

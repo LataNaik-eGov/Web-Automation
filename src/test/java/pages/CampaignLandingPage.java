@@ -2,6 +2,7 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
 public class CampaignLandingPage {
 
@@ -13,9 +14,9 @@ public class CampaignLandingPage {
 
     public CampaignLandingPage(Page page) {
         this.page = page;
-        this.createCampaignLink = page.locator(".digit-button-label").nth(2);
-        this.scratchCardTitle = page.locator("#campaign-home-card-campaign-create-methods-campaign-create-from-scratch");
-        this.continueButton = page.locator("#campaign-campaign-home-standalone-create-new-campaign-from-scratch-btn");
+        this.createCampaignLink = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create campaign"));
+        this.scratchCardTitle = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create a New Campaign from"));
+        this.continueButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Continue"));
     }
 
     // --- Actions ---

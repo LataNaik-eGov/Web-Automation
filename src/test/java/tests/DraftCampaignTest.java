@@ -13,7 +13,6 @@ public class DraftCampaignTest extends CampaignLandingTest {
     @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToLandingPage")
     public void navigateToCreateCampaign() {
         landingPage.clickCreateCampaign();
-        page.waitForURL("**/campaign/campaign-home", new com.microsoft.playwright.Page.WaitForURLOptions().setTimeout(30000));
         page.waitForLoadState();
 
         landingPage.clickScratchCard();

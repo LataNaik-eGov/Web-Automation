@@ -69,8 +69,8 @@ public class DraftCampaignPage {
 
     public void clearAndEnterDynamicCampaignName() {
         campaignName.clear();
-        String dynamicName = campaignType + "Campaign" + java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String dynamicName = campaignType.replace(" ", "") + "Camp" + java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddss"));
         campaignName.fill(dynamicName);
         campaignName.press("Enter");
     }

@@ -76,10 +76,13 @@ public class BaseTest {
         System.out.println("HEADLESS: " + headless);
         System.out.println("==========================================");
 
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
+        BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                 .setHeadless(headless)
-                .setChannel(browserChannel)
-                .setArgs(Arrays.asList("--disable-dev-shm-usage", "--no-sandbox", "--start-maximized")));
+                .setArgs(Arrays.asList("--disable-dev-shm-usage", "--no-sandbox", "--start-maximized"));
+        if (browserChannel != null && !browserChannel.equalsIgnoreCase("chromium")) {
+            launchOptions.setChannel(browserChannel);
+        }
+        browser = playwright.chromium().launch(launchOptions);
 
         context = browser.newContext(new Browser.NewContextOptions().setViewportSize(null));
         page = context.newPage();

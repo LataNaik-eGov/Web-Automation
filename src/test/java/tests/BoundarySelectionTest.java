@@ -26,7 +26,7 @@ public class BoundarySelectionTest extends DraftCampaignTest {
         page.waitForTimeout(1000);
         draftPage.fillEndDate();
         page.waitForTimeout(1000);
-        draftPage.clickNext();
+        draftPage.clickSubmit();
         page.waitForLoadState();
         page.waitForTimeout(2000);
 

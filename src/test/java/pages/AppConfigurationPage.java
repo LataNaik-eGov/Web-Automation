@@ -83,44 +83,43 @@ public class AppConfigurationPage {
 
     public void configureRegistrationAndDelivery() {
         registrationAndDelivery.click();
-        page.waitForTimeout(2000);
-        selectDeliveryType();
+        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureCloseHousehold() {
         closeHousehold.click();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureComplaints() {
         complaints.click();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureInventory() {
         inventory.click();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureStockReconciliation() {
         stockReconciliation.click();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureReports() {
         reports.click();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configurePermissionHandler() {
         permissionHandler.click();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 

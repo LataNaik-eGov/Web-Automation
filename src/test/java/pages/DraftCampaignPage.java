@@ -2,9 +2,13 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import utils.ConfigReader;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.Map;
 
 public class DraftCampaignPage {
@@ -13,6 +17,7 @@ public class DraftCampaignPage {
 
     private Locator campaignTypeDropdown;
     private Locator nextButton;
+    private Locator submitButton;
     private Locator campaignName;
     private Locator startDateInput;
     private Locator endDateInput;
@@ -21,7 +26,7 @@ public class DraftCampaignPage {
     private final String campaignDisplayName;
 
     private static final Map<String, String> CAMPAIGN_DISPLAY_NAMES = Map.of(
-            "BEDNET", "Bednet Distribution",
+            "BEDNET", "Bednet",
             "MR-DN", "Seasonal Malaria Chemoprevention (SMC)"
     );
 
@@ -30,31 +35,36 @@ public class DraftCampaignPage {
         this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
 
-        this.campaignTypeDropdown = page.locator("#campaign-create-campaign-standalone-hcm_select_campaign_type-field");
-        this.nextButton = page.locator("#campaign-create-campaign-formcomposer-setup-campaign-primary-submit-btn");
-        this.campaignName = page.locator("input[name='CampaignName']");
-        this.startDateInput = page.locator("input.digit-employeeCard-input").nth(0);
-        this.endDateInput = page.locator("input.digit-employeeCard-input").nth(1);
+        this.campaignTypeDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));
+        this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
+        this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        this.campaignName = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("CampaignName_Month_Year"));
+        this.startDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
+        this.endDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
     }
 
     // --- Actions ---
 
     public void clickCampaignTypeDropdown() {
-        campaignTypeDropdown.click(new Locator.ClickOptions().setForce(true));
+        campaignTypeDropdown.click();
         page.waitForTimeout(1000);
     }
 
     public void selectCampaignType() {
-        page.getByText(campaignDisplayName).click(new Locator.ClickOptions().setForce(true));
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).click();
         page.waitForTimeout(1000);
     }
 
     public boolean isCampaignTypeVisible() {
-        return page.getByText(campaignDisplayName).isVisible();
+        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).isVisible();
     }
 
     public void clickNext() {
         nextButton.click();
+    }
+
+    public void clickSubmit() {
+        submitButton.click();
     }
 
     public void clearAndEnterDynamicCampaignName() {
@@ -62,26 +72,56 @@ public class DraftCampaignPage {
         String dynamicName = campaignType + "Campaign" + java.time.LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         campaignName.fill(dynamicName);
+        campaignName.press("Enter");
     }
 
     public void fillStartDate() {
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
-        startDateInput.click();
-        page.waitForTimeout(500);
-        page.locator(".react-datepicker__day--0" + String.format("%02d", tomorrow.getDayOfMonth())
-                + ":not(.react-datepicker__day--outside-month)").first().click();
-        page.waitForTimeout(500);
+        LocalDate startDate = LocalDate.now().plusDays(1);
+        selectDate(startDateInput, startDate);
     }
 
     public void fillEndDate() {
-        LocalDate oneMonthLater = LocalDate.now().plusMonths(1);
-        endDateInput.click();
+        LocalDate endDate = LocalDate.now().plusMonths(1);
+        selectDate(endDateInput, endDate);
+    }
+
+    private void selectDate(Locator input, LocalDate date) {
+        input.click();
         page.waitForTimeout(500);
-        page.locator(".react-datepicker__navigation--next").click();
+
+        String headerText = page.locator(".react-datepicker__current-month").innerText().trim();
+        String[] parts = headerText.split(" ");
+        int displayedMonth = Month.valueOf(parts[0].toUpperCase(Locale.ENGLISH)).getValue();
+        int displayedYear = Integer.parseInt(parts[1]);
+
+        int targetTotal = date.getYear() * 12 + date.getMonthValue();
+        int displayedTotal = displayedYear * 12 + displayedMonth;
+
+        for (int i = 0; i < targetTotal - displayedTotal; i++) {
+            page.locator(".react-datepicker__navigation--next").click();
+            page.waitForTimeout(300);
+        }
+
+        page.getByRole(AriaRole.GRIDCELL, new Page.GetByRoleOptions().setName(getGridCellName(date))).click();
         page.waitForTimeout(500);
-        page.locator(".react-datepicker__day--0" + String.format("%02d", oneMonthLater.getDayOfMonth())
-                + ":not(.react-datepicker__day--outside-month)").first().click();
-        page.waitForTimeout(500);
+    }
+
+    private String getGridCellName(LocalDate date) {
+        String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        String month = date.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        int day = date.getDayOfMonth();
+        String ordinal;
+        if (day >= 11 && day <= 13) {
+            ordinal = day + "th";
+        } else {
+            switch (day % 10) {
+                case 1: ordinal = day + "st"; break;
+                case 2: ordinal = day + "nd"; break;
+                case 3: ordinal = day + "rd"; break;
+                default: ordinal = day + "th"; break;
+            }
+        }
+        return "Choose " + dayOfWeek + ", " + month + " " + ordinal + ",";
     }
 
     public void fillStartAndEndDates() {

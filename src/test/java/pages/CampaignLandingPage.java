@@ -16,7 +16,7 @@ public class CampaignLandingPage {
         this.page = page;
         this.createCampaignLink = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create campaign"));
         this.scratchCardTitle = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create a New Campaign from"));
-        this.continueButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Continue"));
+        this.continueButton = page.getByLabel("Continue");
     }
 
     // --- Actions ---

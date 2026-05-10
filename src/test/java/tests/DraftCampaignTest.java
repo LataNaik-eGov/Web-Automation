@@ -61,8 +61,8 @@ public class DraftCampaignTest extends CampaignLandingTest {
         Assert.assertFalse(draftPage.getEndDateValue().isEmpty(),
                 "End date input should not be empty after filling");
 
-        // Step 6: Click Next after dates and verify still in create campaign flow
-        draftPage.clickNext();
+        // Step 6: Click Submit after dates and verify still in create campaign flow
+        draftPage.clickSubmit();
         page.waitForLoadState();
         page.waitForTimeout(2000);
         Assert.assertTrue(page.url().contains("create-campaign"),

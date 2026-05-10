@@ -17,7 +17,8 @@ public class ConfigureDeliveryRulesPage {
 
     // Delivery rules elements
     private Locator configureDeliveryButton;
-    private Locator datePickerButton;
+    private Locator startDateTextbox;
+    private Locator endDateTextbox;
     private Locator nextButton;
     private Locator submitButton;
 
@@ -25,10 +26,11 @@ public class ConfigureDeliveryRulesPage {
 
         this.page = page;
         this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
-        this.configureDeliveryButton = page.locator("#campaign-details-page-button-delivery-strategy");
-        this.datePickerButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Open date picker"));
-        this.nextButton = page.locator("#campaign-setup-campaign-standalone-setup-campaign-field-primary");
-        this.submitButton = page.locator("#campaign-setup-campaign-standalone-setup-campaign-field-primary");
+        this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Configure Delivery"));
+        this.startDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
+        this.endDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
+        this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
+        this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
 
     }
 
@@ -57,8 +59,8 @@ public class ConfigureDeliveryRulesPage {
         return "Choose " + dayOfWeek + ", " + month + " " + ordinal + ",";
     }
 
-    private void selectDate(int pickerIndex, LocalDate date) {
-        datePickerButton.nth(pickerIndex).click();
+    private void selectDate(Locator textbox, LocalDate date) {
+        textbox.click();
         page.waitForTimeout(500);
 
         // Navigate months if needed
@@ -83,12 +85,12 @@ public class ConfigureDeliveryRulesPage {
 
     public void fillStartDate() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        selectDate(0, tomorrow);
+        selectDate(startDateTextbox, tomorrow);
     }
 
     public void fillEndDate() {
         LocalDate oneMonthLater = LocalDate.now().plusMonths(1);
-        selectDate(1, oneMonthLater);
+        selectDate(endDateTextbox, oneMonthLater);
     }
 
     public void fillMRDNDates() {
@@ -97,8 +99,8 @@ public class ConfigureDeliveryRulesPage {
         for (int i = 0; i < 3; i++) {
             LocalDate cycleEnd = cycleStart.plusWeeks(1);
 
-            selectDate(i * 2, cycleStart);
-            selectDate(i * 2 + 1, cycleEnd);
+            selectDate(startDateTextbox.nth(i), cycleStart);
+            selectDate(endDateTextbox.nth(i), cycleEnd);
 
             cycleStart = cycleEnd.plusWeeks(1);
         }

@@ -16,14 +16,16 @@ public class UploadFilePage {
     private Locator uploadDataButton;
     private Locator downloadTemplateButton;
     private Locator dragAndDropLabel;
+    private Locator fileInputBody;
     private Locator submit;
 
     public UploadFilePage(Page page) {
         this.page = page;
-        this.uploadDataButton = page.locator("#campaign-details-page-button-unified-console-data-upload");
-        this.downloadTemplateButton = page.locator("#file-download-template-popup");
-        this.dragAndDropLabel = page.locator(".upload-drag-drop-container");
-        this.submit = page.locator("#campaign-unified-upload-screen-formcomposer-form-primary-submit-btn");
+        this.uploadDataButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Upload Data"));
+        this.downloadTemplateButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Do you want to download")).getByLabel("Download Template");
+        this.dragAndDropLabel = page.locator("label").filter(new Locator.FilterOptions().setHasText("Drag and drop your filled"));
+        this.fileInputBody = page.locator("input[type='file']");
+        this.submit = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
     }
 
     // --- Actions ---
@@ -42,7 +44,8 @@ public class UploadFilePage {
     }
 
     public void uploadFile(String filePath) {
-        dragAndDropLabel.setInputFiles(Paths.get(filePath));
+        dragAndDropLabel.click();
+        fileInputBody.setInputFiles(Paths.get(filePath));
         page.waitForTimeout(3000);
         submit.click();
     }

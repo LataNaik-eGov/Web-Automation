@@ -2,7 +2,6 @@ package pages;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.microsoft.playwright.Locator;
@@ -22,6 +21,10 @@ public class ConfigureDeliveryRulesPage {
     private Locator nextButton;
     private Locator submitButton;
 
+    // Date picker elements
+    private Locator currentMonthLabel;
+    private Locator nextMonthButton;
+
     public ConfigureDeliveryRulesPage(Page page) {
 
         this.page = page;
@@ -31,6 +34,8 @@ public class ConfigureDeliveryRulesPage {
         this.endDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        this.currentMonthLabel = page.locator(".react-datepicker__current-month");
+        this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
 
     }
 
@@ -59,12 +64,17 @@ public class ConfigureDeliveryRulesPage {
         return "Choose " + dayOfWeek + ", " + month + " " + ordinal + ",";
     }
 
+    private Locator dateCell(LocalDate date) {
+        return page.locator(".react-datepicker__day:not(.react-datepicker__day--outside-month)")
+                   .getByText(String.valueOf(date.getDayOfMonth()), new Locator.GetByTextOptions().setExact(true));
+    }
+
     private void selectDate(Locator textbox, LocalDate date) {
         textbox.click();
         page.waitForTimeout(500);
 
         // Navigate months if needed
-        String headerText = page.locator(".react-datepicker__current-month").innerText().trim();
+        String headerText = currentMonthLabel.innerText().trim();
         String[] parts = headerText.split(" ");
         String displayedMonthStr = parts[0];
         int displayedYear = Integer.parseInt(parts[1]);
@@ -75,11 +85,11 @@ public class ConfigureDeliveryRulesPage {
         int monthDiff = targetMonthTotal - displayedMonthTotal;
 
         for (int i = 0; i < monthDiff; i++) {
-            page.locator(".react-datepicker__navigation--next").click();
+            nextMonthButton.click();
             page.waitForTimeout(300);
         }
 
-        page.getByRole(AriaRole.GRIDCELL, new Page.GetByRoleOptions().setName(getGridCellName(date))).click();
+        dateCell(date).click();
         page.waitForTimeout(500);
     }
 

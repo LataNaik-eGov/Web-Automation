@@ -28,7 +28,6 @@ public class AppConfigurationPage {
     private Locator stockReconciliation;
     private Locator reports;
     private Locator permissionHandler;
-    private Locator configureExactButton;
     private Locator saveConfigurationButton;
     private Locator goBackButton;
 
@@ -53,9 +52,7 @@ public class AppConfigurationPage {
         this.reports = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Access summary and detailed")).getByLabel("Configure");
         this.permissionHandler = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Configure").setExact(true));
-        this.configureExactButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Configure").setExact(true));
+                new Page.GetByRoleOptions().setName("Manages user permissions")).getByLabel("Configure");
         this.saveConfigurationButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Save Configuration"));
         this.goBackButton = page.getByRole(AriaRole.BUTTON,
@@ -120,12 +117,6 @@ public class AppConfigurationPage {
     public void configurePermissionHandler() {
         permissionHandler.click();
         page.waitForTimeout(4000);
-        clickSaveConfiguration();
-    }
-
-    public void clickConfigureExact() {
-        configureExactButton.click();
-        page.waitForTimeout(2000);
         clickSaveConfiguration();
     }
 

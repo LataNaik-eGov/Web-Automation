@@ -22,6 +22,10 @@ public class DraftCampaignPage {
     private Locator startDateInput;
     private Locator endDateInput;
 
+    // Date picker elements
+    private Locator currentMonthLabel;
+    private Locator nextMonthButton;
+
     private final String campaignType;
     private final String campaignDisplayName;
 
@@ -41,6 +45,8 @@ public class DraftCampaignPage {
         this.campaignName = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("CampaignName_Month_Year"));
         this.startDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
         this.endDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
+        this.currentMonthLabel = page.locator(".react-datepicker__current-month");
+        this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
     }
 
     // --- Actions ---
@@ -81,15 +87,23 @@ public class DraftCampaignPage {
     }
 
     public void fillEndDate() {
-        LocalDate endDate = LocalDate.now().plusMonths(1);
+        // MR-DN needs 3 cycles × 1 week each with 1-week gaps = 36 days from tomorrow
+        LocalDate endDate = "MR-DN".equals(campaignType)
+                ? LocalDate.now().plusWeeks(6)
+                : LocalDate.now().plusMonths(1);
         selectDate(endDateInput, endDate);
+    }
+
+    private Locator dateCell(LocalDate date) {
+        return page.locator(".react-datepicker__day:not(.react-datepicker__day--outside-month)")
+                   .getByText(String.valueOf(date.getDayOfMonth()), new Locator.GetByTextOptions().setExact(true));
     }
 
     private void selectDate(Locator input, LocalDate date) {
         input.click();
         page.waitForTimeout(500);
 
-        String headerText = page.locator(".react-datepicker__current-month").innerText().trim();
+        String headerText = currentMonthLabel.innerText().trim();
         String[] parts = headerText.split(" ");
         int displayedMonth = Month.valueOf(parts[0].toUpperCase(Locale.ENGLISH)).getValue();
         int displayedYear = Integer.parseInt(parts[1]);
@@ -98,11 +112,11 @@ public class DraftCampaignPage {
         int displayedTotal = displayedYear * 12 + displayedMonth;
 
         for (int i = 0; i < targetTotal - displayedTotal; i++) {
-            page.locator(".react-datepicker__navigation--next").click();
+            nextMonthButton.click();
             page.waitForTimeout(300);
         }
 
-        page.getByRole(AriaRole.GRIDCELL, new Page.GetByRoleOptions().setName(getGridCellName(date))).click();
+        dateCell(date).click();
         page.waitForTimeout(500);
     }
 

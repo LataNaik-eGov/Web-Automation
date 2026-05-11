@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Create Checklist Suite" verbose="1">
+
+    <test name="Create Checklist Flow" preserve-order="true">
+        <classes>
+            <class name="tests.CreateChecklistTest"/>
+        </classes>
+    </test>
+
+</suite>
+

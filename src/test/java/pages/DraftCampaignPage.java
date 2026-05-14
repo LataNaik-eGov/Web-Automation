@@ -19,8 +19,10 @@ public class DraftCampaignPage {
     private Locator nextButton;
     private Locator submitButton;
     private Locator campaignName;
+    private Locator campaignNameError;
     private Locator startDateInput;
     private Locator endDateInput;
+    private Locator dateToastError;
 
     // Date picker elements
     private Locator currentMonthLabel;
@@ -42,9 +44,11 @@ public class DraftCampaignPage {
         this.campaignTypeDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
-        this.campaignName = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("CampaignName_Month_Year"));
+        this.campaignName = page.locator("input[placeholder='CampaignName_Month_Year']");
         this.startDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
         this.endDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
+        this.campaignNameError = page.getByText("Please add valid campaign name as per the guidelines.");
+        this.dateToastError = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
     }
@@ -75,10 +79,33 @@ public class DraftCampaignPage {
 
     public void clearAndEnterDynamicCampaignName() {
         campaignName.clear();
-        String dynamicName = campaignType.replace(" ", "") + java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddss"));
+        String prefix = campaignType.replace(" ", "");
+        if (prefix.length() > 22) prefix = prefix.substring(0, 22);
+        String dynamicName = prefix + java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("HHssSSS"));
         campaignName.fill(dynamicName);
         campaignName.press("Enter");
+    }
+
+    public void enterCampaignName(String name) {
+        campaignName.clear();
+        campaignName.fill(name);
+        campaignName.press("Tab");
+        page.waitForTimeout(500);
+    }
+
+    public boolean isCampaignNameErrorVisible() {
+        campaignNameError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return campaignNameError.isVisible();
+    }
+
+    public boolean isDateToastErrorVisible() {
+        dateToastError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return dateToastError.isVisible();
+    }
+
+    public String getCampaignNameErrorText() {
+        return campaignNameError.textContent();
     }
 
     public void fillStartDate() {
@@ -100,6 +127,7 @@ public class DraftCampaignPage {
     }
 
     private void selectDate(Locator input, LocalDate date) {
+        input.waitFor(new Locator.WaitForOptions().setTimeout(15000));
         input.click();
         page.waitForTimeout(500);
 

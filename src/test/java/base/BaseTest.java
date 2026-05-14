@@ -55,7 +55,7 @@ public class BaseTest {
     // Pre-initialized page objects
     protected HomePage homePage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setup() {
         playwright = Playwright.create();
 
@@ -107,7 +107,7 @@ public class BaseTest {
         homePage = loginPage.login(username, password);
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult result) {
         try {
             if (result.getStatus() == ITestResult.FAILURE && page != null) {

@@ -14,19 +14,19 @@ public class AppConfigurationTest extends ConfigureDeliveryRulesTest {
         // Complete delivery rules to reach app configuration page
         deliveryRulesPage.clickConfigureDelivery();
         page.waitForLoadState();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         deliveryRulesPage.fillDates();
         page.waitForTimeout(1000);
 
         deliveryRulesPage.clickNext();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         deliveryRulesPage.clickNext();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         deliveryRulesPage.clickSubmit();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         appConfigPage = new AppConfigurationPage(page);
     }

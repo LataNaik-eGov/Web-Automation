@@ -15,12 +15,12 @@ public class BoundarySelectionTest extends DraftCampaignTest {
         draftPage.selectCampaignType();
         draftPage.clickNext();
         page.waitForLoadState();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
         page.waitForLoadState();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
 
         draftPage.fillStartDate();
         page.waitForTimeout(1000);
@@ -28,17 +28,24 @@ public class BoundarySelectionTest extends DraftCampaignTest {
         page.waitForTimeout(1000);
         draftPage.clickSubmit();
         page.waitForLoadState();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(4000);
 
         boundaryPage = new BoundarySelectionPage(page);
         boundaryPage.clickDefineTarget();
         page.waitForLoadState();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
     }
 
-    @Override
-    @Test(enabled = false)
-    public void verifyDraftCampaignFlow() {}
+    @Override @Test(enabled = false) public void verifyDraftCampaignFlow() {}
+    @Override @Test(enabled = false) public void verifyValidCampaignName() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameTooLong() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameStartsWithSpecialChar() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameEndsWithUnderscore() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameContainsHashSymbol() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameContainsEmoji() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameConsecutiveUnderscores() {}
+    @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}
+    @Override @Test(enabled = false) public void verifySubmitWithEndDateOnly() {}
 
     @Test(groups = {"regression", "workbench-ui"})
     public void verifyBoundarySelection() {

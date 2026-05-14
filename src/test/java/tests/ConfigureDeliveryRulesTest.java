@@ -13,17 +13,17 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
     public void navigateToConfigureDeliveryRules() {
         // Complete boundary selection to reach delivery rules page
         boundaryPage.clickfirstlevel();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         boundaryPage.clicksecondlevel();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         boundaryPage.clickthirdlevel();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         boundaryPage.clickfourthlevel();
         page.waitForLoadState();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(3000);
 
         deliveryRulesPage = new ConfigureDeliveryRulesPage(page);
     }
@@ -31,6 +31,16 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
     @Override
     @Test(enabled = false)
     public void verifyBoundarySelection() {}
+
+    @Override @Test(enabled = false) public void verifyValidCampaignName() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameTooLong() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameStartsWithSpecialChar() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameEndsWithUnderscore() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameContainsHashSymbol() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameContainsEmoji() {}
+    @Override @Test(enabled = false) public void verifyCampaignNameConsecutiveUnderscores() {}
+    @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}
+    @Override @Test(enabled = false) public void verifySubmitWithEndDateOnly() {}
 
     @Test(groups = {"regression", "workbench-ui"})
     public void verifyConfigureDeliveryRules() {

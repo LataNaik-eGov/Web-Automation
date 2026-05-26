@@ -38,7 +38,7 @@ public class AppConfigurationPage {
         this.deliveryTypeDropdown = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Select an option"));
         this.setUpMobileAppButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Set Up Mobile App"));
+                new Page.GetByRoleOptions().setName("Set App Configurations"));
         this.registrationAndDelivery = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Register eligible children")).getByLabel("Configure");
         this.closeHousehold = page.getByRole(AriaRole.BUTTON,
@@ -54,7 +54,7 @@ public class AppConfigurationPage {
         this.permissionHandler = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Manages user permissions")).getByLabel("Configure");
         this.saveConfigurationButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Save Configuration"));
+                new Page.GetByRoleOptions().setName("Submit"));
         this.goBackButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Go Back"));
     }
@@ -67,7 +67,7 @@ public class AppConfigurationPage {
     }
 
     public void clickSaveConfiguration() {
-        saveConfigurationButton.click();
+        saveConfigurationButton.last().click();
         page.waitForTimeout(2000);
     }
 

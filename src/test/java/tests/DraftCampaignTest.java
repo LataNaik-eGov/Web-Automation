@@ -36,7 +36,7 @@ public class DraftCampaignTest extends CampaignLandingTest {
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
         page.waitForLoadState();
-        page.waitForTimeout(2000);
+        page.waitForTimeout(6000);
     }
 
     @Override

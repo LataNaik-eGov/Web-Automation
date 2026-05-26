@@ -12,6 +12,9 @@ target/
 # Screenshots from test failures
 screenshots/
 
+# Test output
+test-output/
+
 # OS files
 .DS_Store
 Thumbs.db

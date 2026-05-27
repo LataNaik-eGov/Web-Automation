@@ -20,6 +20,7 @@ public class BoundarySelectionPage {
     private Locator thirdCheckbox;
     private Locator nextButton;
     private Locator submitButton;
+    private Locator mandatoryFieldsToast;
 
 
     public BoundarySelectionPage(Page page) {
@@ -35,6 +36,7 @@ public class BoundarySelectionPage {
         this.thirdCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(2);
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        this.mandatoryFieldsToast = page.getByText("Please fill all the mandatory fields.");
     }
 
     // --- Actions ---
@@ -80,5 +82,14 @@ public class BoundarySelectionPage {
         page.waitForTimeout(1000);
         submitButton.click();
         page.waitForTimeout(1000);
+    }
+
+    public void clickNextButton() {
+        nextButton.click();
+    }
+
+    public boolean isMandatoryFieldsToastVisible() {
+        mandatoryFieldsToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return mandatoryFieldsToast.isVisible();
     }
 }

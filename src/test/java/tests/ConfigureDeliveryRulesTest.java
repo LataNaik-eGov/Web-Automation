@@ -32,11 +32,11 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
     @Test(enabled = false)
     public void verifyBoundarySelection() {}
 
+    @Override @Test(enabled = false) public void verifyBoundarySelectionWithPartialSelection() {}
+
     @Override @Test(enabled = false) public void verifyValidCampaignName() {}
     @Override @Test(enabled = false) public void verifyCampaignNameTooLong() {}
     @Override @Test(enabled = false) public void verifyCampaignNameStartsWithSpecialChar() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameEndsWithUnderscore() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameContainsHashSymbol() {}
     @Override @Test(enabled = false) public void verifyCampaignNameContainsEmoji() {}
     @Override @Test(enabled = false) public void verifyCampaignNameConsecutiveUnderscores() {}
     @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}

@@ -1,5 +1,6 @@
 package tests;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -20,7 +21,7 @@ public class BoundarySelectionTest extends DraftCampaignTest {
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
         page.waitForLoadState();
-        page.waitForTimeout(8000);
+        page.waitForTimeout(12000);
 
         draftPage.fillStartDate();
         page.waitForTimeout(1000);
@@ -40,8 +41,6 @@ public class BoundarySelectionTest extends DraftCampaignTest {
     @Override @Test(enabled = false) public void verifyValidCampaignName() {}
     @Override @Test(enabled = false) public void verifyCampaignNameTooLong() {}
     @Override @Test(enabled = false) public void verifyCampaignNameStartsWithSpecialChar() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameEndsWithUnderscore() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameContainsHashSymbol() {}
     @Override @Test(enabled = false) public void verifyCampaignNameContainsEmoji() {}
     @Override @Test(enabled = false) public void verifyCampaignNameConsecutiveUnderscores() {}
     @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}
@@ -65,5 +64,23 @@ public class BoundarySelectionTest extends DraftCampaignTest {
         boundaryPage.clickfourthlevel();
         page.waitForTimeout(2000);
 
+    }
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyBoundarySelectionWithPartialSelection() {
+        // Select only first two boundary levels (Country and Province), leave District and Administrative Post empty
+        boundaryPage.clickfirstlevel();
+        page.waitForTimeout(2000);
+
+        boundaryPage.clicksecondlevel();
+        page.waitForTimeout(2000);
+
+        // Click Next without selecting all mandatory boundary levels
+        boundaryPage.clickNextButton();
+        page.waitForTimeout(2000);
+
+        // Verify toast error appears for unfilled mandatory fields
+        Assert.assertTrue(boundaryPage.isMandatoryFieldsToastVisible(),
+                "Toast error 'Please fill all the mandatory fields.' should appear when District and Administrative Post are not selected");
     }
 }

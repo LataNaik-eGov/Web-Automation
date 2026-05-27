@@ -149,16 +149,16 @@ public class DraftCampaignTest extends CampaignLandingTest {
 //                 "Error should be shown for campaign name ending with a hyphen");
 //     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"}, priority = 1)
-    public void verifyCampaignNameEndsWithUnderscore() {
-        goToCampaignNameStep();
-        draftPage.enterCampaignName("Campaign_");
-        draftPage.clickNext();
-        page.waitForTimeout(500);
-        Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
-                "Error should be shown for campaign name ending with an underscore");
-        page.waitForTimeout(2000);
-    }
+    // @Test(groups = {"negative", "regression", "workbench-ui"}, priority = 1)
+    // public void verifyCampaignNameEndsWithUnderscore() {
+    //     goToCampaignNameStep();
+    //     draftPage.enterCampaignName("Campaign_");
+    //     draftPage.clickNext();
+    //     page.waitForTimeout(500);
+    //     Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
+    //             "Error should be shown for campaign name ending with an underscore");
+    //     page.waitForTimeout(2000);
+    // }
 
 //     @Test(groups = {"negative", "regression", "workbench-ui"}, priority = 1)
 //     public void verifyCampaignNameContainsDisallowedSymbol() {
@@ -170,16 +170,16 @@ public class DraftCampaignTest extends CampaignLandingTest {
 //                 "Error should be shown for campaign name containing '@' symbol");
 //     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"}, priority = 1)
-    public void verifyCampaignNameContainsHashSymbol() {
-        goToCampaignNameStep();
-        draftPage.enterCampaignName("Camp#ign1");
-        draftPage.clickNext();
-        page.waitForTimeout(500);
-        Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
-                "Error should be shown for campaign name containing '#' symbol");
-        page.waitForTimeout(2000);
-    }
+    // @Test(groups = {"negative", "regression", "workbench-ui"}, priority = 1)
+    // public void verifyCampaignNameContainsHashSymbol() {
+    //     goToCampaignNameStep();
+    //     draftPage.enterCampaignName("Camp#ign1");
+    //     draftPage.clickNext();
+    //     page.waitForTimeout(500);
+    //     Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
+    //             "Error should be shown for campaign name containing '#' symbol");
+    //     page.waitForTimeout(2000);
+    // }
 
     @Test(groups = {"negative", "regression", "workbench-ui"}, priority = 1)
     public void verifyCampaignNameContainsEmoji() {

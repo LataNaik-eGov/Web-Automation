@@ -20,6 +20,7 @@ public class ConfigureDeliveryRulesPage {
     private Locator endDateTextbox;
     private Locator nextButton;
     private Locator submitButton;
+    private Locator cycleDateToast;
 
     // Date picker elements
     private Locator currentMonthLabel;
@@ -36,6 +37,7 @@ public class ConfigureDeliveryRulesPage {
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
+        this.cycleDateToast = page.getByText("Please fill the cycle dates to move ahead.");
 
     }
 
@@ -123,6 +125,16 @@ public class ConfigureDeliveryRulesPage {
             fillStartDate();
             fillEndDate();
         }
+    }
+
+    public void fillFirstStartDateOnly() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        selectDate(startDateTextbox.first(), tomorrow);
+    }
+
+    public boolean isCycleDateToastVisible() {
+        cycleDateToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return cycleDateToast.isVisible();
     }
 
     public void clickNext() {

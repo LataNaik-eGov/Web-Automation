@@ -30,6 +30,10 @@ public class AppConfigurationPage {
     private Locator permissionHandler;
     private Locator saveConfigurationButton;
     private Locator goBackButton;
+    private Locator searchBeneficiaryFlow;
+    private Locator proximitySearchElement;
+    private Locator labelInput;
+    private Locator labelLocalizationToast;
 
     public AppConfigurationPage(Page page) {
         this.page = page;
@@ -57,6 +61,10 @@ public class AppConfigurationPage {
                 new Page.GetByRoleOptions().setName("Submit"));
         this.goBackButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Go Back"));
+        this.searchBeneficiaryFlow = page.getByText("Search Beneficiary").first();
+        this.proximitySearchElement = page.getByText("Search by proximity").locator("..");
+        this.labelInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Label"));
+        this.labelLocalizationToast = page.getByText("Label localization is empty for field");
     }
 
     // --- Actions ---
@@ -118,6 +126,33 @@ public class AppConfigurationPage {
         permissionHandler.click();
         page.waitForTimeout(4000);
         clickSaveConfiguration();
+    }
+
+    public void clickRegistrationAndDeliveryConfigure() {
+        registrationAndDelivery.click();
+        page.waitForTimeout(4000);
+    }
+
+    public void clickSearchBeneficiaryFlow() {
+        searchBeneficiaryFlow.click();
+        page.waitForTimeout(2000);
+    }
+
+    public void clickProximitySearchElement() {
+        proximitySearchElement.dispatchEvent("click");
+        page.waitForTimeout(1000);
+    }
+
+    public void clearLabelField() {
+        labelInput.click();
+        page.waitForTimeout(500);
+        labelInput.fill("");
+        page.waitForTimeout(500);
+    }
+
+    public boolean isLabelLocalizationToastVisible() {
+        labelLocalizationToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return labelLocalizationToast.isVisible();
     }
 
     public void clickGoBack() {

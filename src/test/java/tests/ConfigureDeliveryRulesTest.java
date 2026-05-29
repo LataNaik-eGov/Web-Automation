@@ -1,5 +1,6 @@
 package tests;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -41,6 +42,26 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
     @Override @Test(enabled = false) public void verifyCampaignNameConsecutiveUnderscores() {}
     @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}
     @Override @Test(enabled = false) public void verifySubmitWithEndDateOnly() {}
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyNextWithFirstStartDateOnly() {
+        // Click Configure Delivery to open the delivery rules form
+        deliveryRulesPage.clickConfigureDelivery();
+        page.waitForLoadState();
+        page.waitForTimeout(2000);
+
+        // Fill only the first start date, leaving all other dates empty
+        deliveryRulesPage.fillFirstStartDateOnly();
+        page.waitForTimeout(1000);
+
+        // Click Next without completing remaining cycle dates
+        deliveryRulesPage.clickNext();
+        page.waitForTimeout(2000);
+
+        // Verify toast error appears
+        Assert.assertTrue(deliveryRulesPage.isCycleDateToastVisible(),
+                "Toast 'Please fill the cycle dates to move ahead.' should appear when only the first start date is filled");
+    }
 
     @Test(groups = {"regression", "workbench-ui"})
     public void verifyConfigureDeliveryRules() {

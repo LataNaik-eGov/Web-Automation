@@ -1,5 +1,6 @@
 package tests;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -34,6 +35,36 @@ public class AppConfigurationTest extends ConfigureDeliveryRulesTest {
     @Override
     @Test(enabled = false)
     public void verifyConfigureDeliveryRules() {}
+
+    @Override @Test(enabled = false) public void verifyNextWithFirstStartDateOnly() {}
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyProximitySearchWithEmptyLabel() {
+        // Step 1: Open Registration & Delivery configuration
+        appConfigPage.clickSetUpMobileApp();
+        page.waitForLoadState();
+        page.waitForTimeout(2000);
+
+        appConfigPage.clickRegistrationAndDeliveryConfigure();
+
+        // Step 2: Click on Search Beneficiary in the Flows panel
+        appConfigPage.clickSearchBeneficiaryFlow();
+
+        // Step 3: Click on Proximity Search element in Field properties
+        appConfigPage.clickProximitySearchElement();
+
+        // Step 4: Clear the Label field
+        appConfigPage.clearLabelField();
+        page.waitForTimeout(500);
+
+        // Step 5: Click Submit
+        appConfigPage.clickSaveConfiguration();
+        page.waitForTimeout(2000);
+
+        // Step 6: Verify toast error appears
+        Assert.assertTrue(appConfigPage.isLabelLocalizationToastVisible(),
+                "Toast 'Label localization is empty for field' should appear when Proximity Search label is cleared");
+    }
 
     @Test(groups = {"regression", "workbench-ui"})
     public void verifyAppConfiguration() {

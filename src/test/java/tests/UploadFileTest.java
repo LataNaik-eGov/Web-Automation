@@ -54,6 +54,10 @@ public class UploadFileTest extends AppConfigurationTest {
     @Test(enabled = false)
     public void verifyAppConfiguration() {}
 
+    @Override
+    @Test(enabled = false)
+    public void verifyProximitySearchWithEmptyLabel() {}
+
     @Test(groups = {"regression", "workbench-ui"})
     public void verifyUploadFile() throws URISyntaxException {
         // Step 1: Click Upload Data

@@ -1,10 +1,12 @@
 package tests;
 
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import pages.ConfigureDeliveryRulesPage;
+import utils.ConfigReader;
 
 public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
 
@@ -50,17 +52,17 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        // Fill only the first start date, leaving all other dates empty
-        deliveryRulesPage.fillFirstStartDateOnly();
+        // Fill only start date — end date intentionally left empty
+        deliveryRulesPage.fillStartDate();
         page.waitForTimeout(1000);
 
-        // Click Next without completing remaining cycle dates
+        // Click Next without filling end date
         deliveryRulesPage.clickNext();
         page.waitForTimeout(2000);
 
         // Verify toast error appears
         Assert.assertTrue(deliveryRulesPage.isCycleDateToastVisible(),
-                "Toast 'Please fill the cycle dates to move ahead.' should appear when only the first start date is filled");
+                "Toast 'Please fill the cycle dates to move ahead.' should appear when only the start date is filled");
     }
 
     @Test(groups = {"regression", "workbench-ui"})

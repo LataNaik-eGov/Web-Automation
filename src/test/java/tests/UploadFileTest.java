@@ -45,7 +45,8 @@ public class UploadFileTest extends AppConfigurationTest {
         page.waitForTimeout(2000);
 
         appConfigPage.clickGoBack();
-        page.waitForTimeout(2000);
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
 
         uploadFilePage = new UploadFilePage(page);
     }
@@ -57,6 +58,21 @@ public class UploadFileTest extends AppConfigurationTest {
     @Override
     @Test(enabled = false)
     public void verifyProximitySearchWithEmptyLabel() {}
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifySubmitWithoutFile() {
+        // Step 1: Click Upload Data to reach the upload page
+        uploadFilePage.clickUploadData();
+        page.waitForLoadState();
+        page.waitForTimeout(2000);
+
+        // Step 2: Click Submit without uploading any file
+        uploadFilePage.clickSubmit();
+
+        // Step 3: Verify toast message appears
+        Assert.assertTrue(uploadFilePage.isNoFileToastVisible(),
+                "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
+    }
 
     @Test(groups = {"regression", "workbench-ui"})
     public void verifyUploadFile() throws URISyntaxException {
@@ -82,6 +98,10 @@ public class UploadFileTest extends AppConfigurationTest {
         Assert.assertNotNull(resource, templateFile + " should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();
         uploadFilePage.uploadFile(filePath);
+        page.waitForTimeout(2000);
+
+        // Step 4: Click Upload Data label
+        uploadFilePage.clickUploadDataLabel();
         page.waitForTimeout(2000);
     }
 }

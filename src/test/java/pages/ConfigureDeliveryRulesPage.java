@@ -97,7 +97,7 @@ public class ConfigureDeliveryRulesPage {
 
     public void fillStartDate() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        selectDate(startDateTextbox, tomorrow);
+        selectDate(startDateTextbox.first(), tomorrow);
     }
 
     public void fillEndDate() {

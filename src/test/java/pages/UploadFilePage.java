@@ -18,6 +18,8 @@ public class UploadFilePage {
     private Locator dragAndDropLabel;
     private Locator fileInputBody;
     private Locator submit;
+    private Locator noFileToast;
+    private Locator uploadDataLabel;
 
     public UploadFilePage(Page page) {
         this.page = page;
@@ -26,6 +28,8 @@ public class UploadFilePage {
         this.dragAndDropLabel = page.locator("label").filter(new Locator.FilterOptions().setHasText("Drag and drop your filled"));
         this.fileInputBody = page.locator("input[type='file']");
         this.submit = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        this.noFileToast = page.getByText("Please upload a file");
+        this.uploadDataLabel = page.getByText("Upload Data").first();
     }
 
     // --- Actions ---
@@ -48,5 +52,20 @@ public class UploadFilePage {
         fileInputBody.setInputFiles(Paths.get(filePath));
         page.waitForTimeout(3000);
         submit.click();
+    }
+
+    public void clickSubmit() {
+        submit.dispatchEvent("click");
+        page.waitForTimeout(2000);
+    }
+
+    public void clickUploadDataLabel() {
+        uploadDataLabel.click();
+        page.waitForTimeout(1000);
+    }
+
+    public boolean isNoFileToastVisible() {
+        noFileToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return noFileToast.isVisible();
     }
 }

@@ -1,15 +1,59 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Negative Test Suite" verbose="1">
+<suite name="Negative Test Suite" verbose="1" preserve-order="true">
 
-    <test name="Negative Tests">
+    <test name="1 - Draft Campaign Negative Tests">
         <groups>
             <run>
                 <include name="negative"/>
             </run>
         </groups>
-        <packages>
-            <package name="tests"/>
-        </packages>
+        <classes>
+            <class name="tests.DraftCampaignTest"/>
+        </classes>
+    </test>
+
+    <test name="2 - Boundary Selection Negative Tests">
+        <groups>
+            <run>
+                <include name="negative"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.BoundarySelectionTest"/>
+        </classes>
+    </test>
+
+    <test name="3 - Configure Delivery Rules Negative Tests">
+        <groups>
+            <run>
+                <include name="negative"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.ConfigureDeliveryRulesTest"/>
+        </classes>
+    </test>
+
+    <test name="4 - App Configuration Negative Tests">
+        <groups>
+            <run>
+                <include name="negative"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.AppConfigurationTest"/>
+        </classes>
+    </test>
+
+    <test name="5 - Upload File Negative Tests">
+        <groups>
+            <run>
+                <include name="negative"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.UploadFileTest"/>
+        </classes>
     </test>
 
 </suite>

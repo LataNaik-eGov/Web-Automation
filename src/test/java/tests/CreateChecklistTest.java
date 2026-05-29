@@ -51,7 +51,7 @@ public class CreateChecklistTest extends UploadFileTest {
     @Test(enabled = false)
     public void verifyProximitySearchWithEmptyLabel() {}
 
-    @Test(groups = {"regression", "workbench-ui"})
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyCreateChecklist() {
         // Step 1: Click Create Checklist
         createChecklistPage.clickCreateChecklist();

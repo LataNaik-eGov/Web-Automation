@@ -1,0 +1,40 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Workbench UI and Sanity Suite" verbose="1">
+
+    <test name="Workbench UI Tests">
+        <groups>
+            <run>
+                <include name="workbench-ui"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.HomeTest"/>
+            <class name="tests.CampaignLandingTest"/>
+            <class name="tests.DraftCampaignTest"/>
+            <class name="tests.BoundarySelectionTest"/>
+            <class name="tests.AppConfigurationTest"/>
+            <class name="tests.ConfigureDeliveryRulesTest"/>
+            <class name="tests.UploadFileTest"/>
+            <class name="tests.CreateChecklistTest"/>
+        </classes>
+    </test>
+
+    <test name="Sanity Tests">
+        <groups>
+            <run>
+                <include name="sanity"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CampaignLandingTest"/>
+            <class name="tests.DraftCampaignTest"/>
+            <class name="tests.BoundarySelectionTest"/>
+            <class name="tests.AppConfigurationTest"/>
+            <class name="tests.ConfigureDeliveryRulesTest"/>
+            <class name="tests.UploadFileTest"/>
+            <class name="tests.CreateChecklistTest"/>
+        </classes>
+    </test>
+
+</suite>

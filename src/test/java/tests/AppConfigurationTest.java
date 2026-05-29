@@ -66,7 +66,7 @@ public class AppConfigurationTest extends ConfigureDeliveryRulesTest {
                 "Toast 'Label localization is empty for field' should appear when Proximity Search label is cleared");
     }
 
-    @Test(groups = {"regression", "workbench-ui"})
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyAppConfiguration() {
         // Step 1: Click Set Up Mobile App
         appConfigPage.clickSetUpMobileApp();

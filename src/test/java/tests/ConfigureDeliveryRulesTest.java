@@ -65,7 +65,7 @@ public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
                 "Toast 'Please fill the cycle dates to move ahead.' should appear when only the start date is filled");
     }
 
-    @Test(groups = {"regression", "workbench-ui"})
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyConfigureDeliveryRules() {
         // Step 1: Click Configure Delivery button on campaign dashboard
         deliveryRulesPage.clickConfigureDelivery();

@@ -15,7 +15,7 @@ public class CampaignLandingTest extends BaseTest {
         landingPage = new CampaignLandingPage(page);
     }
 
-    @Test(groups = {"regression", "workbench-ui"})
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyCreateCampaignFromScratch() {
         landingPage.clickCreateCampaign();
         page.waitForLoadState();

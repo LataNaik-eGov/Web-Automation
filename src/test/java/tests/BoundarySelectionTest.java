@@ -46,12 +46,11 @@ public class BoundarySelectionTest extends DraftCampaignTest {
     @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}
     @Override @Test(enabled = false) public void verifySubmitWithEndDateOnly() {}
 
-    @Test(groups = {"regression", "workbench-ui"})
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyBoundarySelection() {
         // Step 1: Select first boundary level
         boundaryPage.clickfirstlevel();
         page.waitForTimeout(2000);
-
         // Step 2: Select second boundary level
         boundaryPage.clicksecondlevel();
         page.waitForTimeout(2000);

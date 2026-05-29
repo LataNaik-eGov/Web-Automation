@@ -74,7 +74,7 @@ public class UploadFileTest extends AppConfigurationTest {
                 "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
     }
 
-    @Test(groups = {"regression", "workbench-ui"})
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyUploadFile() throws URISyntaxException {
         // Step 1: Click Upload Data
         uploadFilePage.clickUploadData();

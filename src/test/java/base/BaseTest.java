@@ -4,9 +4,7 @@ import java.util.Arrays;
 
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -21,13 +19,31 @@ import utils.FormHelper;
 import utils.NavigationHelper;
 import utils.ScreenshotHelper;
 
+/**
+ * Base class for all test classes.
+ * Handles browser setup, login, and teardown.
+ *
+ * Usage:
+ *   public class MyTest extends BaseTest {
+ *
+ *       @Test
+ *       public void myTest() {
+ *           // Use nav for navigation
+ *           ComplaintPage complaint = nav.goToCreateComplaint();
+ *
+ *           // Use form for form interactions
+ *           form.enterText("#field", "value");
+ *
+ *           // Use homePage directly
+ *           homePage.goToCreateComplaint();
+ *       }
+ *   }
+ */
 public class BaseTest {
 
-    // Suite-level: launched once for the entire test run
-    private static Playwright playwright;
-    private static Browser browser;
-
-    // Test-level: fresh context + page per test for isolation
+    // Core Playwright objects
+    protected Playwright playwright;
+    protected Browser browser;
     protected BrowserContext context;
     protected Page page;
 
@@ -39,16 +55,18 @@ public class BaseTest {
     // Pre-initialized page objects
     protected HomePage homePage;
 
-    @BeforeSuite(alwaysRun = true)
-    public static void launchBrowser() {
+    @BeforeMethod(alwaysRun = true)
+    public void setup() {
         playwright = Playwright.create();
 
+        // Read config from .env file via ConfigReader (works for local and CI)
         String headlessStr = ConfigReader.get("HEADLESS");
         boolean headless = Boolean.parseBoolean(headlessStr != null ? headlessStr : "false");
 
         String browserChannel = ConfigReader.get("BROWSER");
         if (browserChannel == null) browserChannel = "chrome";
 
+        // Display environment info
         System.out.println("==========================================");
         System.out.println("  TEST EXECUTION ENVIRONMENT (BaseTest)");
         System.out.println("==========================================");
@@ -61,22 +79,21 @@ public class BaseTest {
         BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                 .setHeadless(headless)
                 .setArgs(Arrays.asList("--disable-dev-shm-usage", "--no-sandbox", "--start-maximized"));
-        if (!browserChannel.equalsIgnoreCase("chromium")) {
+        if (browserChannel != null && !browserChannel.equalsIgnoreCase("chromium")) {
             launchOptions.setChannel(browserChannel);
         }
         browser = playwright.chromium().launch(launchOptions);
-    }
 
-    @BeforeMethod(alwaysRun = true)
-    public void setup() {
         context = browser.newContext(new Browser.NewContextOptions().setViewportSize(null));
         page = context.newPage();
         page.setDefaultTimeout(60000);
 
+        // Initialize helpers
         nav = new NavigationHelper(page);
         form = new FormHelper(page);
         screenshot = new ScreenshotHelper(page);
 
+        // Navigate to app and login
         String baseUrl = ConfigReader.get("BASE_URL");
         String username = ConfigReader.get("USERNAME");
         String password = ConfigReader.get("PASSWORD");
@@ -103,10 +120,6 @@ public class BaseTest {
         }
 
         try { if (context != null) context.close(); } catch (Exception ignored) {}
-    }
-
-    @AfterSuite(alwaysRun = true)
-    public static void closeBrowser() {
         try { if (browser != null) browser.close(); } catch (Exception ignored) {}
         try { if (playwright != null) playwright.close(); } catch (Exception ignored) {}
     }

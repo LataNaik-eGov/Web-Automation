@@ -24,7 +24,7 @@ public class UploadFilePage {
     public UploadFilePage(Page page) {
         this.page = page;
         this.uploadDataButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Upload Data"));
-        this.downloadTemplateButton = page.locator("#file-download-template-popup");
+        this.downloadTemplateButton = page.locator("#file-download-template");
         this.dragAndDropLabel = page.locator("label").filter(new Locator.FilterOptions().setHasText("Drag and drop your filled"));
         this.fileInputBody = page.locator("input[type='file']");
         this.submit = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
@@ -51,7 +51,11 @@ public class UploadFilePage {
         dragAndDropLabel.click();
         fileInputBody.setInputFiles(Paths.get(filePath));
         page.waitForTimeout(3000);
-        submit.click();
+    }
+
+    public void closePopupByClickingOutside() {
+        page.mouse().click(50, 50);
+        page.waitForTimeout(1000);
     }
 
     public void clickSubmit() {

@@ -61,25 +61,29 @@ public class UploadFileTest extends AppConfigurationTest {
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifySubmitWithoutFile() {
-        // Step 1: Click Upload Data to reach the upload page
+        // Step 1: Click Upload Data to open the popup
         uploadFilePage.clickUploadData();
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        // Step 2: Click Submit without uploading any file
+        // Step 2: Close the popup by clicking outside it
+        uploadFilePage.closePopupByClickingOutside();
+
+        // Step 3: Click Submit without uploading any file
         uploadFilePage.clickSubmit();
 
-        // Step 3: Verify toast message appears
+        // Step 4: Verify toast message appears
         Assert.assertTrue(uploadFilePage.isNoFileToastVisible(),
                 "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
     }
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyUploadFile() throws URISyntaxException {
-        // Step 1: Click Upload Data
+        // Step 1: Click Upload Data, then click somewhere on the page
         uploadFilePage.clickUploadData();
         page.waitForLoadState();
         page.waitForTimeout(2000);
+        uploadFilePage.closePopupByClickingOutside();
 
         // Step 2: Download Template
         Download download = uploadFilePage.downloadTemplate();
@@ -100,8 +104,8 @@ public class UploadFileTest extends AppConfigurationTest {
         uploadFilePage.uploadFile(filePath);
         page.waitForTimeout(2000);
 
-        // Step 4: Click Upload Data label
-        uploadFilePage.clickUploadDataLabel();
-        page.waitForTimeout(2000);
+        // Step 4: Close popup by clicking outside, then submit
+        uploadFilePage.closePopupByClickingOutside();
+        uploadFilePage.clickSubmit();
     }
 }

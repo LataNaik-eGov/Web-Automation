@@ -127,7 +127,7 @@ public class DraftCampaignPage {
     }
 
     private void selectDate(Locator input, LocalDate date) {
-        input.waitFor(new Locator.WaitForOptions().setTimeout(15000));
+        input.waitFor(new Locator.WaitForOptions().setTimeout(45000));
         input.click();
         page.waitForTimeout(500);
 

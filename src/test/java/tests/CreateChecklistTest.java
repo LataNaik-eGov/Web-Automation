@@ -40,6 +40,11 @@ public class CreateChecklistTest extends UploadFileTest {
         uploadFilePage.uploadFile(filePath);
         page.waitForTimeout(2000);
 
+        uploadFilePage.closePopupByClickingOutside();
+        uploadFilePage.clickSubmit();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
         createChecklistPage = new CreateChecklist(page);
     }
 

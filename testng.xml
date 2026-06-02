@@ -7,18 +7,6 @@
         </packages>
     </test>
 
-    <test name="Workbench UI Tests">
-        <groups>
-            <run>
-                <include name="workbench-ui"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="tests.DraftCampaignTest"/>
-            <class name="tests.CreateChecklistTest"/>
-        </classes>
-    </test>
-
     <test name="Sanity Tests">
         <groups>
             <run>

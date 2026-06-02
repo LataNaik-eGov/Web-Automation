@@ -7,7 +7,6 @@ import utils.ConfigReader;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Map;
 
@@ -146,24 +145,6 @@ public class DraftCampaignPage {
 
         dateCell(date).click();
         page.waitForTimeout(500);
-    }
-
-    private String getGridCellName(LocalDate date) {
-        String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-        String month = date.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-        int day = date.getDayOfMonth();
-        String ordinal;
-        if (day >= 11 && day <= 13) {
-            ordinal = day + "th";
-        } else {
-            switch (day % 10) {
-                case 1: ordinal = day + "st"; break;
-                case 2: ordinal = day + "nd"; break;
-                case 3: ordinal = day + "rd"; break;
-                default: ordinal = day + "th"; break;
-            }
-        }
-        return "Choose " + dayOfWeek + ", " + month + " " + ordinal + ",";
     }
 
     public void fillStartAndEndDates() {

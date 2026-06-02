@@ -6,83 +6,47 @@ import org.testng.annotations.Test;
 import pages.HRMSPage;
 import utils.ConfigReader;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class HRMSTest extends BaseTest {
 
-    // ---------------------------------------------------------------
-    // Test Case 1 — Create Employee (all fields)
-    // ---------------------------------------------------------------
-    // @Test(priority = 1)
-    // public void createNewEmployee() {
-    //     HRMSPage hrmsPage = nav.goToCreateEmployee();
+    @Test(groups = {"payments-ui"})
+    public void createHRMS() {
+        // Generate unique values per run to satisfy uniqueness constraints
+        String username = "Test-" + System.currentTimeMillis() % 100000;
+        String mobile = "8" + String.format("%09d", ThreadLocalRandom.current().nextInt(100000000, 999999999));
 
-    //     hrmsPage.fillLoginDetails(
-    //             ConfigReader.getEmpUsername(),
-    //             ConfigReader.getEmpPassword());
+        System.out.println("[HRMS] Username: " + username + " | Mobile: " + mobile);
 
-    //     hrmsPage.fillPersonalDetails(
-    //             ConfigReader.getEmpName(),
-    //             ConfigReader.getEmpMobile(),
-    //             ConfigReader.getEmpDob(),
-    //             ConfigReader.getEmpEmail(),
-    //             ConfigReader.getEmpAddress());
-    //     screenshot.take("03_personal_details_filled");
+        HRMSPage hrms = homePage.goToCreateUser();
 
-    //     hrmsPage.fillEmployeeDetails();
-    //     screenshot.take("04_employee_details_filled");
+        hrms.selectHierarchyType(
+                ConfigReader.get("hrms.hierarchy.search"),
+                ConfigReader.get("hrms.hierarchy.option"))
+            .clickNext()
+            .fillLoginDetails(
+                username,
+                ConfigReader.get("hrms.emp.password"))
+            .fillPersonalDetails(
+                ConfigReader.get("hrms.emp.name"),
+                mobile,
+                ConfigReader.get("hrms.emp.gender"),
+                ConfigReader.get("hrms.emp.dob"),
+                ConfigReader.get("hrms.emp.email"),
+                ConfigReader.get("hrms.emp.address"))
+            .fillEmploymentDetails(
+                ConfigReader.get("hrms.emp.type"),
+                ConfigReader.get("hrms.emp.doa"),
+                ConfigReader.get("hrms.emp.department"),
+                ConfigReader.get("hrms.emp.designation"),
+                ConfigReader.get("hrms.emp.role"),
+                ConfigReader.get("hrms.emp.jurisdiction"));
 
-    //     hrmsPage.submitForm();
-    //     screenshot.take("05_form_submitted");
+        hrms.submitForm();
 
-    //     boolean success = hrmsPage.isEmployeeCreatedSuccessfully();
-    //     if (success) {
-          
-    //         System.out.println("New Employee ID: " + hrmsPage.getEmployeeId());
-    //     }
+        Assert.assertTrue(hrms.isEmployeeCreatedSuccessfully(),
+                "Employee should be created successfully");
 
-    //     Assert.assertTrue(success, "Employee was not created successfully");
-    // }
-
-    // // ---------------------------------------------------------------
-    // // Test Case 2 — Create Employee (mandatory fields only)
-    // // ---------------------------------------------------------------
-    // @Test(priority = 2)
-    // public void createEmployeeMinimalData() {
-    //     // Generate unique credentials for this test — avoids collision with
-    //     // createNewEmployee
-    //     int rand = new java.util.Random().nextInt(9000) + 1000;
-    //     String minEmpId = "smc-oy-hd-min" + rand;
-    //     String minEmail = "mintest" + rand + "@test.com";
-
-    //     HRMSPage hrmsPage = nav.goToCreateEmployee();
-        
-
-    //     // Mandatory: employee login credentials
-    //     hrmsPage.fillLoginDetails(minEmpId, ConfigReader.getEmpPassword());
-
-    //     // Mandatory: name, gender (clicked inside method), dob
-    //     // Optional skipped: mobile (""), address ("")
-    //     // Email included — DIGIT API requires it even though not HTML-required
-    //     hrmsPage.fillPersonalDetails(
-    //             ConfigReader.getEmpName(),
-    //             "", // mobile — optional, skipped
-    //             ConfigReader.getEmpDob(),
-    //             minEmail,
-    //             ""); // address — optional, skipped
-
-
-    //     // Mandatory: employment type, date of appointment, role
-    //     hrmsPage.fillEmployeeDetails();
-  
-
-    //     hrmsPage.submitForm();
-
-
-    //     boolean success = hrmsPage.isEmployeeCreatedSuccessfully();
-    //     if (success) {
-
-    //         System.out.println("[MinTest] New Employee ID: " + hrmsPage.getEmployeeId());
-    //     }
-
-    //     Assert.assertTrue(success, "Minimal employee was not created successfully");
-    // }
+        System.out.println("[HRMS] Created employee ID: " + hrms.getEmployeeId());
+    }
 }

@@ -48,24 +48,6 @@ public class ConfigureDeliveryRulesPage {
         page.waitForTimeout(1000);
     }
 
-    private String getGridCellName(LocalDate date) {
-        String dayOfWeek = date.getDayOfWeek().getDisplayName(java.time.format.TextStyle.FULL, Locale.ENGLISH);
-        String month = date.getMonth().getDisplayName(java.time.format.TextStyle.FULL, Locale.ENGLISH);
-        int day = date.getDayOfMonth();
-        String ordinal;
-        if (day >= 11 && day <= 13) {
-            ordinal = day + "th";
-        } else {
-            switch (day % 10) {
-                case 1: ordinal = day + "st"; break;
-                case 2: ordinal = day + "nd"; break;
-                case 3: ordinal = day + "rd"; break;
-                default: ordinal = day + "th"; break;
-            }
-        }
-        return "Choose " + dayOfWeek + ", " + month + " " + ordinal + ",";
-    }
-
     private Locator dateCell(LocalDate date) {
         return page.locator(".react-datepicker__day:not(.react-datepicker__day--outside-month)")
                    .getByText(String.valueOf(date.getDayOfMonth()), new Locator.GetByTextOptions().setExact(true));
@@ -125,11 +107,6 @@ public class ConfigureDeliveryRulesPage {
             fillStartDate();
             fillEndDate();
         }
-    }
-
-    public void fillFirstStartDateOnly() {
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
-        selectDate(startDateTextbox.first(), tomorrow);
     }
 
     public boolean isCycleDateToastVisible() {

@@ -1,12 +1,10 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import pages.ConfigureDeliveryRulesPage;
-import utils.ConfigReader;
 
 public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
 

@@ -57,12 +57,12 @@ public class HomePage extends BasePage {
     }
 
     /**
-     * Go to Create User page.
-     * (Add CreateUserPage class when needed)
+     * Go to Create User (HRMS) page.
      */
-    public void goToCreateUser() {
+    public HRMSPage goToCreateUser() {
         createUserBtn.click();
         waitForPageLoad();
+        return new HRMSPage(page);
     }
 
     /**

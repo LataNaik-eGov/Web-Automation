@@ -1,7 +1,5 @@
 package tests;
 
-import java.time.LocalDate;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -11,14 +9,30 @@ import pages.ComplaintPage;
 public class ComplaintTest extends BaseTest {
 
     private String createAndCaptureComplaint() {
-        String today = LocalDate.now().toString();
         ComplaintPage complaint = nav.goToCreateComplaint();
-        return complaint.fillForm(today, "not working");
+        return complaint.fillForm("not working");
     }
 
     @Test(groups = {"payments-ui"})
     public void createComplaint() {
-        String complaintNumber = createAndCaptureComplaint();
+        ComplaintPage complaint = nav.goToCreateComplaint();
+        String complaintNumber = complaint.fillForm("not working");
+        Assert.assertNotNull(complaintNumber, "Complaint number should be visible after creation");
+        Assert.assertTrue(complaintNumber.startsWith("PGR-"), "Complaint number should start with PGR-");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createComplaintWithJpeg() {
+        ComplaintPage complaint = nav.goToCreateComplaint();
+        String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
+        Assert.assertNotNull(complaintNumber, "Complaint number should be visible after creation");
+        Assert.assertTrue(complaintNumber.startsWith("PGR-"), "Complaint number should start with PGR-");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createComplaintWithPdf() {
+        ComplaintPage complaint = nav.goToCreateComplaint();
+        String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
         Assert.assertNotNull(complaintNumber, "Complaint number should be visible after creation");
         Assert.assertTrue(complaintNumber.startsWith("PGR-"), "Complaint number should start with PGR-");
     }

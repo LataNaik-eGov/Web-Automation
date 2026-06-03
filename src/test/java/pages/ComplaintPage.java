@@ -1,10 +1,14 @@
 package pages;
 
+import com.microsoft.playwright.options.FilePayload;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 import utils.ConfigReader;
@@ -25,7 +29,6 @@ public class ComplaintPage extends BasePage {
     private final Locator areaDropdown;
     private final Locator complainantRadio;
     private final Locator descriptionField;
-    private final Locator fileInput;
     private final Locator submitButton;
 
     // Confirmation locator
@@ -53,7 +56,6 @@ public class ComplaintPage extends BasePage {
         this.areaDropdown = page.locator("div:nth-child(6) > .digit-text-input-field-without-card > .digit-dropdown-employee-select-wrap > .digit-dropdown-select > .digit-dropdown-employee-select-wrap--elipses");
         this.complainantRadio = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("Are you raising a complaint"));
         this.descriptionField = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Complaint description"));
-        this.fileInput = page.locator("input[type=\"file\"]");
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.complaintNumberLabel = page.locator(".digit-panel-response");
         this.backToComplaintsInbox = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search Complaint"));
@@ -68,14 +70,17 @@ public class ComplaintPage extends BasePage {
 
     // ==================== MAIN ACTIONS ====================
 
-    public String fillForm(String date, String description) {
-        // Wait for page auto-refresh to complete before interacting
+    public String fillForm(String description) {
+        return fillFormWithFile(description, null);
+    }
+
+    public String fillFormWithFile(String description, String filePath) {
         waitForVisible(complaintTypeDropdown);
         wait(5000);
         page.waitForLoadState();
         waitForVisible(complaintTypeDropdown);
         selectComplaintType();
-        selectDate(date);
+        selectDate(LocalDate.now().toString());
         selectCountry();
         selectState();
         selectLGA();
@@ -84,6 +89,10 @@ public class ComplaintPage extends BasePage {
         selectArea();
         selectComplainant();
         enterDescription(description);
+        if (filePath != null) {
+            uploadFile(filePath);
+            wait(2000);
+        }
         clickSubmit();
         return getComplaintNumber();
     }
@@ -156,7 +165,15 @@ public class ComplaintPage extends BasePage {
     }
 
     public void uploadFile(String filePath) {
-        fileInput.setInputFiles(Paths.get(filePath));
+        try {
+            java.nio.file.Path path = Paths.get(filePath).toAbsolutePath();
+            String fileName = path.getFileName().toString();
+            String mimeType = fileName.endsWith(".pdf") ? "application/pdf" : "image/jpeg";
+            byte[] content = Files.readAllBytes(path);
+            page.locator("#upload-complaintFile").setInputFiles(new FilePayload(fileName, mimeType, content));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read upload file: " + filePath, e);
+        }
     }
 
     public void clickSubmit() {

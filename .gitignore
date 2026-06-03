@@ -27,3 +27,9 @@ Thumbs.db
 
 # Documentation
 *.md
+
+# Jenkins
+Jenkinsfile
+
+# Scripts
+run-tests.sh

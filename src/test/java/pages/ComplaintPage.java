@@ -71,7 +71,7 @@ public class ComplaintPage extends BasePage {
     public String fillForm(String date, String description) {
         // Wait for page auto-refresh to complete before interacting
         waitForVisible(complaintTypeDropdown);
-        wait(10000);
+        wait(5000);
         page.waitForLoadState();
         waitForVisible(complaintTypeDropdown);
         selectComplaintType();
@@ -173,6 +173,7 @@ public class ComplaintPage extends BasePage {
     }
 
     public void searchComplaint(String complaintNumber) {
+        page.waitForTimeout(1000);
         complaintNumberInput.click();
         complaintNumberInput.fill(complaintNumber);
         searchButton.click();

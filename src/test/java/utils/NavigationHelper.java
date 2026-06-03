@@ -78,7 +78,7 @@ public class NavigationHelper {
      * Navigate to Search User page.
      */
     /** Navigate to Search Employee (HRMS inbox). */
-    public EmployeeInboxPage goToSearchEmployee() {
+    public HRMSPage goToSearchEmployee() {
         // Navigate via the sidebar from a fully-loaded home page (React Router).
         // Direct URL navigation re-initialises the React app from scratch and the
         // HRMS inbox API call intermittently fails before auth context is ready.
@@ -112,14 +112,14 @@ public class NavigationHelper {
                 page.locator("input[name='codes']").first()
                         .waitFor(new Locator.WaitForOptions().setTimeout(15000));
                 System.out.println("[Nav] Search form loaded on attempt " + attempt);
-                return new EmployeeInboxPage(page);
+                return new HRMSPage(page);
             } catch (Exception e) {
                 System.out.println("[Nav] Search form not loaded on attempt " + attempt + " — retrying");
             }
         }
 
         System.out.println("[Nav] All sidebar attempts exhausted — returning page as-is");
-        return new EmployeeInboxPage(page);
+        return new HRMSPage(page);
     }
     // ==================== PAGE OBJECT GETTERS ====================
     // Use these when you're already on the page
@@ -149,9 +149,9 @@ public class NavigationHelper {
         return new HRMSPage(page);
     }
 
-    /** Get SearchEmployeePage object (use when on HRMS inbox). */
-    public EmployeeInboxPage searchEmployeePage() {
-        return new EmployeeInboxPage(page);
+    /** Get HRMSPage object (use when on HRMS inbox). */
+    public HRMSPage searchEmployeePage() {
+        return new HRMSPage(page);
     }
     // ==================== UTILITY ====================
 

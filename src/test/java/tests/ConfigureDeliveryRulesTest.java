@@ -4,45 +4,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
-import pages.BoundarySelectionPage;
-import pages.CampaignLandingPage;
 import pages.ConfigureDeliveryRulesPage;
-import pages.DraftCampaignPage;
 
 public class ConfigureDeliveryRulesTest extends BaseTest {
 
-    private ConfigureDeliveryRulesPage setupDeliveryRulesPage() {
-        CampaignLandingPage landingPage = new CampaignLandingPage(page);
-        landingPage.clickCreateCampaign();
-        landingPage.clickScratchCard();
-        landingPage.clickContinue();
-
-        DraftCampaignPage draftPage = new DraftCampaignPage(page);
-        draftPage.clickCampaignTypeDropdown();
-        draftPage.selectCampaignType();
-        draftPage.clickNext();
-
-        draftPage.clearAndEnterDynamicCampaignName();
-        draftPage.clickNext();
-
-        draftPage.fillStartDate();
-        draftPage.fillEndDate();
-        draftPage.clickSubmit();
-
-        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
-        boundaryPage.clickDefineTarget();
-
-        boundaryPage.clickfirstlevel();
-        boundaryPage.clicksecondlevel();
-        boundaryPage.clickthirdlevel();
-        boundaryPage.clickfourthlevel();
-
-        return new ConfigureDeliveryRulesPage(page);
-    }
-
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyNextWithFirstStartDateOnly() {
-        ConfigureDeliveryRulesPage deliveryRulesPage = setupDeliveryRulesPage();
+        ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToConfigureDeliveryRules();
 
         deliveryRulesPage.clickConfigureDelivery();
 
@@ -56,7 +24,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyConfigureDeliveryRules() {
-        ConfigureDeliveryRulesPage deliveryRulesPage = setupDeliveryRulesPage();
+        ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToConfigureDeliveryRules();
 
         deliveryRulesPage.clickConfigureDelivery();
 

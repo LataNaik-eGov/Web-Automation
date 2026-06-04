@@ -5,12 +5,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
-import pages.AppConfigurationPage;
-import pages.BoundarySelectionPage;
-import pages.CampaignLandingPage;
-import pages.ConfigureDeliveryRulesPage;
 import pages.CreateChecklist;
-import pages.DraftCampaignPage;
 import pages.UploadFilePage;
 import utils.ConfigReader;
 
@@ -21,62 +16,8 @@ import java.nio.file.Paths;
 public class CreateChecklistTest extends BaseTest {
 
     private CreateChecklist setupCreateChecklistPage() throws URISyntaxException {
-        CampaignLandingPage landingPage = new CampaignLandingPage(page);
-        landingPage.clickCreateCampaign();
-        landingPage.clickScratchCard();
-        landingPage.clickContinue();
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
 
-        DraftCampaignPage draftPage = new DraftCampaignPage(page);
-        draftPage.clickCampaignTypeDropdown();
-        draftPage.selectCampaignType();
-        draftPage.clickNext();
-
-        draftPage.clearAndEnterDynamicCampaignName();
-        draftPage.clickNext();
-
-        draftPage.fillStartDate();
-        draftPage.fillEndDate();
-        draftPage.clickSubmit();
-
-        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
-        boundaryPage.clickDefineTarget();
-
-        boundaryPage.clickfirstlevel();
-        boundaryPage.clicksecondlevel();
-        boundaryPage.clickthirdlevel();
-        boundaryPage.clickfourthlevel();
-
-        ConfigureDeliveryRulesPage deliveryRulesPage = new ConfigureDeliveryRulesPage(page);
-        deliveryRulesPage.clickConfigureDelivery();
-
-        deliveryRulesPage.fillDates();
-
-        deliveryRulesPage.clickNext();
-
-        deliveryRulesPage.clickNext();
-
-        deliveryRulesPage.clickSubmit();
-
-        AppConfigurationPage appConfigPage = new AppConfigurationPage(page);
-        appConfigPage.clickSetUpMobileApp();
-
-        appConfigPage.configureRegistrationAndDelivery();
-
-        appConfigPage.configureCloseHousehold();
-
-        appConfigPage.configureComplaints();
-
-        appConfigPage.configureInventory();
-
-        appConfigPage.configureStockReconciliation();
-
-        appConfigPage.configureReports();
-
-        appConfigPage.configurePermissionHandler();
-
-        appConfigPage.clickGoBack();
-
-        UploadFilePage uploadFilePage = new UploadFilePage(page);
         uploadFilePage.clickUploadData();
 
         Download download = uploadFilePage.downloadTemplate();

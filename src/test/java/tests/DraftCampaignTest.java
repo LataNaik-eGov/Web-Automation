@@ -4,37 +4,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
-import pages.CampaignLandingPage;
 import pages.DraftCampaignPage;
 
 public class DraftCampaignTest extends BaseTest {
 
-    private DraftCampaignPage setupDraftPage() {
-        CampaignLandingPage landingPage = new CampaignLandingPage(page);
-        landingPage.clickCreateCampaign();
-        landingPage.clickScratchCard();
-        landingPage.clickContinue();
-        return new DraftCampaignPage(page);
-    }
-
-    private DraftCampaignPage goToCampaignNameStep() {
-        DraftCampaignPage draftPage = setupDraftPage();
-        draftPage.clickCampaignTypeDropdown();
-        draftPage.selectCampaignType();
-        draftPage.clickNext();
-        return draftPage;
-    }
-
-    private DraftCampaignPage goToDateStep() {
-        DraftCampaignPage draftPage = goToCampaignNameStep();
-        draftPage.clearAndEnterDynamicCampaignName();
-        draftPage.clickNext();
-        return draftPage;
-    }
-
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyDraftCampaignFlow() {
-        DraftCampaignPage draftPage = setupDraftPage();
+        DraftCampaignPage draftPage = nav.goToCampaignDraft();
 
         draftPage.clickCampaignTypeDropdown();
         Assert.assertTrue(draftPage.isCampaignTypeVisible(),
@@ -65,7 +41,7 @@ public class DraftCampaignTest extends BaseTest {
 
     @Test(groups = {"regression", "workbench-ui"})
     public void verifyValidCampaignName() {
-        DraftCampaignPage draftPage = goToCampaignNameStep();
+        DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
         Assert.assertTrue(page.url().contains("create-campaign"),
@@ -74,7 +50,7 @@ public class DraftCampaignTest extends BaseTest {
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyCampaignNameTooLong() {
-        DraftCampaignPage draftPage = goToCampaignNameStep();
+        DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("ThisCampaignNameIsWayTooLong123"); // 31 chars - above maximum of 30
         draftPage.clickNext();
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
@@ -83,7 +59,7 @@ public class DraftCampaignTest extends BaseTest {
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyCampaignNameStartsWithSpecialChar() {
-        DraftCampaignPage draftPage = goToCampaignNameStep();
+        DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("_Campaign");
         draftPage.clickNext();
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
@@ -92,7 +68,7 @@ public class DraftCampaignTest extends BaseTest {
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyCampaignNameContainsEmoji() {
-        DraftCampaignPage draftPage = goToCampaignNameStep();
+        DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("Camp🎉ign1"); // 🎉 emoji
         draftPage.clickNext();
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
@@ -101,7 +77,7 @@ public class DraftCampaignTest extends BaseTest {
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyCampaignNameConsecutiveUnderscores() {
-        DraftCampaignPage draftPage = goToCampaignNameStep();
+        DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("Camp__aign");
         draftPage.clickNext();
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
@@ -112,7 +88,7 @@ public class DraftCampaignTest extends BaseTest {
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifySubmitWithStartDateOnly() {
-        DraftCampaignPage draftPage = goToDateStep();
+        DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.fillStartDate();
         draftPage.clickSubmit();
         Assert.assertTrue(draftPage.isDateToastErrorVisible(),
@@ -121,7 +97,7 @@ public class DraftCampaignTest extends BaseTest {
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifySubmitWithEndDateOnly() {
-        DraftCampaignPage draftPage = goToDateStep();
+        DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.fillEndDate();
         draftPage.clickSubmit();
         Assert.assertTrue(draftPage.isDateToastErrorVisible(),

@@ -1,5 +1,7 @@
 package pages;
 
+import java.util.regex.Pattern;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
@@ -7,16 +9,15 @@ import com.microsoft.playwright.options.AriaRole;
 
 public class BoundarySelectionPage {
 
-    private Page page;
-
     // Campaign template step elements
-    private Locator DefineTarget;
+    private Locator defineTarget;
     private Locator firstBoundaryLevel;
     private Locator secondBoundaryLevel;
     private Locator thirdBoundaryLevel;
     private Locator fourthBoundaryLevel;
     private Locator outsideClick;
     private Locator firstCheckbox;
+    private Locator secondCheckbox;
     private Locator thirdCheckbox;
     private Locator nextButton;
     private Locator submitButton;
@@ -25,14 +26,15 @@ public class BoundarySelectionPage {
 
     public BoundarySelectionPage(Page page) {
 
-        this.page = page;
-        this.DefineTarget = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Define Target Areas"));
+        this.defineTarget = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Define Target Areas"));
         this.firstBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).first();
         this.secondBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(1);
         this.thirdBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(2);
         this.fourthBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(3);
-        this.outsideClick = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Country*"));
+        // Use regex to match heading containing "Country" — the asterisk is a separate DOM element for required-field indicator
+        this.outsideClick = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName(Pattern.compile("Country")));
         this.firstCheckbox = page.getByRole(AriaRole.CHECKBOX).first();
+        this.secondCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(1);
         this.thirdCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(2);
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
@@ -42,37 +44,39 @@ public class BoundarySelectionPage {
     // --- Actions ---
 
     public void clickDefineTarget() {
-        DefineTarget.click();
+        defineTarget.click();
     }
 
-    public void clickfirstlevel() {
+    public void clickFirstLevel() {
         firstBoundaryLevel.click();
         firstCheckbox.check();
         outsideClick.click();
     }
 
-    public void clicksecondlevel() {
+    public void clickSecondLevel() {
         secondBoundaryLevel.click();
-        thirdCheckbox.check();
+        secondCheckbox.check();
         outsideClick.click();
     }
 
-    public void clickthirdlevel() {
+    public void clickThirdLevel() {
         thirdBoundaryLevel.click();
         thirdCheckbox.check();
         outsideClick.click();
     }
 
-    public void clickfourthlevel() {
+    public void clickFourthLevel() {
         fourthBoundaryLevel.click();
         thirdCheckbox.check();
         outsideClick.click();
-        nextButton.click();
-        submitButton.click();
     }
 
     public void clickNextButton() {
         nextButton.click();
+    }
+
+    public void clickSubmitButton() {
+        submitButton.click();
     }
 
     public boolean isMandatoryFieldsToastVisible() {

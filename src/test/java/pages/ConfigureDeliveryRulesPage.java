@@ -105,6 +105,11 @@ public class ConfigureDeliveryRulesPage {
         }
     }
 
+    public boolean isConfigureDeliveryButtonVisible() {
+        configureDeliveryButton.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return configureDeliveryButton.isVisible();
+    }
+
     public boolean isCycleDateToastVisible() {
         cycleDateToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
         return cycleDateToast.isVisible();

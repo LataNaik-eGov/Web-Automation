@@ -5,11 +5,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
-import pages.AppConfigurationPage;
-import pages.BoundarySelectionPage;
-import pages.CampaignLandingPage;
-import pages.ConfigureDeliveryRulesPage;
-import pages.DraftCampaignPage;
 import pages.UploadFilePage;
 import utils.ConfigReader;
 
@@ -19,68 +14,9 @@ import java.nio.file.Paths;
 
 public class UploadFileTest extends BaseTest {
 
-    private UploadFilePage setupUploadFilePage() {
-        CampaignLandingPage landingPage = new CampaignLandingPage(page);
-        landingPage.clickCreateCampaign();
-        landingPage.clickScratchCard();
-        landingPage.clickContinue();
-
-        DraftCampaignPage draftPage = new DraftCampaignPage(page);
-        draftPage.clickCampaignTypeDropdown();
-        draftPage.selectCampaignType();
-        draftPage.clickNext();
-
-        draftPage.clearAndEnterDynamicCampaignName();
-        draftPage.clickNext();
-
-        draftPage.fillStartDate();
-        draftPage.fillEndDate();
-        draftPage.clickSubmit();
-
-        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
-        boundaryPage.clickDefineTarget();
-
-        boundaryPage.clickfirstlevel();
-        boundaryPage.clicksecondlevel();
-        boundaryPage.clickthirdlevel();
-        boundaryPage.clickfourthlevel();
-
-        ConfigureDeliveryRulesPage deliveryRulesPage = new ConfigureDeliveryRulesPage(page);
-        deliveryRulesPage.clickConfigureDelivery();
-
-        deliveryRulesPage.fillDates();
-
-        deliveryRulesPage.clickNext();
-
-        deliveryRulesPage.clickNext();
-
-        deliveryRulesPage.clickSubmit();
-
-        AppConfigurationPage appConfigPage = new AppConfigurationPage(page);
-        appConfigPage.clickSetUpMobileApp();
-
-        appConfigPage.configureRegistrationAndDelivery();
-
-        appConfigPage.configureCloseHousehold();
-
-        appConfigPage.configureComplaints();
-
-        appConfigPage.configureInventory();
-
-        appConfigPage.configureStockReconciliation();
-
-        appConfigPage.configureReports();
-
-        appConfigPage.configurePermissionHandler();
-
-        appConfigPage.clickGoBack();
-
-        return new UploadFilePage(page);
-    }
-
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifySubmitWithoutFile() {
-        UploadFilePage uploadFilePage = setupUploadFilePage();
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
 
@@ -93,7 +29,7 @@ public class UploadFileTest extends BaseTest {
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyUploadFile() throws URISyntaxException {
-        UploadFilePage uploadFilePage = setupUploadFilePage();
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
         uploadFilePage.closePopupByClickingOutside();

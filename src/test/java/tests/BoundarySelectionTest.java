@@ -5,50 +5,32 @@ import org.testng.annotations.Test;
 
 import base.BaseTest;
 import pages.BoundarySelectionPage;
-import pages.CampaignLandingPage;
-import pages.DraftCampaignPage;
+import pages.ConfigureDeliveryRulesPage;
 
 public class BoundarySelectionTest extends BaseTest {
 
-    private BoundarySelectionPage setupBoundaryPage() {
-        CampaignLandingPage landingPage = new CampaignLandingPage(page);
-        landingPage.clickCreateCampaign();
-        landingPage.clickScratchCard();
-        landingPage.clickContinue();
-
-        DraftCampaignPage draftPage = new DraftCampaignPage(page);
-        draftPage.clickCampaignTypeDropdown();
-        draftPage.selectCampaignType();
-        draftPage.clickNext();
-
-        draftPage.clearAndEnterDynamicCampaignName();
-        draftPage.clickNext();
-
-        draftPage.fillStartDate();
-        draftPage.fillEndDate();
-        draftPage.clickSubmit();
-
-        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
-        boundaryPage.clickDefineTarget();
-        return boundaryPage;
-    }
-
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyBoundarySelection() {
-        BoundarySelectionPage boundaryPage = setupBoundaryPage();
+        BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
-        boundaryPage.clickfirstlevel();
-        boundaryPage.clicksecondlevel();
-        boundaryPage.clickthirdlevel();
-        boundaryPage.clickfourthlevel();
+        boundaryPage.clickFirstLevel();
+        boundaryPage.clickSecondLevel();
+        boundaryPage.clickThirdLevel();
+        boundaryPage.clickFourthLevel();
+        boundaryPage.clickNextButton();
+        boundaryPage.clickSubmitButton();
+
+        ConfigureDeliveryRulesPage deliveryPage = new ConfigureDeliveryRulesPage(page);
+        Assert.assertTrue(deliveryPage.isConfigureDeliveryButtonVisible(),
+                "Should navigate to Configure Delivery Rules page after completing boundary selection");
     }
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyBoundarySelectionWithPartialSelection() {
-        BoundarySelectionPage boundaryPage = setupBoundaryPage();
+        BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
-        boundaryPage.clickfirstlevel();
-        boundaryPage.clicksecondlevel();
+        boundaryPage.clickFirstLevel();
+        boundaryPage.clickSecondLevel();
 
         boundaryPage.clickNextButton();
 

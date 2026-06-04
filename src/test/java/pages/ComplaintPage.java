@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 import utils.ConfigReader;
+import utils.TestDataReader;
 
 /**
  * Page Object for Complaint Form.
@@ -110,6 +111,14 @@ public class ComplaintPage extends BasePage {
         backToComplaintsInbox.click();
     }
 
+    public boolean isStatusVisible(String expectedStatus) {
+        Locator statusDiv = page.locator("div")
+            .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^" + expectedStatus + "$")))
+            .first();
+        statusDiv.waitFor();
+        return statusDiv.isVisible();
+    }
+
     public boolean isComplaintFound(String complaintNumber) {
         searchComplaint(complaintNumber);
         Locator link = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(complaintNumber));
@@ -123,7 +132,7 @@ public class ComplaintPage extends BasePage {
         complaintTypeDropdown.click();
         complaintTypeDropdown.click();
         wait(1000);
-        String[] types = ConfigReader.get("COMPLAINT_TYPES").split(",");
+        String[] types = TestDataReader.get("COMPLAINT_TYPES").split(",");
         String type = types[new java.util.Random().nextInt(types.length)].trim();
         page.getByText(type, new Page.GetByTextOptions().setExact(true)).click();
     }
@@ -267,7 +276,7 @@ public class ComplaintPage extends BasePage {
     public void selectRejectionReason() {
         rejectionReasonDropdown.click();
         wait(1000);
-        String[] reasons = ConfigReader.get("REJECTION_REASON").split(",");
+        String[] reasons = TestDataReader.get("REJECTION_REASON").split(",");
         String reason = reasons[new java.util.Random().nextInt(reasons.length)].trim();
         page.getByText(reason, new Page.GetByTextOptions().setExact(true)).click();
     }
@@ -289,7 +298,14 @@ public class ComplaintPage extends BasePage {
     public ComplaintPage searchAndAssign(String complaintNumber, String comments) {
         searchComplaint(complaintNumber);
         openComplaint(complaintNumber);
-        assign(comments);
+        assign(comments, null);
+        return this;
+    }
+
+    public ComplaintPage searchAndAssign(String complaintNumber, String comments, String filePath) {
+        searchComplaint(complaintNumber);
+        openComplaint(complaintNumber);
+        assign(comments, filePath);
         return this;
     }
 
@@ -301,16 +317,21 @@ public class ComplaintPage extends BasePage {
         waitForVisible(selectEmployeeDropdown);
         selectEmployeeDropdown.click();
         wait(1000);
-        page.getByText(ConfigReader.get("ASSIGN_EMPLOYEE")).first().click();
+        page.getByText(TestDataReader.get("ASSIGN_EMPLOYEE")).first().click();
+        page.getByText(TestDataReader.get("ASSIGN_EMPLOYEE")).first().click();
     }
 
-    public void assign(String comments) {
+    public void assign(String comments, String filePath) {
         takeAction();
         clickAssign();
         selectEmployee();
         wait(1000);
         waitForVisible(employeeComments);
         enterComments(comments);
+        if (filePath != null) {
+            uploadFile(filePath);
+            wait(3000);
+        }
         clickSubmit();
     }
 }

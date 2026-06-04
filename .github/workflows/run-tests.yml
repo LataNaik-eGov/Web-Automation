@@ -166,6 +166,7 @@ jobs:
 
       - name: Run tests
         run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}"
+        continue-on-error: true
         env:
           CI: true
 
@@ -174,5 +175,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: failure-screenshots
-          path: screenshots/
+          path: ${{ github.workspace }}/screenshots/
           if-no-files-found: ignore

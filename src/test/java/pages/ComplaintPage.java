@@ -35,13 +35,15 @@ public class ComplaintPage extends BasePage {
     private final Locator complaintNumberLabel;
     private final Locator backToComplaintsInbox;
 
-    // Search, resolve & reject complaint locators
+    // Search, resolve, reject & assign complaint locators
     private final Locator complaintNumberInput;
     private final Locator searchButton;
     private final Locator takeActionButton;
     private final Locator resolveOption;
     private final Locator rejectOption;
+    private final Locator assignOption;
     private final Locator rejectionReasonDropdown;
+    private final Locator selectEmployeeDropdown;
     private final Locator employeeComments;
 
     public ComplaintPage(Page page) {
@@ -64,7 +66,9 @@ public class ComplaintPage extends BasePage {
         this.takeActionButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Take Action"));
         this.resolveOption = page.getByText("Resolve");
         this.rejectOption = page.getByText("Reject");
+        this.assignOption = page.getByText("Assign", new Page.GetByTextOptions().setExact(true));
         this.rejectionReasonDropdown = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Rejection Reason"));
+        this.selectEmployeeDropdown = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Select Employee"));
         this.employeeComments = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Employee Comments"));
     }
 
@@ -106,13 +110,22 @@ public class ComplaintPage extends BasePage {
         backToComplaintsInbox.click();
     }
 
+    public boolean isComplaintFound(String complaintNumber) {
+        searchComplaint(complaintNumber);
+        Locator link = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(complaintNumber));
+        link.waitFor();
+        return link.isVisible();
+    }
+
     // ==================== INDIVIDUAL ACTIONS ====================
 
     public void selectComplaintType() {
         complaintTypeDropdown.click();
         complaintTypeDropdown.click();
         wait(1000);
-        page.getByText("Performance Issue: Dept-").click();
+        String[] types = ConfigReader.get("COMPLAINT_TYPES").split(",");
+        String type = types[new java.util.Random().nextInt(types.length)].trim();
+        page.getByText(type, new Page.GetByTextOptions().setExact(true)).click();
     }
 
     public void selectDate(String date) {
@@ -185,7 +198,14 @@ public class ComplaintPage extends BasePage {
     public ComplaintPage searchAndResolve(String complaintNumber, String comments) {
         searchComplaint(complaintNumber);
         openComplaint(complaintNumber);
-        resolve(comments);
+        resolve(comments, null);
+        return this;
+    }
+
+    public ComplaintPage searchAndResolve(String complaintNumber, String comments, String filePath) {
+        searchComplaint(complaintNumber);
+        openComplaint(complaintNumber);
+        resolve(comments, filePath);
         return this;
     }
 
@@ -213,10 +233,14 @@ public class ComplaintPage extends BasePage {
         employeeComments.fill(comments);
     }
 
-    public void resolve(String comments) {
+    public void resolve(String comments, String filePath) {
         takeAction();
         clickResolve();
         enterComments(comments);
+        if (filePath != null) {
+            uploadFile(filePath);
+            wait(3000);
+        }
         clickSubmit();
     }
 
@@ -225,7 +249,14 @@ public class ComplaintPage extends BasePage {
     public ComplaintPage searchAndReject(String complaintNumber, String comments) {
         searchComplaint(complaintNumber);
         openComplaint(complaintNumber);
-        reject(comments);
+        reject(comments, null);
+        return this;
+    }
+
+    public ComplaintPage searchAndReject(String complaintNumber, String comments, String filePath) {
+        searchComplaint(complaintNumber);
+        openComplaint(complaintNumber);
+        reject(comments, filePath);
         return this;
     }
 
@@ -236,13 +267,49 @@ public class ComplaintPage extends BasePage {
     public void selectRejectionReason() {
         rejectionReasonDropdown.click();
         wait(1000);
-        page.getByText("CS_REJECTION__REASON3").click();
+        String[] reasons = ConfigReader.get("REJECTION_REASON").split(",");
+        String reason = reasons[new java.util.Random().nextInt(reasons.length)].trim();
+        page.getByText(reason, new Page.GetByTextOptions().setExact(true)).click();
     }
 
-    public void reject(String comments) {
+    public void reject(String comments, String filePath) {
         takeAction();
         clickReject();
         selectRejectionReason();
+        enterComments(comments);
+        if (filePath != null) {
+            uploadFile(filePath);
+            wait(3000);
+        }
+        clickSubmit();
+    }
+
+    // ==================== ASSIGN ====================
+
+    public ComplaintPage searchAndAssign(String complaintNumber, String comments) {
+        searchComplaint(complaintNumber);
+        openComplaint(complaintNumber);
+        assign(comments);
+        return this;
+    }
+
+    public void clickAssign() {
+        assignOption.click();
+    }
+
+    public void selectEmployee() {
+        waitForVisible(selectEmployeeDropdown);
+        selectEmployeeDropdown.click();
+        wait(1000);
+        page.getByText(ConfigReader.get("ASSIGN_EMPLOYEE")).first().click();
+    }
+
+    public void assign(String comments) {
+        takeAction();
+        clickAssign();
+        selectEmployee();
+        wait(1000);
+        waitForVisible(employeeComments);
         enterComments(comments);
         clickSubmit();
     }

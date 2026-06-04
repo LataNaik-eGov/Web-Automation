@@ -168,3 +168,11 @@ jobs:
         run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}"
         env:
           CI: true
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots
+          path: screenshots/
+          if-no-files-found: ignore

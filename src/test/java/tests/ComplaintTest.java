@@ -52,6 +52,7 @@ public class ComplaintTest extends BaseTest {
         ComplaintPage complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndResolve(complaintNumber, "Resolved");
+        Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
     @Test(groups = {"payments-ui"})
@@ -61,6 +62,7 @@ public class ComplaintTest extends BaseTest {
         complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndResolve(complaintNumber, "Resolved with image", "src/test/resources/complaint.jpeg");
+        Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
     @Test(groups = {"payments-ui"})
@@ -70,6 +72,7 @@ public class ComplaintTest extends BaseTest {
         complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndResolve(complaintNumber, "Resolved with pdf", "src/test/resources/complaint.pdf");
+        Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
     @Test(groups = {"payments-ui"})
@@ -78,6 +81,7 @@ public class ComplaintTest extends BaseTest {
         ComplaintPage complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndAssign(complaintNumber, "Assigned");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
     }
 
     @Test(groups = {"payments-ui"})
@@ -87,6 +91,7 @@ public class ComplaintTest extends BaseTest {
         complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndAssign(complaintNumber, "Assigned with image");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
     }
 
     @Test(groups = {"payments-ui"})
@@ -96,6 +101,77 @@ public class ComplaintTest extends BaseTest {
         complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndAssign(complaintNumber, "Assigned with pdf");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createAssignAndResolveComplaint() {
+        String complaintNumber = createAndCaptureComplaint();
+        ComplaintPage complaint = nav.complaintPage();
+        complaint.clickBackToComplaintsInbox();
+        complaint.searchAndAssign(complaintNumber, "Assigned");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
+        complaint.resolve("Resolved", null);
+        Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createAssignAndResolveComplaintWithJpeg() {
+        ComplaintPage complaint = nav.goToCreateComplaint();
+        String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
+        complaint = nav.complaintPage();
+        complaint.clickBackToComplaintsInbox();
+        complaint.searchAndAssign(complaintNumber, "Assigned", "src/test/resources/complaint.jpeg");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
+        complaint.resolve("Resolved", "src/test/resources/complaint.jpeg");
+        Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createAssignAndResolveComplaintWithPdf() {
+        ComplaintPage complaint = nav.goToCreateComplaint();
+        String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
+        complaint = nav.complaintPage();
+        complaint.clickBackToComplaintsInbox();
+        complaint.searchAndAssign(complaintNumber, "Assigned", "src/test/resources/complaint.pdf");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
+        complaint.resolve("Resolved", "src/test/resources/complaint.pdf");
+        Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createAssignAndRejectComplaint() {
+        String complaintNumber = createAndCaptureComplaint();
+        ComplaintPage complaint = nav.complaintPage();
+        complaint.clickBackToComplaintsInbox();
+        complaint.searchAndAssign(complaintNumber, "Assigned");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
+        complaint.reject("rejected", null);
+        Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createAssignAndRejectComplaintWithJpeg() {
+        ComplaintPage complaint = nav.goToCreateComplaint();
+        String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
+        complaint = nav.complaintPage();
+        complaint.clickBackToComplaintsInbox();
+        complaint.searchAndAssign(complaintNumber, "Assigned", "src/test/resources/complaint.jpeg");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
+        complaint.reject("rejected", "src/test/resources/complaint.jpeg");
+        Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void createAssignAndRejectComplaintWithPdf() {
+        ComplaintPage complaint = nav.goToCreateComplaint();
+        String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
+        complaint = nav.complaintPage();
+        complaint.clickBackToComplaintsInbox();
+        complaint.searchAndAssign(complaintNumber, "Assigned", "src/test/resources/complaint.pdf");
+        Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
+        complaint.reject("rejected", "src/test/resources/complaint.pdf");
+        Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
     @Test(groups = {"payments-ui"})
@@ -104,6 +180,7 @@ public class ComplaintTest extends BaseTest {
         ComplaintPage complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndReject(complaintNumber, "rejected");
+        Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
     @Test(groups = {"payments-ui"})
@@ -113,6 +190,7 @@ public class ComplaintTest extends BaseTest {
         complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndReject(complaintNumber, "rejected with image", "src/test/resources/complaint.jpeg");
+        Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
     @Test(groups = {"payments-ui"})
@@ -122,5 +200,6 @@ public class ComplaintTest extends BaseTest {
         complaint = nav.complaintPage();
         complaint.clickBackToComplaintsInbox();
         complaint.searchAndReject(complaintNumber, "rejected with pdf", "src/test/resources/complaint.pdf");
+        Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 }

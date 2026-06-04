@@ -31,34 +31,27 @@ public class CreateChecklist {
 
     public void clickCreateChecklist() {
         createChecklist.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickConfigureList() {
         configureList.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickConfigureChecklist() {
         configureChecklist.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickConfirmChecklist() {
         confirmChecklist.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickBackToHomepage() {
         backToHomepage.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickCreateCampaign() {
         page.mouse().wheel(0, 500);
-        page.waitForTimeout(1000);
         createCampaign.click();
-        page.waitForTimeout(1000);
         goMyCampaign.click();
     }
 }

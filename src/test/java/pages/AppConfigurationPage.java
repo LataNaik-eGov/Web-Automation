@@ -71,83 +71,67 @@ public class AppConfigurationPage {
 
     public void clickSetUpMobileApp() {
         setUpMobileAppButton.click();
-        page.waitForTimeout(2000);
     }
 
     public void clickSaveConfiguration() {
         saveConfigurationButton.last().click();
-        page.waitForTimeout(2000);
     }
 
     public void selectDeliveryType() {
         deliveryTypeDropdown.click();
-        page.waitForTimeout(1000);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).click();
-        page.waitForTimeout(1000);
     }
 
     public void configureRegistrationAndDelivery() {
         registrationAndDelivery.click();
-        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureCloseHousehold() {
         closeHousehold.click();
-        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureComplaints() {
         complaints.click();
-        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureInventory() {
         inventory.click();
-        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureStockReconciliation() {
         stockReconciliation.click();
-        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configureReports() {
         reports.click();
-        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void configurePermissionHandler() {
         permissionHandler.click();
-        page.waitForTimeout(4000);
         clickSaveConfiguration();
     }
 
     public void clickRegistrationAndDeliveryConfigure() {
         registrationAndDelivery.click();
-        page.waitForTimeout(4000);
     }
 
     public void clickSearchBeneficiaryFlow() {
         searchBeneficiaryFlow.click();
-        page.waitForTimeout(2000);
     }
 
     public void clickProximitySearchElement() {
         proximitySearchElement.dispatchEvent("click");
-        page.waitForTimeout(1000);
     }
 
     public void clearLabelField() {
         labelInput.click();
-        page.waitForTimeout(500);
         labelInput.fill("");
-        page.waitForTimeout(500);
     }
 
     public boolean isLabelLocalizationToastVisible() {
@@ -157,6 +141,5 @@ public class AppConfigurationPage {
 
     public void clickGoBack() {
         goBackButton.click();
-        page.waitForTimeout(2000);
     }
 }

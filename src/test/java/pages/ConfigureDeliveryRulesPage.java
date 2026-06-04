@@ -45,7 +45,6 @@ public class ConfigureDeliveryRulesPage {
 
     public void clickConfigureDelivery() {
         configureDeliveryButton.click();
-        page.waitForTimeout(1000);
     }
 
     private Locator dateCell(LocalDate date) {
@@ -55,7 +54,6 @@ public class ConfigureDeliveryRulesPage {
 
     private void selectDate(Locator textbox, LocalDate date) {
         textbox.click();
-        page.waitForTimeout(500);
 
         // Navigate months if needed
         String headerText = currentMonthLabel.innerText().trim();
@@ -70,11 +68,9 @@ public class ConfigureDeliveryRulesPage {
 
         for (int i = 0; i < monthDiff; i++) {
             nextMonthButton.click();
-            page.waitForTimeout(300);
         }
 
         dateCell(date).click();
-        page.waitForTimeout(500);
     }
 
     public void fillStartDate() {
@@ -116,11 +112,9 @@ public class ConfigureDeliveryRulesPage {
 
     public void clickNext() {
         nextButton.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickSubmit() {
         submitButton.click();
-        page.waitForTimeout(1000);
     }
 }

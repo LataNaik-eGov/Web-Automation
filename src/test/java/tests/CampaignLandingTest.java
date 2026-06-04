@@ -11,10 +11,7 @@ import pages.CampaignLandingPage;
     public void verifyCreateCampaignFromScratch() {
         CampaignLandingPage landingPage = new CampaignLandingPage(page);
         landingPage.clickCreateCampaign();
-        page.waitForLoadState();
         landingPage.clickScratchCard();
-        page.waitForLoadState();
         landingPage.clickContinue();
-        page.waitForLoadState();
     }
 }

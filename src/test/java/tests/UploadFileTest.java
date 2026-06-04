@@ -22,93 +22,58 @@ public class UploadFileTest extends BaseTest {
     private UploadFilePage setupUploadFilePage() {
         CampaignLandingPage landingPage = new CampaignLandingPage(page);
         landingPage.clickCreateCampaign();
-        page.waitForLoadState();
         landingPage.clickScratchCard();
         landingPage.clickContinue();
-        page.waitForLoadState();
-        page.waitForTimeout(4000);
 
         DraftCampaignPage draftPage = new DraftCampaignPage(page);
         draftPage.clickCampaignTypeDropdown();
         draftPage.selectCampaignType();
         draftPage.clickNext();
-        page.waitForLoadState();
-        page.waitForTimeout(3000);
 
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
-        page.waitForLoadState();
-        page.waitForTimeout(20000);
 
         draftPage.fillStartDate();
-        page.waitForTimeout(1000);
         draftPage.fillEndDate();
-        page.waitForTimeout(1000);
         draftPage.clickSubmit();
-        page.waitForLoadState();
-        page.waitForTimeout(4000);
 
         BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
         boundaryPage.clickDefineTarget();
-        page.waitForLoadState();
-        page.waitForTimeout(3000);
 
         boundaryPage.clickfirstlevel();
-        page.waitForTimeout(3000);
         boundaryPage.clicksecondlevel();
-        page.waitForTimeout(3000);
         boundaryPage.clickthirdlevel();
-        page.waitForTimeout(3000);
         boundaryPage.clickfourthlevel();
-        page.waitForLoadState();
-        page.waitForTimeout(3000);
 
         ConfigureDeliveryRulesPage deliveryRulesPage = new ConfigureDeliveryRulesPage(page);
         deliveryRulesPage.clickConfigureDelivery();
-        page.waitForLoadState();
-        page.waitForTimeout(3000);
 
         deliveryRulesPage.fillDates();
-        page.waitForTimeout(1000);
 
         deliveryRulesPage.clickNext();
-        page.waitForTimeout(3000);
 
         deliveryRulesPage.clickNext();
-        page.waitForTimeout(3000);
 
         deliveryRulesPage.clickSubmit();
-        page.waitForTimeout(3000);
 
         AppConfigurationPage appConfigPage = new AppConfigurationPage(page);
         appConfigPage.clickSetUpMobileApp();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
 
         appConfigPage.configureRegistrationAndDelivery();
-        page.waitForTimeout(2000);
 
         appConfigPage.configureCloseHousehold();
-        page.waitForTimeout(2000);
 
         appConfigPage.configureComplaints();
-        page.waitForTimeout(2000);
 
         appConfigPage.configureInventory();
-        page.waitForTimeout(2000);
 
         appConfigPage.configureStockReconciliation();
-        page.waitForTimeout(2000);
 
         appConfigPage.configureReports();
-        page.waitForTimeout(2000);
 
         appConfigPage.configurePermissionHandler();
-        page.waitForTimeout(2000);
 
         appConfigPage.clickGoBack();
-        page.waitForLoadState();
-        page.waitForTimeout(3000);
 
         return new UploadFilePage(page);
     }
@@ -118,8 +83,6 @@ public class UploadFileTest extends BaseTest {
         UploadFilePage uploadFilePage = setupUploadFilePage();
 
         uploadFilePage.clickUploadData();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
 
         uploadFilePage.closePopupByClickingOutside();
         uploadFilePage.clickSubmit();
@@ -133,13 +96,10 @@ public class UploadFileTest extends BaseTest {
         UploadFilePage uploadFilePage = setupUploadFilePage();
 
         uploadFilePage.clickUploadData();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
         uploadFilePage.closePopupByClickingOutside();
 
         Download download = uploadFilePage.downloadTemplate();
         Assert.assertNotNull(download, "Template download should have started");
-        page.waitForTimeout(2000);
 
         String baseUrl = ConfigReader.get("BASE_URL");
         String templateFile;
@@ -152,7 +112,6 @@ public class UploadFileTest extends BaseTest {
         Assert.assertNotNull(resource, templateFile + " should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();
         uploadFilePage.uploadFile(filePath);
-        page.waitForTimeout(2000);
 
         uploadFilePage.closePopupByClickingOutside();
         uploadFilePage.clickSubmit();

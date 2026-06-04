@@ -78,7 +78,6 @@ public class HRMSPage extends BasePage {
 
     public HRMSPage clickNext() {
         nextButton.click();
-        page.waitForLoadState();
         return this;
     }
 
@@ -242,15 +241,12 @@ public class HRMSPage extends BasePage {
     public HRMSPage searchEmployee(String empId) {
         form.waitFor(searchInput);
         form.fill(searchInput, empId);
-        page.waitForTimeout(500);
         form.clickDispatch(searchBtn);
-        page.waitForTimeout(2000);
         System.out.println("[HRMS] Searched for employee: " + empId);
         return this;
     }
 
     public HRMSPage openEmployeeResult() {
-        page.waitForTimeout(2000);
         String[] selectors = {
                 "table tbody tr td:first-child a",
                 "tbody tr td a",
@@ -261,7 +257,6 @@ public class HRMSPage extends BasePage {
             System.out.println("[HRMS] Selector '" + sel + "' count: " + count);
             if (count > 0) {
                 page.locator(sel).first().dispatchEvent("click");
-                page.waitForTimeout(2000);
                 System.out.println("[HRMS] Opened employee result using: " + sel);
                 return this;
             }
@@ -272,7 +267,6 @@ public class HRMSPage extends BasePage {
     public HRMSPage openTakeActionMenu() {
         form.waitFor(takeActionBtn);
         form.clickDispatch(takeActionBtn);
-        page.waitForTimeout(1000);
         System.out.println("[HRMS] Opened Take Action menu");
         return this;
     }
@@ -280,7 +274,6 @@ public class HRMSPage extends BasePage {
     private void clickMenuItemByText(String menuText) {
         page.locator(menuItem + ":has-text('" + menuText + "')")
                 .first().dispatchEvent("click");
-        page.waitForTimeout(2000);
         System.out.println("[HRMS] Clicked menu: " + menuText);
     }
 
@@ -296,28 +289,23 @@ public class HRMSPage extends BasePage {
         String currentName = page.locator(employeeNameInput).first().inputValue();
         String updatedName = currentName + " one";
         page.locator(employeeNameInput).first().fill(updatedName);
-        page.waitForTimeout(500);
         System.out.println("[HRMS] Updated employee name: " + currentName + " → " + updatedName);
         return this;
     }
 
     public HRMSPage fillRequiredEditFields() {
         form.selectDropdown(0, 0);
-        page.waitForTimeout(500);
 
         page.locator("div.master input.cursorPointer").first().scrollIntoViewIfNeeded();
-        page.waitForTimeout(500);
         try {
             page.locator("div.master input.cursorPointer").first()
                     .click(new Locator.ClickOptions().setForce(true));
         } catch (Exception e) {
             form.clickDispatch("div.master input.cursorPointer");
         }
-        page.waitForTimeout(1500);
 
         if (page.locator("div.server input[type='checkbox'], .profile-dropdown--item").count() == 0) {
             page.locator("div.master input.cursorPointer").first().press("ArrowDown");
-            page.waitForTimeout(1500);
         }
 
         if (page.locator("div.server input[type='checkbox']").count() > 0) {
@@ -332,16 +320,13 @@ public class HRMSPage extends BasePage {
             System.out.println("[HRMS] Role dropdown items found (no checkbox) — skipping to preserve existing");
         }
 
-        page.waitForTimeout(500);
         page.keyboard().press("Escape");
-        page.waitForTimeout(400);
         try {
             page.locator("h1, h2, .form-heading").first()
                     .click(new Locator.ClickOptions().setForce(true));
         } catch (Exception e) {
             page.evaluate("document.body.click()");
         }
-        page.waitForTimeout(400);
         System.out.println("[HRMS] Filled required edit fields");
         return this;
     }
@@ -352,14 +337,12 @@ public class HRMSPage extends BasePage {
 
         Locator btn = page.locator(saveBtnSelector).first();
         btn.dispatchEvent("click");
-        page.waitForTimeout(3000);
 
         try {
             String btnClass = btn.getAttribute("class",
                     new Locator.GetAttributeOptions().setTimeout(5000));
             if (btnClass != null && !btnClass.contains("disable")) {
                 btn.dispatchEvent("click");
-                page.waitForTimeout(3000);
             }
         } catch (Exception e) {
             System.out.println("[HRMS] Save button no longer present — form submitted on first click");
@@ -373,7 +356,6 @@ public class HRMSPage extends BasePage {
             if (page.locator(sel).count() > 0) {
                 page.locator(sel).first().dispatchEvent("click");
                 System.out.println("[HRMS] Confirmed save popup: " + sel);
-                page.waitForTimeout(3000);
                 break;
             }
         }
@@ -391,19 +373,16 @@ public class HRMSPage extends BasePage {
     public HRMSPage selectDeactivateReason() {
         form.waitFor(reasonDropdownSvg);
         form.clickDispatch(reasonDropdownSvg);
-        page.waitForTimeout(1500);
         if (page.locator(".profile-dropdown--item").count() > 0) {
             page.locator(".profile-dropdown--item").first().dispatchEvent("click");
             System.out.println("[HRMS] Selected deactivate reason");
         }
-        page.waitForTimeout(500);
         return this;
     }
 
     public HRMSPage confirmDeactivate() {
         form.waitFor(deactivateConfirm);
         form.clickDispatch(deactivateConfirm);
-        page.waitForTimeout(3000);
         System.out.println("[HRMS] Confirmed deactivation");
         return this;
     }
@@ -422,7 +401,6 @@ public class HRMSPage extends BasePage {
         dateInput.scrollIntoViewIfNeeded();
         dateInput.fill(today);
         dateInput.dispatchEvent("change");
-        page.waitForTimeout(500);
         System.out.println("[HRMS] Campaign date set to: " + today);
         return this;
     }
@@ -469,7 +447,6 @@ public class HRMSPage extends BasePage {
         } catch (Exception e) {
             page.navigate(page.url().split("/hrms")[0] + "/digit-ui/employee");
         }
-        page.waitForTimeout(2000);
         System.out.println("[HRMS] Navigated back to home");
     }
 }

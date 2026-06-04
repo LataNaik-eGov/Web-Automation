@@ -43,45 +43,32 @@ public class BoundarySelectionPage {
 
     public void clickDefineTarget() {
         DefineTarget.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickfirstlevel() {
         firstBoundaryLevel.click();
         firstCheckbox.check();
-        page.waitForTimeout(1000);
         outsideClick.click();
-        page.waitForTimeout(1000);
     }
 
     public void clicksecondlevel() {
         secondBoundaryLevel.click();
         thirdCheckbox.check();
-        page.waitForTimeout(1000);
         outsideClick.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickthirdlevel() {
         thirdBoundaryLevel.click();
-        page.waitForTimeout(1000);
         thirdCheckbox.check();
-        page.waitForTimeout(1000);
         outsideClick.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickfourthlevel() {
         fourthBoundaryLevel.click();
-        page.waitForTimeout(1000);
         thirdCheckbox.check();
-        page.waitForTimeout(1000);
         outsideClick.click();
-        page.waitForTimeout(1000);
         nextButton.click();
-        page.waitForTimeout(1000);
         submitButton.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickNextButton() {

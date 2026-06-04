@@ -12,11 +12,8 @@ public class DraftCampaignTest extends BaseTest {
     private DraftCampaignPage setupDraftPage() {
         CampaignLandingPage landingPage = new CampaignLandingPage(page);
         landingPage.clickCreateCampaign();
-        page.waitForLoadState();
         landingPage.clickScratchCard();
         landingPage.clickContinue();
-        page.waitForLoadState();
-        page.waitForTimeout(4000);
         return new DraftCampaignPage(page);
     }
 
@@ -25,8 +22,6 @@ public class DraftCampaignTest extends BaseTest {
         draftPage.clickCampaignTypeDropdown();
         draftPage.selectCampaignType();
         draftPage.clickNext();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
         return draftPage;
     }
 
@@ -34,8 +29,6 @@ public class DraftCampaignTest extends BaseTest {
         DraftCampaignPage draftPage = goToCampaignNameStep();
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
-        page.waitForLoadState();
-        page.waitForTimeout(6000);
         return draftPage;
     }
 
@@ -49,29 +42,21 @@ public class DraftCampaignTest extends BaseTest {
 
         draftPage.selectCampaignType();
         draftPage.clickNext();
-        page.waitForLoadState();
         Assert.assertTrue(page.url().contains("create-campaign"),
                 "Should remain on create campaign flow after selecting campaign type and clicking Next");
 
-        page.waitForTimeout(2000);
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
-        page.waitForLoadState();
-        page.waitForTimeout(4000);
 
         draftPage.fillStartDate();
-        page.waitForTimeout(1000);
         Assert.assertFalse(draftPage.getStartDateValue().isEmpty(),
                 "Start date input should not be empty after filling");
 
         draftPage.fillEndDate();
-        page.waitForTimeout(1000);
         Assert.assertFalse(draftPage.getEndDateValue().isEmpty(),
                 "End date input should not be empty after filling");
 
         draftPage.clickSubmit();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
         Assert.assertTrue(page.url().contains("create-campaign"),
                 "Should remain in the create campaign flow after submitting the full draft form");
     }
@@ -83,8 +68,6 @@ public class DraftCampaignTest extends BaseTest {
         DraftCampaignPage draftPage = goToCampaignNameStep();
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
         Assert.assertTrue(page.url().contains("create-campaign"),
                 "Should proceed to date step after entering a valid campaign name");
     }
@@ -94,10 +77,8 @@ public class DraftCampaignTest extends BaseTest {
         DraftCampaignPage draftPage = goToCampaignNameStep();
         draftPage.enterCampaignName("ThisCampaignNameIsWayTooLong123"); // 31 chars - above maximum of 30
         draftPage.clickNext();
-        page.waitForTimeout(500);
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
                 "Error should be shown for campaign name longer than 30 characters");
-        page.waitForTimeout(2000);
     }
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
@@ -105,10 +86,8 @@ public class DraftCampaignTest extends BaseTest {
         DraftCampaignPage draftPage = goToCampaignNameStep();
         draftPage.enterCampaignName("_Campaign");
         draftPage.clickNext();
-        page.waitForTimeout(500);
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
                 "Error should be shown for campaign name starting with an underscore");
-        page.waitForTimeout(2000);
     }
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
@@ -116,10 +95,8 @@ public class DraftCampaignTest extends BaseTest {
         DraftCampaignPage draftPage = goToCampaignNameStep();
         draftPage.enterCampaignName("Camp🎉ign1"); // 🎉 emoji
         draftPage.clickNext();
-        page.waitForTimeout(500);
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
                 "Error should be shown for campaign name containing an emoji");
-        page.waitForTimeout(2000);
     }
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
@@ -127,10 +104,8 @@ public class DraftCampaignTest extends BaseTest {
         DraftCampaignPage draftPage = goToCampaignNameStep();
         draftPage.enterCampaignName("Camp__aign");
         draftPage.clickNext();
-        page.waitForTimeout(500);
         Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
                 "Error should be shown for campaign name with consecutive underscores");
-        page.waitForTimeout(2000);
     }
 
     // ==================== Date Negative Test Cases ====================
@@ -139,23 +114,17 @@ public class DraftCampaignTest extends BaseTest {
     public void verifySubmitWithStartDateOnly() {
         DraftCampaignPage draftPage = goToDateStep();
         draftPage.fillStartDate();
-        page.waitForTimeout(500);
         draftPage.clickSubmit();
-        page.waitForTimeout(500);
         Assert.assertTrue(draftPage.isDateToastErrorVisible(),
                 "Toast error should appear when submitting with only start date filled");
-        page.waitForTimeout(2000);
     }
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifySubmitWithEndDateOnly() {
         DraftCampaignPage draftPage = goToDateStep();
         draftPage.fillEndDate();
-        page.waitForTimeout(500);
         draftPage.clickSubmit();
-        page.waitForTimeout(500);
         Assert.assertTrue(draftPage.isDateToastErrorVisible(),
                 "Toast error should appear when submitting with only end date filled");
-        page.waitForTimeout(2000);
     }
 }

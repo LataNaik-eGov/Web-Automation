@@ -56,12 +56,10 @@ public class DraftCampaignPage {
 
     public void clickCampaignTypeDropdown() {
         campaignTypeDropdown.click();
-        page.waitForTimeout(1000);
     }
 
     public void selectCampaignType() {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).click();
-        page.waitForTimeout(1000);
     }
 
     public boolean isCampaignTypeVisible() {
@@ -90,7 +88,6 @@ public class DraftCampaignPage {
         campaignName.clear();
         campaignName.fill(name);
         campaignName.press("Tab");
-        page.waitForTimeout(500);
     }
 
     public boolean isCampaignNameErrorVisible() {
@@ -128,7 +125,6 @@ public class DraftCampaignPage {
     private void selectDate(Locator input, LocalDate date) {
         input.waitFor(new Locator.WaitForOptions().setTimeout(45000));
         input.click();
-        page.waitForTimeout(500);
 
         String headerText = currentMonthLabel.innerText().trim();
         String[] parts = headerText.split(" ");
@@ -140,11 +136,9 @@ public class DraftCampaignPage {
 
         for (int i = 0; i < targetTotal - displayedTotal; i++) {
             nextMonthButton.click();
-            page.waitForTimeout(300);
         }
 
         dateCell(date).click();
-        page.waitForTimeout(500);
     }
 
     public void fillStartAndEndDates() {

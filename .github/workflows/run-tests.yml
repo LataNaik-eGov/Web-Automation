@@ -170,10 +170,17 @@ jobs:
         env:
           CI: true
 
+      - name: List screenshots
+        if: always()
+        run: |
+          echo "Checking for screenshots in workspace..."
+          find ${{ github.workspace }} -name "*.png" -type f || echo "No PNG files found"
+          ls -la ${{ github.workspace }}/screenshots/ 2>/dev/null || echo "screenshots/ directory not found"
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: failure-screenshots
-          path: ${{ github.workspace }}/screenshots/
+          path: ${{ github.workspace }}/**/FAILED_*.png
           if-no-files-found: ignore

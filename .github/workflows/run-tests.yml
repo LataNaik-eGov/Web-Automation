@@ -73,9 +73,9 @@ jobs:
       - name: Set test groups
         id: test-config
         run: |
-          GROUPS="${{ github.event.inputs.test_groups || 'payments-ui' }}"
-          echo "groups=$GROUPS" >> $GITHUB_OUTPUT
-          echo "Test groups to run: $GROUPS"
+          TEST_GROUPS="${{ github.event.inputs.test_groups || 'payments-ui' }}"
+          echo "groups=$TEST_GROUPS" >> $GITHUB_OUTPUT
+          echo "Test groups to run: $TEST_GROUPS"
 
       - name: Create .env file
         env:

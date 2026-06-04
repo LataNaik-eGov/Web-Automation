@@ -28,8 +28,6 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <suiteXmlFile>testng.xml</suiteXmlFile>
-    <test.class></test.class>
-    <test.groups></test.groups>
   </properties>
   <build>
     <plugins>
@@ -43,8 +41,6 @@
           <suiteXmlFiles>
             <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
           </suiteXmlFiles>
-          <test>${test.class}</test>
-          <groups>${test.groups}</groups>
         </configuration>
       </plugin>
 

@@ -7,6 +7,17 @@
         </packages>
     </test>
 
+    <test name="Payments UI Tests">
+        <groups>
+            <run>
+                <include name="payments-ui"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.ComplaintTest"/>
+        </classes>
+    </test>
+
     <test name="Sanity Tests">
         <groups>
             <run>

@@ -1,18 +1,62 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import base.BaseTest;
 import pages.AppConfigurationPage;
+import pages.BoundarySelectionPage;
+import pages.CampaignLandingPage;
+import pages.ConfigureDeliveryRulesPage;
+import pages.DraftCampaignPage;
 
-public class AppConfigurationTest extends ConfigureDeliveryRulesTest {
+public class AppConfigurationTest extends BaseTest {
 
-    protected AppConfigurationPage appConfigPage;
+    private AppConfigurationPage setupAppConfigPage() {
+        CampaignLandingPage landingPage = new CampaignLandingPage(page);
+        landingPage.clickCreateCampaign();
+        page.waitForLoadState();
+        landingPage.clickScratchCard();
+        landingPage.clickContinue();
+        page.waitForLoadState();
+        page.waitForTimeout(4000);
 
-    @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToConfigureDeliveryRules")
-    public void navigateToAppConfiguration() {
-        // Complete delivery rules to reach app configuration page
+        DraftCampaignPage draftPage = new DraftCampaignPage(page);
+        draftPage.clickCampaignTypeDropdown();
+        draftPage.selectCampaignType();
+        draftPage.clickNext();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        draftPage.clearAndEnterDynamicCampaignName();
+        draftPage.clickNext();
+        page.waitForLoadState();
+        page.waitForTimeout(30000);
+
+        draftPage.fillStartDate();
+        page.waitForTimeout(1000);
+        draftPage.fillEndDate();
+        page.waitForTimeout(1000);
+        draftPage.clickSubmit();
+        page.waitForLoadState();
+        page.waitForTimeout(4000);
+
+        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
+        boundaryPage.clickDefineTarget();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        boundaryPage.clickfirstlevel();
+        page.waitForTimeout(3000);
+        boundaryPage.clicksecondlevel();
+        page.waitForTimeout(3000);
+        boundaryPage.clickthirdlevel();
+        page.waitForTimeout(3000);
+        boundaryPage.clickfourthlevel();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        ConfigureDeliveryRulesPage deliveryRulesPage = new ConfigureDeliveryRulesPage(page);
         deliveryRulesPage.clickConfigureDelivery();
         page.waitForLoadState();
         page.waitForTimeout(3000);
@@ -29,79 +73,59 @@ public class AppConfigurationTest extends ConfigureDeliveryRulesTest {
         deliveryRulesPage.clickSubmit();
         page.waitForTimeout(3000);
 
-        appConfigPage = new AppConfigurationPage(page);
+        return new AppConfigurationPage(page);
     }
-
-    @Override
-    @Test(enabled = false)
-    public void verifyConfigureDeliveryRules() {}
-
-    @Override @Test(enabled = false) public void verifyNextWithFirstStartDateOnly() {}
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyProximitySearchWithEmptyLabel() {
-        // Step 1: Open Registration & Delivery configuration
+        AppConfigurationPage appConfigPage = setupAppConfigPage();
+
         appConfigPage.clickSetUpMobileApp();
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
         appConfigPage.clickRegistrationAndDeliveryConfigure();
-
-        // Step 2: Click on Search Beneficiary in the Flows panel
         appConfigPage.clickSearchBeneficiaryFlow();
-
-        // Step 3: Click on Proximity Search element in Field properties
         appConfigPage.clickProximitySearchElement();
-
-        // Step 4: Clear the Label field
         appConfigPage.clearLabelField();
         page.waitForTimeout(500);
 
-        // Step 5: Click Submit
         appConfigPage.clickSaveConfiguration();
         page.waitForTimeout(2000);
 
-        // Step 6: Verify toast error appears
         Assert.assertTrue(appConfigPage.isLabelLocalizationToastVisible(),
                 "Toast 'Label localization is empty for field' should appear when Proximity Search label is cleared");
     }
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyAppConfiguration() {
-        // Step 1: Click Set Up Mobile App
+        AppConfigurationPage appConfigPage = setupAppConfigPage();
+
         appConfigPage.clickSetUpMobileApp();
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        // Step 2: Configure Registration & Delivery
         appConfigPage.configureRegistrationAndDelivery();
         page.waitForTimeout(2000);
 
-        // Step 3: Configure Close Household
         appConfigPage.configureCloseHousehold();
         page.waitForTimeout(2000);
 
-        // Step 4: Configure Complaints
         appConfigPage.configureComplaints();
         page.waitForTimeout(2000);
 
-        // Step 5: Configure Inventory
         appConfigPage.configureInventory();
         page.waitForTimeout(2000);
 
-        // Step 6: Configure Stock Reconciliation
         appConfigPage.configureStockReconciliation();
         page.waitForTimeout(2000);
 
-        // Step 7: Configure Reports
         appConfigPage.configureReports();
         page.waitForTimeout(2000);
 
-        // Step 8: Configure Permission Handler
         appConfigPage.configurePermissionHandler();
         page.waitForTimeout(2000);
 
-        // Step 9: Click Go Back
         appConfigPage.clickGoBack();
         page.waitForTimeout(2000);
     }

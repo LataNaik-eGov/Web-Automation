@@ -1,88 +1,98 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import base.BaseTest;
+import pages.BoundarySelectionPage;
+import pages.CampaignLandingPage;
 import pages.ConfigureDeliveryRulesPage;
+import pages.DraftCampaignPage;
 
-public class ConfigureDeliveryRulesTest extends BoundarySelectionTest {
+public class ConfigureDeliveryRulesTest extends BaseTest {
 
-    protected ConfigureDeliveryRulesPage deliveryRulesPage;
+    private ConfigureDeliveryRulesPage setupDeliveryRulesPage() {
+        CampaignLandingPage landingPage = new CampaignLandingPage(page);
+        landingPage.clickCreateCampaign();
+        page.waitForLoadState();
+        landingPage.clickScratchCard();
+        landingPage.clickContinue();
+        page.waitForLoadState();
+        page.waitForTimeout(4000);
 
-    @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToBoundarySelection")
-    public void navigateToConfigureDeliveryRules() {
-        // Complete boundary selection to reach delivery rules page
+        DraftCampaignPage draftPage = new DraftCampaignPage(page);
+        draftPage.clickCampaignTypeDropdown();
+        draftPage.selectCampaignType();
+        draftPage.clickNext();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        draftPage.clearAndEnterDynamicCampaignName();
+        draftPage.clickNext();
+        page.waitForLoadState();
+        page.waitForTimeout(30000);
+
+        draftPage.fillStartDate();
+        page.waitForTimeout(1000);
+        draftPage.fillEndDate();
+        page.waitForTimeout(1000);
+        draftPage.clickSubmit();
+        page.waitForLoadState();
+        page.waitForTimeout(4000);
+
+        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
+        boundaryPage.clickDefineTarget();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
         boundaryPage.clickfirstlevel();
         page.waitForTimeout(3000);
-
         boundaryPage.clicksecondlevel();
         page.waitForTimeout(3000);
-
         boundaryPage.clickthirdlevel();
         page.waitForTimeout(3000);
-
         boundaryPage.clickfourthlevel();
         page.waitForLoadState();
         page.waitForTimeout(3000);
 
-        deliveryRulesPage = new ConfigureDeliveryRulesPage(page);
+        return new ConfigureDeliveryRulesPage(page);
     }
-
-    @Override
-    @Test(enabled = false)
-    public void verifyBoundarySelection() {}
-
-    @Override @Test(enabled = false) public void verifyBoundarySelectionWithPartialSelection() {}
-
-    @Override @Test(enabled = false) public void verifyValidCampaignName() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameTooLong() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameStartsWithSpecialChar() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameContainsEmoji() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameConsecutiveUnderscores() {}
-    @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}
-    @Override @Test(enabled = false) public void verifySubmitWithEndDateOnly() {}
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyNextWithFirstStartDateOnly() {
-        // Click Configure Delivery to open the delivery rules form
+        ConfigureDeliveryRulesPage deliveryRulesPage = setupDeliveryRulesPage();
+
         deliveryRulesPage.clickConfigureDelivery();
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        // Fill only start date — end date intentionally left empty
         deliveryRulesPage.fillStartDate();
         page.waitForTimeout(1000);
 
-        // Click Next without filling end date
         deliveryRulesPage.clickNext();
         page.waitForTimeout(2000);
 
-        // Verify toast error appears
         Assert.assertTrue(deliveryRulesPage.isCycleDateToastVisible(),
                 "Toast 'Please fill the cycle dates to move ahead.' should appear when only the start date is filled");
     }
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyConfigureDeliveryRules() {
-        // Step 1: Click Configure Delivery button on campaign dashboard
+        ConfigureDeliveryRulesPage deliveryRulesPage = setupDeliveryRulesPage();
+
         deliveryRulesPage.clickConfigureDelivery();
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        // Step 2: Fill dates (BEDNET: 1 start/end, MR-DN: 3 cycles with 1-week gaps)
         deliveryRulesPage.fillDates();
         page.waitForTimeout(1000);
 
-        // Step 4: Click Next
         deliveryRulesPage.clickNext();
         page.waitForTimeout(2000);
 
-        // Step 5: Click Next again
         deliveryRulesPage.clickNext();
         page.waitForTimeout(2000);
 
-        // Step 6: Click Submit
         deliveryRulesPage.clickSubmit();
         page.waitForTimeout(2000);
     }

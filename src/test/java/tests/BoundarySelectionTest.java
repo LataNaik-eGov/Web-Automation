@@ -1,17 +1,25 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import base.BaseTest;
 import pages.BoundarySelectionPage;
+import pages.CampaignLandingPage;
+import pages.DraftCampaignPage;
 
-public class BoundarySelectionTest extends DraftCampaignTest {
+public class BoundarySelectionTest extends BaseTest {
 
-    protected BoundarySelectionPage boundaryPage;
+    private BoundarySelectionPage setupBoundaryPage() {
+        CampaignLandingPage landingPage = new CampaignLandingPage(page);
+        landingPage.clickCreateCampaign();
+        page.waitForLoadState();
+        landingPage.clickScratchCard();
+        landingPage.clickContinue();
+        page.waitForLoadState();
+        page.waitForTimeout(4000);
 
-    @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToCreateCampaign")
-    public void navigateToBoundarySelection() {
+        DraftCampaignPage draftPage = new DraftCampaignPage(page);
         draftPage.clickCampaignTypeDropdown();
         draftPage.selectCampaignType();
         draftPage.clickNext();
@@ -21,7 +29,7 @@ public class BoundarySelectionTest extends DraftCampaignTest {
         draftPage.clearAndEnterDynamicCampaignName();
         draftPage.clickNext();
         page.waitForLoadState();
-        page.waitForTimeout(20000);
+        page.waitForTimeout(30000);
 
         draftPage.fillStartDate();
         page.waitForTimeout(1000);
@@ -31,54 +39,39 @@ public class BoundarySelectionTest extends DraftCampaignTest {
         page.waitForLoadState();
         page.waitForTimeout(4000);
 
-        boundaryPage = new BoundarySelectionPage(page);
+        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
         boundaryPage.clickDefineTarget();
         page.waitForLoadState();
         page.waitForTimeout(3000);
+        return boundaryPage;
     }
-
-    @Override @Test(enabled = false) public void verifyDraftCampaignFlow() {}
-    @Override @Test(enabled = false) public void verifyValidCampaignName() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameTooLong() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameStartsWithSpecialChar() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameContainsEmoji() {}
-    @Override @Test(enabled = false) public void verifyCampaignNameConsecutiveUnderscores() {}
-    @Override @Test(enabled = false) public void verifySubmitWithStartDateOnly() {}
-    @Override @Test(enabled = false) public void verifySubmitWithEndDateOnly() {}
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyBoundarySelection() {
-        // Step 1: Select first boundary level
+        BoundarySelectionPage boundaryPage = setupBoundaryPage();
+
         boundaryPage.clickfirstlevel();
         page.waitForTimeout(2000);
-        // Step 2: Select second boundary level
         boundaryPage.clicksecondlevel();
         page.waitForTimeout(2000);
-
-        // Step 3: Select third boundary level
         boundaryPage.clickthirdlevel();
         page.waitForTimeout(2000);
-
-        // Step 4: Select fourth boundary level
         boundaryPage.clickfourthlevel();
         page.waitForTimeout(2000);
-
     }
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyBoundarySelectionWithPartialSelection() {
-        // Select only first two boundary levels (Country and Province), leave District and Administrative Post empty
+        BoundarySelectionPage boundaryPage = setupBoundaryPage();
+
         boundaryPage.clickfirstlevel();
         page.waitForTimeout(2000);
-
         boundaryPage.clicksecondlevel();
         page.waitForTimeout(2000);
 
-        // Click Next without selecting all mandatory boundary levels
         boundaryPage.clickNextButton();
         page.waitForTimeout(2000);
 
-        // Verify toast error appears for unfilled mandatory fields
         Assert.assertTrue(boundaryPage.isMandatoryFieldsToastVisible(),
                 "Toast error 'Please fill all the mandatory fields.' should appear when District and Administrative Post are not selected");
     }

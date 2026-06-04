@@ -1,22 +1,15 @@
 package tests;
 
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
 import pages.CampaignLandingPage;
 
-public class CampaignLandingTest extends BaseTest {
-
-    protected CampaignLandingPage landingPage;
-
-    @BeforeMethod(alwaysRun = true)
-    public void navigateToLandingPage() {
-        landingPage = new CampaignLandingPage(page);
-    }
+ public class CampaignLandingTest extends BaseTest {
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyCreateCampaignFromScratch() {
+        CampaignLandingPage landingPage = new CampaignLandingPage(page);
         landingPage.clickCreateCampaign();
         page.waitForLoadState();
         landingPage.clickScratchCard();

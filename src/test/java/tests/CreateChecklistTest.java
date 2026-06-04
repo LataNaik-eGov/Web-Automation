@@ -2,23 +2,116 @@ package tests;
 
 import com.microsoft.playwright.Download;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import base.BaseTest;
+import pages.AppConfigurationPage;
+import pages.BoundarySelectionPage;
+import pages.CampaignLandingPage;
+import pages.ConfigureDeliveryRulesPage;
 import pages.CreateChecklist;
+import pages.DraftCampaignPage;
+import pages.UploadFilePage;
 import utils.ConfigReader;
 
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-public class CreateChecklistTest extends UploadFileTest {
+public class CreateChecklistTest extends BaseTest {
 
-    protected CreateChecklist createChecklistPage;
+    private CreateChecklist setupCreateChecklistPage() throws URISyntaxException {
+        CampaignLandingPage landingPage = new CampaignLandingPage(page);
+        landingPage.clickCreateCampaign();
+        page.waitForLoadState();
+        landingPage.clickScratchCard();
+        landingPage.clickContinue();
+        page.waitForLoadState();
+        page.waitForTimeout(4000);
 
-    @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToUploadFile")
-    public void navigateToCreateChecklist() throws URISyntaxException {
-        // Run upload file steps first
+        DraftCampaignPage draftPage = new DraftCampaignPage(page);
+        draftPage.clickCampaignTypeDropdown();
+        draftPage.selectCampaignType();
+        draftPage.clickNext();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        draftPage.clearAndEnterDynamicCampaignName();
+        draftPage.clickNext();
+        page.waitForLoadState();
+        page.waitForTimeout(20000);
+
+        draftPage.fillStartDate();
+        page.waitForTimeout(1000);
+        draftPage.fillEndDate();
+        page.waitForTimeout(1000);
+        draftPage.clickSubmit();
+        page.waitForLoadState();
+        page.waitForTimeout(4000);
+
+        BoundarySelectionPage boundaryPage = new BoundarySelectionPage(page);
+        boundaryPage.clickDefineTarget();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        boundaryPage.clickfirstlevel();
+        page.waitForTimeout(3000);
+        boundaryPage.clicksecondlevel();
+        page.waitForTimeout(3000);
+        boundaryPage.clickthirdlevel();
+        page.waitForTimeout(3000);
+        boundaryPage.clickfourthlevel();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        ConfigureDeliveryRulesPage deliveryRulesPage = new ConfigureDeliveryRulesPage(page);
+        deliveryRulesPage.clickConfigureDelivery();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        deliveryRulesPage.fillDates();
+        page.waitForTimeout(1000);
+
+        deliveryRulesPage.clickNext();
+        page.waitForTimeout(3000);
+
+        deliveryRulesPage.clickNext();
+        page.waitForTimeout(3000);
+
+        deliveryRulesPage.clickSubmit();
+        page.waitForTimeout(3000);
+
+        AppConfigurationPage appConfigPage = new AppConfigurationPage(page);
+        appConfigPage.clickSetUpMobileApp();
+        page.waitForLoadState();
+        page.waitForTimeout(2000);
+
+        appConfigPage.configureRegistrationAndDelivery();
+        page.waitForTimeout(2000);
+
+        appConfigPage.configureCloseHousehold();
+        page.waitForTimeout(2000);
+
+        appConfigPage.configureComplaints();
+        page.waitForTimeout(2000);
+
+        appConfigPage.configureInventory();
+        page.waitForTimeout(2000);
+
+        appConfigPage.configureStockReconciliation();
+        page.waitForTimeout(2000);
+
+        appConfigPage.configureReports();
+        page.waitForTimeout(2000);
+
+        appConfigPage.configurePermissionHandler();
+        page.waitForTimeout(2000);
+
+        appConfigPage.clickGoBack();
+        page.waitForLoadState();
+        page.waitForTimeout(3000);
+
+        UploadFilePage uploadFilePage = new UploadFilePage(page);
         uploadFilePage.clickUploadData();
         page.waitForLoadState();
         page.waitForTimeout(2000);
@@ -45,41 +138,29 @@ public class CreateChecklistTest extends UploadFileTest {
         page.waitForLoadState();
         page.waitForTimeout(3000);
 
-        createChecklistPage = new CreateChecklist(page);
+        return new CreateChecklist(page);
     }
 
-    @Override
-    @Test(enabled = false)
-    public void verifyUploadFile() {}
-
-    @Override
-    @Test(enabled = false)
-    public void verifyProximitySearchWithEmptyLabel() {}
-
     @Test(groups = {"regression", "workbench-ui", "sanity"})
-    public void verifyCreateChecklist() {
-        // Step 1: Click Create Checklist
+    public void verifyCreateChecklist() throws URISyntaxException {
+        CreateChecklist createChecklistPage = setupCreateChecklistPage();
+
         createChecklistPage.clickCreateChecklist();
         page.waitForLoadState();
         page.waitForTimeout(2000);
 
-        // Step 2: Configure List
         createChecklistPage.clickConfigureList();
         page.waitForTimeout(2000);
 
-        // Step 3: Configure Checklist
         createChecklistPage.clickConfigureChecklist();
         page.waitForTimeout(2000);
 
-        // Step 4: Confirm Checklist
         createChecklistPage.clickConfirmChecklist();
         page.waitForTimeout(2000);
 
-        // Step 5: Back to Homepage
         createChecklistPage.clickBackToHomepage();
         page.waitForTimeout(2000);
 
-        // Step 6: Create Campaign
         createChecklistPage.clickCreateCampaign();
         page.waitForTimeout(2000);
     }

@@ -7,7 +7,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
 
-public class BoundarySelectionPage {
+public class BoundarySelectionPage extends BasePage {
 
     // Campaign template step elements
     private Locator defineTarget;
@@ -25,7 +25,7 @@ public class BoundarySelectionPage {
 
 
     public BoundarySelectionPage(Page page) {
-
+        super(page);
         this.defineTarget = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Define Target Areas"));
         this.firstBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).first();
         this.secondBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(1);
@@ -47,34 +47,54 @@ public class BoundarySelectionPage {
     }
 
     public void clickFirstLevel() {
+        waitForVisible(firstBoundaryLevel);
+        wait(500);
         firstBoundaryLevel.click();
+        waitForVisible(firstCheckbox);
+        wait(500);
         firstCheckbox.check();
         outsideClick.click();
     }
 
     public void clickSecondLevel() {
+        waitForVisible(secondBoundaryLevel);
+        wait(500);
         secondBoundaryLevel.click();
+        waitForVisible(secondCheckbox);
+        wait(500);
         secondCheckbox.check();
         outsideClick.click();
     }
 
     public void clickThirdLevel() {
+        waitForVisible(thirdBoundaryLevel);
+        wait(500);
         thirdBoundaryLevel.click();
+        waitForVisible(thirdCheckbox);
+        wait(500);
         thirdCheckbox.check();
         outsideClick.click();
     }
 
     public void clickFourthLevel() {
+        waitForVisible(fourthBoundaryLevel);
+        wait(500);
         fourthBoundaryLevel.click();
+        waitForVisible(thirdCheckbox);
+        wait(500);
         thirdCheckbox.check();
         outsideClick.click();
     }
 
     public void clickNextButton() {
+        waitForVisible(nextButton);
+        wait(500);
         nextButton.click();
     }
 
     public void clickSubmitButton() {
+        waitForVisible(submitButton);
+        wait(500);
         submitButton.click();
     }
 

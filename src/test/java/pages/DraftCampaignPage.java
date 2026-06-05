@@ -10,9 +10,7 @@ import java.time.Month;
 import java.util.Locale;
 import java.util.Map;
 
-public class DraftCampaignPage {
-
-    private Page page;
+public class DraftCampaignPage extends BasePage {
 
     private Locator campaignTypeDropdown;
     private Locator nextButton;
@@ -36,7 +34,7 @@ public class DraftCampaignPage {
     );
 
     public DraftCampaignPage(Page page) {
-        this.page = page;
+        super(page);
         this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
 
@@ -55,11 +53,16 @@ public class DraftCampaignPage {
     // --- Actions ---
 
     public void clickCampaignTypeDropdown() {
+        waitForVisible(campaignTypeDropdown);
+        wait(500);
         campaignTypeDropdown.click();
     }
 
     public void selectCampaignType() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).click();
+        Locator option = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true));
+        waitForVisible(option);
+        wait(500);
+        option.click();
     }
 
     public boolean isCampaignTypeVisible() {
@@ -67,14 +70,20 @@ public class DraftCampaignPage {
     }
 
     public void clickNext() {
+        waitForVisible(nextButton);
+        wait(500);
         nextButton.click();
     }
 
     public void clickSubmit() {
+        waitForVisible(submitButton);
+        wait(500);
         submitButton.click();
     }
 
     public void clearAndEnterDynamicCampaignName() {
+        waitForVisible(campaignName);
+        wait(500);
         campaignName.clear();
         String prefix = campaignType.replace(" ", "");
         if (prefix.length() > 22) prefix = prefix.substring(0, 22);
@@ -85,6 +94,8 @@ public class DraftCampaignPage {
     }
 
     public void enterCampaignName(String name) {
+        waitForVisible(campaignName);
+        wait(500);
         campaignName.clear();
         campaignName.fill(name);
         campaignName.press("Tab");

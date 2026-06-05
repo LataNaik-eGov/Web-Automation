@@ -9,9 +9,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import utils.ConfigReader;
 
-public class ConfigureDeliveryRulesPage {
+public class ConfigureDeliveryRulesPage extends BasePage {
 
-    private Page page;
     private String campaignType;
 
     // Delivery rules elements
@@ -27,8 +26,7 @@ public class ConfigureDeliveryRulesPage {
     private Locator nextMonthButton;
 
     public ConfigureDeliveryRulesPage(Page page) {
-
-        this.page = page;
+        super(page);
         this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
         this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Start Planning Deliveries"));
         this.startDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
@@ -44,6 +42,8 @@ public class ConfigureDeliveryRulesPage {
     // --- Actions ---
 
     public void clickConfigureDelivery() {
+        waitForVisible(configureDeliveryButton);
+        wait(500);
         configureDeliveryButton.click();
     }
 
@@ -53,6 +53,8 @@ public class ConfigureDeliveryRulesPage {
     }
 
     private void selectDate(Locator textbox, LocalDate date) {
+        waitForVisible(textbox);
+        wait(500);
         textbox.click();
 
         // Navigate months if needed
@@ -116,10 +118,14 @@ public class ConfigureDeliveryRulesPage {
     }
 
     public void clickNext() {
+        waitForVisible(nextButton);
+        wait(500);
         nextButton.click();
     }
 
     public void clickSubmit() {
+        waitForVisible(submitButton);
+        wait(500);
         submitButton.click();
     }
 }

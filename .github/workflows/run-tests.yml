@@ -170,6 +170,36 @@ jobs:
         env:
           CI: true
 
+      - name: Test summary
+        if: always()
+        run: |
+          report_dir="target/surefire-reports"
+          total=0; passed=0; failed=0; errors=0; skipped=0
+          if ls "$report_dir"/TEST-*.xml 1>/dev/null 2>&1; then
+            for f in "$report_dir"/TEST-*.xml; do
+              t=$(grep -o 'tests="[0-9]*"'    "$f" | grep -o '[0-9]*' | head -1)
+              fl=$(grep -o 'failures="[0-9]*"' "$f" | grep -o '[0-9]*' | head -1)
+              e=$(grep -o 'errors="[0-9]*"'   "$f" | grep -o '[0-9]*' | head -1)
+              s=$(grep -o 'skipped="[0-9]*"'  "$f" | grep -o '[0-9]*' | head -1)
+              total=$((total   + ${t:-0}))
+              failed=$((failed + ${fl:-0}))
+              errors=$((errors + ${e:-0}))
+              skipped=$((skipped + ${s:-0}))
+            done
+            passed=$((total - failed - errors - skipped))
+            echo "[INFO] ========================================"
+            echo "[INFO]   TEST RESULTS SUMMARY"
+            echo "[INFO] ========================================"
+            echo "[INFO] Tests run : $total"
+            echo "[INFO] Passed    : $passed"
+            echo "[INFO] Failures  : $failed"
+            echo "[INFO] Errors    : $errors"
+            echo "[INFO] Skipped   : $skipped"
+            echo "[INFO] ========================================"
+          else
+            echo "[INFO] No surefire XML reports found in $report_dir"
+          fi
+
       - name: List screenshots
         if: always()
         run: |

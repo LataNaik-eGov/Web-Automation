@@ -3,6 +3,7 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import utils.ConfigReader;
 
 import java.util.Map;
@@ -20,14 +21,14 @@ public class AppConfigurationPage {
 
     // App configuration elements
     private Locator setUpMobileAppButton;
-    private Locator registrationAndDelivery;
+    private Locator registrationAndDeliveryModule;
     private Locator deliveryTypeDropdown;
-    private Locator closeHousehold;
-    private Locator complaints;
-    private Locator inventory;
-    private Locator stockReconciliation;
-    private Locator reports;
-    private Locator permissionHandler;
+    private Locator closeHouseholdModule;
+    private Locator complaintsModule;
+    private Locator inventoryModule;
+    private Locator stockReconciliationModule;
+    private Locator reportsModule;
+    private Locator permissionHandlerModule;
     private Locator saveConfigurationButton;
     private Locator goBackButton;
     private Locator searchBeneficiaryFlow;
@@ -43,19 +44,19 @@ public class AppConfigurationPage {
                 new Page.GetByRoleOptions().setName("Select an option"));
         this.setUpMobileAppButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Set App Configurations"));
-        this.registrationAndDelivery = page.getByRole(AriaRole.BUTTON,
+        this.registrationAndDeliveryModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Register eligible children")).getByLabel("Configure");
-        this.closeHousehold = page.getByRole(AriaRole.BUTTON,
+        this.closeHouseholdModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Record households that were")).getByLabel("Configure");
-        this.complaints = page.getByRole(AriaRole.BUTTON,
+        this.complaintsModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Let field workers log issues")).getByLabel("Configure");
-        this.inventory = page.getByRole(AriaRole.BUTTON,
+        this.inventoryModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Track and update resources")).getByLabel("Configure");
-        this.stockReconciliation = page.getByRole(AriaRole.BUTTON,
+        this.stockReconciliationModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Compare reported stock")).getByLabel("Configure");
-        this.reports = page.getByRole(AriaRole.BUTTON,
+        this.reportsModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Access summary and detailed")).getByLabel("Configure");
-        this.permissionHandler = page.getByRole(AriaRole.BUTTON,
+        this.permissionHandlerModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Manages user permissions")).getByLabel("Configure");
         this.saveConfigurationButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Submit"));
@@ -70,6 +71,7 @@ public class AppConfigurationPage {
     // --- Actions ---
 
     public void clickSetUpMobileApp() {
+        setUpMobileAppButton.waitFor(new Locator.WaitForOptions().setTimeout(15000));
         setUpMobileAppButton.click();
     }
 
@@ -83,42 +85,42 @@ public class AppConfigurationPage {
     }
 
     public void configureRegistrationAndDelivery() {
-        registrationAndDelivery.click();
+        registrationAndDeliveryModule.click();
         clickSaveConfiguration();
     }
 
     public void configureCloseHousehold() {
-        closeHousehold.click();
+        closeHouseholdModule.click();
         clickSaveConfiguration();
     }
 
     public void configureComplaints() {
-        complaints.click();
+        complaintsModule.click();
         clickSaveConfiguration();
     }
 
     public void configureInventory() {
-        inventory.click();
+        inventoryModule.click();
         clickSaveConfiguration();
     }
 
     public void configureStockReconciliation() {
-        stockReconciliation.click();
+        stockReconciliationModule.click();
         clickSaveConfiguration();
     }
 
     public void configureReports() {
-        reports.click();
+        reportsModule.click();
         clickSaveConfiguration();
     }
 
     public void configurePermissionHandler() {
-        permissionHandler.click();
+        permissionHandlerModule.click();
         clickSaveConfiguration();
     }
 
     public void clickRegistrationAndDeliveryConfigure() {
-        registrationAndDelivery.click();
+        registrationAndDeliveryModule.click();
     }
 
     public void clickSearchBeneficiaryFlow() {

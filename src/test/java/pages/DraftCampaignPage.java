@@ -42,8 +42,8 @@ public class DraftCampaignPage extends BasePage {
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.campaignName = page.locator("input[placeholder='CampaignName_Month_Year']");
-        this.startDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
-        this.endDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
+        this.startDateInput = page.getByPlaceholder("Start date");
+        this.endDateInput = page.getByPlaceholder("End date");
         this.campaignNameError = page.getByText("Please add valid campaign name as per the guidelines.");
         this.dateToastError = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
@@ -90,7 +90,7 @@ public class DraftCampaignPage extends BasePage {
         String dynamicName = prefix + java.time.LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("HHssSSS"));
         campaignName.fill(dynamicName);
-        campaignName.press("Enter");
+        campaignName.press("Tab");
     }
 
     public void enterCampaignName(String name) {
@@ -134,8 +134,9 @@ public class DraftCampaignPage extends BasePage {
     }
 
     private void selectDate(Locator input, LocalDate date) {
-        input.waitFor(new Locator.WaitForOptions().setTimeout(45000));
+        input.waitFor(new Locator.WaitForOptions().setTimeout(15000));
         input.click();
+        currentMonthLabel.waitFor(new Locator.WaitForOptions().setTimeout(10000));
 
         String headerText = currentMonthLabel.innerText().trim();
         String[] parts = headerText.split(" ");

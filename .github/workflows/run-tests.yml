@@ -3,14 +3,32 @@ name: Run Web Automation Tests
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
-      test_groups:
-        description: 'Test groups to run (comma-separated, e.g., payments-ui,workbench-ui)'
-        required: false
-        default: 'payments-ui,workbench-ui'
+      group_payments_ui:
+        description: 'Run payments-ui tests'
+        type: boolean
+        default: true
+      group_workbench_ui:
+        description: 'Run workbench-ui tests'
+        type: boolean
+        default: false
+      group_common:
+        description: 'Run common tests'
+        type: boolean
+        default: false
+      group_regression:
+        description: 'Run regression tests'
+        type: boolean
+        default: false
+      group_sanity:
+        description: 'Run sanity tests'
+        type: boolean
+        default: false
+      group_negative:
+        description: 'Run negative tests'
+        type: boolean
+        default: false
       test_class:
         description: 'Specific test class to run (e.g., tests.LoginTest)'
         required: false
@@ -73,9 +91,20 @@ jobs:
       - name: Set test groups
         id: test-config
         run: |
-          TEST_GROUPS="${{ github.event.inputs.test_groups || 'payments-ui' }}"
-          echo "groups=$TEST_GROUPS" >> $GITHUB_OUTPUT
-          echo "Test groups to run: $TEST_GROUPS"
+          groups=""
+          add_group() {
+            if [ -n "$groups" ]; then groups="$groups,$1"; else groups="$1"; fi
+          }
+          [ "${{ github.event.inputs.group_payments_ui }}"  == "true" ] && add_group "payments-ui"
+          [ "${{ github.event.inputs.group_workbench_ui }}" == "true" ] && add_group "workbench-ui"
+          [ "${{ github.event.inputs.group_common }}"       == "true" ] && add_group "common"
+          [ "${{ github.event.inputs.group_regression }}"   == "true" ] && add_group "regression"
+          [ "${{ github.event.inputs.group_sanity }}"       == "true" ] && add_group "sanity"
+          [ "${{ github.event.inputs.group_negative }}"     == "true" ] && add_group "negative"
+          # push to main (non-dispatch) always runs the default group
+          if [ -z "$groups" ]; then groups="payments-ui"; fi
+          echo "groups=$groups" >> $GITHUB_OUTPUT
+          echo "Test groups to run: $groups"
 
       - name: Create .env file
         env:
@@ -139,7 +168,7 @@ jobs:
           echo "  TEST EXECUTION ENVIRONMENT"
           echo "=========================================="
           echo "Environment  : ${{ github.event.inputs.environment || 'DEMO' }}"
-          echo "Test Groups  : ${{ github.event.inputs.test_groups || 'payments-ui,workbench-ui' }}"
+          echo "Test Groups  : ${{ steps.test-config.outputs.groups }}"
           if [ -n "${{ github.event.inputs.test_class }}" ]; then
             echo "Test Class   : ${{ github.event.inputs.test_class }}"
           fi

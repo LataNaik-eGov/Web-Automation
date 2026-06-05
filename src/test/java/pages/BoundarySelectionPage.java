@@ -31,10 +31,9 @@ public class BoundarySelectionPage {
         this.secondBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(1);
         this.thirdBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(2);
         this.fourthBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(3);
-        // Use regex to match heading containing "Country" — the asterisk is a separate DOM element for required-field indicator
         this.outsideClick = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName(Pattern.compile("Country")));
         this.firstCheckbox = page.getByRole(AriaRole.CHECKBOX).first();
-        this.secondCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(1);
+        this.secondCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(2);
         this.thirdCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(2);
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));

@@ -6,14 +6,14 @@ import com.microsoft.playwright.options.AriaRole;
 
 public class CampaignLandingPage {
 
-    private Page page;
+ 
 
     private Locator createCampaignLink;
     private Locator scratchCardTitle;
     private Locator continueButton;
 
     public CampaignLandingPage(Page page) {
-        this.page = page;
+ 
         this.createCampaignLink = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create campaign"));
         this.scratchCardTitle = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create a New Campaign from"));
         this.continueButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Proceed"));

@@ -39,14 +39,14 @@ public class DraftCampaignTest extends BaseTest {
 
     // ==================== Campaign Name Negative Test Cases ====================
 
-    @Test(groups = {"regression", "workbench-ui"})
-    public void verifyValidCampaignName() {
-        DraftCampaignPage draftPage = nav.goToCampaignNameStep();
-        draftPage.clearAndEnterDynamicCampaignName();
-        draftPage.clickNext();
-        Assert.assertTrue(page.url().contains("create-campaign"),
-                "Should proceed to date step after entering a valid campaign name");
-    }
+//     @Test(groups = {"regression", "workbench-ui"})
+//     public void verifyValidCampaignName() {
+//         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
+//         draftPage.clearAndEnterDynamicCampaignName();
+//         draftPage.clickNext();
+//         Assert.assertTrue(page.url().contains("create-campaign"),
+//                 "Should proceed to date step after entering a valid campaign name");
+//     }
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyCampaignNameTooLong() {

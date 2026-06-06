@@ -54,14 +54,14 @@ public class DraftCampaignPage extends BasePage {
 
     public void clickCampaignTypeDropdown() {
         waitForVisible(campaignTypeDropdown);
-        wait(500);
+       wait(3000);
         campaignTypeDropdown.click();
     }
 
     public void selectCampaignType() {
         Locator option = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true));
         waitForVisible(option);
-        wait(500);
+       wait(3000);
         option.click();
     }
 
@@ -71,19 +71,19 @@ public class DraftCampaignPage extends BasePage {
 
     public void clickNext() {
         waitForVisible(nextButton);
-        wait(500);
+       wait(3000);
         nextButton.click();
     }
 
     public void clickSubmit() {
         waitForVisible(submitButton);
-        wait(500);
+       wait(3000);
         submitButton.click();
     }
 
     public void clearAndEnterDynamicCampaignName() {
         waitForVisible(campaignName);
-        wait(500);
+       wait(3000);
         campaignName.clear();
         String prefix = campaignType.replace(" ", "");
         if (prefix.length() > 22) prefix = prefix.substring(0, 22);
@@ -95,7 +95,7 @@ public class DraftCampaignPage extends BasePage {
 
     public void enterCampaignName(String name) {
         waitForVisible(campaignName);
-        wait(500);
+       wait(3000);
         campaignName.clear();
         campaignName.fill(name);
         campaignName.press("Tab");

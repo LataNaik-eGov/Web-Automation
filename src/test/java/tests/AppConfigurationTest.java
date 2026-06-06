@@ -35,6 +35,8 @@ public class AppConfigurationTest extends BaseTest {
 
         appConfigPage.configureCloseHousehold();
 
+        appConfigPage.configureReferral();
+
         appConfigPage.configureComplaints();
 
         appConfigPage.configureInventory();

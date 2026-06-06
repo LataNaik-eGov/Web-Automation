@@ -43,7 +43,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
 
     public void clickConfigureDelivery() {
         waitForVisible(configureDeliveryButton);
-        wait(500);
+       wait(3000);
         configureDeliveryButton.click();
     }
 
@@ -54,7 +54,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
 
     private void selectDate(Locator textbox, LocalDate date) {
         waitForVisible(textbox);
-        wait(500);
+       wait(3000);
         textbox.click();
 
         // Navigate months if needed
@@ -119,13 +119,13 @@ public class ConfigureDeliveryRulesPage extends BasePage {
 
     public void clickNext() {
         waitForVisible(nextButton);
-        wait(500);
+       wait(3000);
         nextButton.click();
     }
 
     public void clickSubmit() {
         waitForVisible(submitButton);
-        wait(500);
+       wait(3000);
         submitButton.click();
     }
 }

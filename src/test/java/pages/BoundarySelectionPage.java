@@ -48,53 +48,53 @@ public class BoundarySelectionPage extends BasePage {
 
     public void clickFirstLevel() {
         waitForVisible(firstBoundaryLevel);
-        wait(500);
+        wait(3000);
         firstBoundaryLevel.click();
         waitForVisible(firstCheckbox);
-        wait(500);
+        wait(3000);
         firstCheckbox.check();
         outsideClick.click();
     }
 
     public void clickSecondLevel() {
         waitForVisible(secondBoundaryLevel);
-        wait(500);
+        wait(3000);
         secondBoundaryLevel.click();
         waitForVisible(secondCheckbox);
-        wait(500);
+        wait(3000);
         secondCheckbox.check();
         outsideClick.click();
     }
 
     public void clickThirdLevel() {
         waitForVisible(thirdBoundaryLevel);
-        wait(500);
+        wait(3000);
         thirdBoundaryLevel.click();
         waitForVisible(thirdCheckbox);
-        wait(500);
+        wait(3000);
         thirdCheckbox.check();
         outsideClick.click();
     }
 
     public void clickFourthLevel() {
         waitForVisible(fourthBoundaryLevel);
-        wait(500);
+        wait(3000);
         fourthBoundaryLevel.click();
         waitForVisible(thirdCheckbox);
-        wait(500);
+        wait(3000);
         thirdCheckbox.check();
         outsideClick.click();
     }
 
     public void clickNextButton() {
         waitForVisible(nextButton);
-        wait(500);
+        wait(3000);
         nextButton.click();
     }
 
     public void clickSubmitButton() {
         waitForVisible(submitButton);
-        wait(500);
+        wait(3000);
         submitButton.click();
     }
 

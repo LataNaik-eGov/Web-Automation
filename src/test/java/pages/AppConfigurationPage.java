@@ -7,15 +7,14 @@ import utils.ConfigReader;
 
 import java.util.Map;
 
-public class AppConfigurationPage {
-
-    private Page page;
+public class AppConfigurationPage extends BasePage {
 
     private static final Map<String, String> CAMPAIGN_DISPLAY_NAMES = Map.of(
             "BEDNET", "Bednet Distribution",
             "MR-DN", "Seasonal Malaria Chemoprevention (SMC)"
     );
 
+    private final String campaignType;
     private final String campaignDisplayName;
 
     // App configuration elements
@@ -23,6 +22,7 @@ public class AppConfigurationPage {
     private Locator registrationAndDeliveryModule;
     private Locator deliveryTypeDropdown;
     private Locator closeHouseholdModule;
+    private Locator referralModule;
     private Locator complaintsModule;
     private Locator inventoryModule;
     private Locator stockReconciliationModule;
@@ -36,8 +36,8 @@ public class AppConfigurationPage {
     private Locator labelLocalizationToast;
 
     public AppConfigurationPage(Page page) {
-        this.page = page;
-        String campaignType = ConfigReader.get("CAMPAIGN_TYPE");
+        super(page);
+        this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
         this.deliveryTypeDropdown = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Select an option"));
@@ -45,8 +45,11 @@ public class AppConfigurationPage {
                 new Page.GetByRoleOptions().setName("Set App Configurations"));
         this.registrationAndDeliveryModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Register eligible children")).getByLabel("Configure");
+
         this.closeHouseholdModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Record households that were")).getByLabel("Configure");
+        this.referralModule = page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Record and manage referrals")).getByLabel("Configure");
         this.complaintsModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Let field workers log issues")).getByLabel("Configure");
         this.inventoryModule = page.getByRole(AriaRole.BUTTON,
@@ -70,7 +73,8 @@ public class AppConfigurationPage {
     // --- Actions ---
 
     public void clickSetUpMobileApp() {
-        setUpMobileAppButton.waitFor(new Locator.WaitForOptions().setTimeout(15000));
+        waitForVisible(setUpMobileAppButton);
+      wait(4000);
         setUpMobileAppButton.click();
     }
 
@@ -78,65 +82,102 @@ public class AppConfigurationPage {
         saveConfigurationButton.last().click();
     }
 
+
     public void selectDeliveryType() {
         deliveryTypeDropdown.click();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).click();
     }
 
     public void configureRegistrationAndDelivery() {
+        waitForVisible(registrationAndDeliveryModule);
+      wait(4000);
         registrationAndDeliveryModule.click();
+      wait(4000);
         clickSaveConfiguration();
     }
 
     public void configureCloseHousehold() {
+        waitForVisible(closeHouseholdModule);
+      wait(4000);
         closeHouseholdModule.click();
+      wait(4000);
+        clickSaveConfiguration();
+    }
+
+    public void configureReferral() {
+        if (!"MR-DN".equals(campaignType)) return;
+        waitForVisible(referralModule);
+      wait(4000);
+        referralModule.click();
+      wait(4000);
         clickSaveConfiguration();
     }
 
     public void configureComplaints() {
+        waitForVisible(complaintsModule);
+      wait(4000);
         complaintsModule.click();
+      wait(4000);
         clickSaveConfiguration();
     }
 
     public void configureInventory() {
+        waitForVisible(inventoryModule);
+      wait(4000);
         inventoryModule.click();
         clickSaveConfiguration();
     }
 
     public void configureStockReconciliation() {
+        waitForVisible(stockReconciliationModule);
+      wait(4000);
         stockReconciliationModule.click();
+      wait(4000);
         clickSaveConfiguration();
     }
 
     public void configureReports() {
+        waitForVisible(reportsModule);
+      wait(4000);
         reportsModule.click();
+      wait(4000);
         clickSaveConfiguration();
     }
 
     public void configurePermissionHandler() {
+        waitForVisible(permissionHandlerModule);
+      wait(4000);
         permissionHandlerModule.click();
+      wait(4000);
         clickSaveConfiguration();
     }
 
     public void clickRegistrationAndDeliveryConfigure() {
+        waitForVisible(registrationAndDeliveryModule);
+      wait(4000);
         registrationAndDeliveryModule.click();
+        wait(4000);
     }
 
     public void clickSearchBeneficiaryFlow() {
         searchBeneficiaryFlow.click();
+        wait(4000);
     }
 
     public void clickProximitySearchElement() {
         proximitySearchElement.dispatchEvent("click");
+        wait(4000);
     }
 
     public void clearLabelField() {
         labelInput.click();
         labelInput.fill("");
+        wait(4000);
     }
 
     public boolean isLabelLocalizationToastVisible() {
-        labelLocalizationToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        waitForVisible(labelLocalizationToast);
+        wait(4000);
         return labelLocalizationToast.isVisible();
     }
 

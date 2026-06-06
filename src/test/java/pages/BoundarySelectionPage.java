@@ -18,6 +18,7 @@ public class BoundarySelectionPage extends BasePage {
     private Locator outsideClick;
     private Locator firstCheckbox;
     private Locator secondCheckbox;
+    private Locator secondCheckboxWrong;
     private Locator thirdCheckbox;
     private Locator nextButton;
     private Locator submitButton;
@@ -34,6 +35,7 @@ public class BoundarySelectionPage extends BasePage {
         this.outsideClick = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName(Pattern.compile("Country")));
         this.firstCheckbox = page.getByRole(AriaRole.CHECKBOX).first();
         this.secondCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(2);
+        this.secondCheckboxWrong = page.getByRole(AriaRole.CHECKBOX).nth(1);
         this.thirdCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(2);
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
@@ -63,6 +65,16 @@ public class BoundarySelectionPage extends BasePage {
         waitForVisible(secondCheckbox);
         wait(3000);
         secondCheckbox.check();
+        outsideClick.click();
+    }
+
+    public void clickSecondLevelWrong() {
+        waitForVisible(secondBoundaryLevel);
+        wait(3000);
+        secondBoundaryLevel.click();
+        waitForVisible(secondCheckboxWrong);
+        wait(3000);
+        secondCheckboxWrong.check();
         outsideClick.click();
     }
 
@@ -99,7 +111,8 @@ public class BoundarySelectionPage extends BasePage {
     }
 
     public boolean isMandatoryFieldsToastVisible() {
-        mandatoryFieldsToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        wait(500);
+        waitForVisible(mandatoryFieldsToast);
         return mandatoryFieldsToast.isVisible();
     }
 }

@@ -37,4 +37,30 @@ public class BoundarySelectionTest extends BaseTest {
         Assert.assertTrue(boundaryPage.isMandatoryFieldsToastVisible(),
                 "Toast error 'Please fill all the mandatory fields.' should appear when District and Administrative Post are not selected");
     }
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyBoundarySelectionWithoutSelection() {
+        BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
+
+
+        boundaryPage.clickNextButton();
+
+        Assert.assertTrue(boundaryPage.isMandatoryFieldsToastVisible(),
+                "Toast error 'Please fill all the mandatory fields.' should appear when no boundary is selected and Next button is clicked");
+    }
+
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyBoundarySelectionWithMissingLowestLevel() {
+        BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
+
+        boundaryPage.clickFirstLevel();
+        boundaryPage.clickSecondLevelWrong();
+        boundaryPage.clickThirdLevel();
+         boundaryPage.clickFourthLevel();
+        boundaryPage.clickNextButton();
+
+        Assert.assertTrue(boundaryPage.isMandatoryFieldsToastVisible(),
+                "Toast error 'Please fill all the mandatory fields.' should appear when lowest boundary level (4th) is not selected");
+    }
 }

@@ -7,8 +7,8 @@ import pages.CreateChecklist;
 
 public class CreateChecklistTest extends BaseTest {
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
-    public void verifyCreateChecklist() {
+    @Test(groups = {"regression", "workbench-ui", "sanity", "smoke"})
+  public void verifyCreateChecklist() {
         CreateChecklist createChecklistPage = nav.goToCreateChecklist();
 
         createChecklistPage.clickCreateChecklist();

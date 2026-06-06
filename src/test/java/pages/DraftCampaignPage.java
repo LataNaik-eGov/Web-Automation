@@ -86,9 +86,9 @@ public class DraftCampaignPage extends BasePage {
        wait(3000);
         campaignName.clear();
         String prefix = campaignType.replace(" ", "");
-        if (prefix.length() > 22) prefix = prefix.substring(0, 22);
+        if (prefix.length() > 21) prefix = prefix.substring(0, 21);
         String dynamicName = prefix + java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("HHssSSS"));
+                .format(java.time.format.DateTimeFormatter.ofPattern("HHmmssSSS"));
         campaignName.fill(dynamicName);
         campaignName.press("Tab");
     }
@@ -103,12 +103,16 @@ public class DraftCampaignPage extends BasePage {
 
     public boolean isCampaignNameErrorVisible() {
         campaignNameError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return campaignNameError.isVisible();
+        boolean visible = campaignNameError.isVisible();
+        wait(2000);
+        return visible;
     }
 
     public boolean isDateToastErrorVisible() {
         dateToastError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return dateToastError.isVisible();
+        boolean visible = dateToastError.isVisible();
+        wait(2000);
+        return visible;
     }
 
     public String getCampaignNameErrorText() {

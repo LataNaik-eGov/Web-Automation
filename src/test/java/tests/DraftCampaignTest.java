@@ -86,6 +86,14 @@ public class DraftCampaignTest extends BaseTest {
 
     // ==================== Date Negative Test Cases ====================
 
+        @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifySubmitWithoutFillingDates() {
+         DraftCampaignPage draftPage = nav.goToCampaignDateStep();
+        draftPage.clickSubmit();
+        Assert.assertTrue(draftPage.isDateToastErrorVisible(),
+                "Toast error should appear without any date filled when submitting the form");
+    }
+
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifySubmitWithStartDateOnly() {
         DraftCampaignPage draftPage = nav.goToCampaignDateStep();

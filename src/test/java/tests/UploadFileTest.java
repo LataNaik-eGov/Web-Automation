@@ -14,18 +14,7 @@ import java.nio.file.Paths;
 
 public class UploadFileTest extends BaseTest {
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
-    public void verifySubmitWithoutFile() {
-        UploadFilePage uploadFilePage = nav.goToUploadFile();
-
-        uploadFilePage.clickUploadData();
-
-        uploadFilePage.closePopup();
-        uploadFilePage.clickSubmit();
-
-        Assert.assertTrue(uploadFilePage.isNoFileToastVisible(),
-                "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
-    }
+  
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyUploadFile() throws URISyntaxException {
@@ -46,5 +35,61 @@ public class UploadFileTest extends BaseTest {
         uploadFilePage.uploadFile(filePath);
 
         uploadFilePage.clickSubmit();
+    }
+
+//Negative tests
+
+      @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifySubmitWithoutFile() {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
+        uploadFilePage.clickUploadData();
+
+        uploadFilePage.closePopup();
+        uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isNoFileToastVisible(),
+                "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
+    }
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyUploadInvalidFileType() throws URISyntaxException {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
+        uploadFilePage.clickUploadData();
+
+        uploadFilePage.closePopup();
+
+        URL resource = getClass().getClassLoader().getResource("complaint.pdf");
+        Assert.assertNotNull(resource, "complaint.pdf should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when an invalid file type (PDF) is uploaded");
+    }
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyUploadInvalidExcelFile() throws URISyntaxException {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
+        uploadFilePage.clickUploadData();
+
+        uploadFilePage.closePopup();
+        
+
+        URL resource = getClass().getClassLoader().getResource("InvalidFile.xlsx");
+        Assert.assertNotNull(resource, "InvalidFile.xlsx should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when an invalid Excel file is uploaded");
     }
 }

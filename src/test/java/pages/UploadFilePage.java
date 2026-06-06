@@ -17,6 +17,7 @@ public class UploadFilePage extends BasePage {
     private Locator submit;
     private Locator noFileToast;
     private Locator cancelIcon;
+    private Locator fileErrorToast;
 
     public UploadFilePage(Page page) {
         super(page);
@@ -26,6 +27,7 @@ public class UploadFilePage extends BasePage {
         this.noFileToast = page.locator("[class*='digit-toast'], [role='alert'], .Toastify__toast")
                 .filter(new Locator.FilterOptions().setHasText("Please upload a file"));
         this.cancelIcon = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cancel"));
+        this.fileErrorToast = page.locator("[class*='digit-toast--error'], [role='alert'][aria-live='assertive'], .Toastify__toast--error").first();
     }
 
     // --- Actions ---
@@ -52,7 +54,8 @@ public class UploadFilePage extends BasePage {
 
     public void closePopup() {
         cancelIcon.click();
-    page.locator(".digit-popup-overlay").waitFor(
+        wait(500);
+        page.locator(".digit-popup-overlay").waitFor(
                 new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }
 
@@ -63,6 +66,13 @@ public class UploadFilePage extends BasePage {
     public boolean isNoFileToastVisible() {
         noFileToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
         boolean visible = noFileToast.isVisible();
+        wait(3000);
+        return visible;
+    }
+
+    public boolean isFileErrorToastVisible() {
+        fileErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        boolean visible = fileErrorToast.isVisible();
         wait(3000);
         return visible;
     }

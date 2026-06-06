@@ -10,7 +10,7 @@ import com.microsoft.playwright.options.AriaRole;
 public class BoundarySelectionPage extends BasePage {
 
     // Campaign template step elements
-    private Locator defineTarget;
+    private Locator defineTargetButton;
     private Locator firstBoundaryLevel;
     private Locator secondBoundaryLevel;
     private Locator thirdBoundaryLevel;
@@ -26,7 +26,7 @@ public class BoundarySelectionPage extends BasePage {
 
     public BoundarySelectionPage(Page page) {
         super(page);
-        this.defineTarget = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Define Target Areas"));
+        this.defineTargetButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Define Target Areas"));
         this.firstBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).first();
         this.secondBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(1);
         this.thirdBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(2);
@@ -43,7 +43,7 @@ public class BoundarySelectionPage extends BasePage {
     // --- Actions ---
 
     public void clickDefineTarget() {
-        defineTarget.click();
+        defineTargetButton.click();
     }
 
     public void clickFirstLevel() {

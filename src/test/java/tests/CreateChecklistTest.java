@@ -35,7 +35,7 @@ public class CreateChecklistTest extends BaseTest {
         String filePath = Paths.get(resource.toURI()).toString();
         uploadFilePage.uploadFile(filePath);
 
-        uploadFilePage.closePopupByClickingOutside();
+        uploadFilePage.closePopup();
         uploadFilePage.clickSubmit();
 
         return new CreateChecklist(page);

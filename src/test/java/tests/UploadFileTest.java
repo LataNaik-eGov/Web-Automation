@@ -20,7 +20,7 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickUploadData();
 
-        uploadFilePage.closePopupByClickingOutside();
+        uploadFilePage.closePopup();
         uploadFilePage.clickSubmit();
 
         Assert.assertTrue(uploadFilePage.isNoFileToastVisible(),
@@ -33,7 +33,7 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickUploadData();
 
-        uploadFilePage.closePopupByClickingOutside();
+        uploadFilePage.closePopup();
 
         Download download = uploadFilePage.downloadTemplate();
         Assert.assertNotNull(download, "Template download should have started");

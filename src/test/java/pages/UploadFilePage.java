@@ -16,7 +16,7 @@ public class UploadFilePage extends BasePage {
     private Locator downloadTemplateButton;
     private Locator submit;
     private Locator noFileToast;
-    private Locator cancelButton;
+    private Locator cancelIcon;
 
     public UploadFilePage(Page page) {
         super(page);
@@ -25,7 +25,7 @@ public class UploadFilePage extends BasePage {
         this.submit = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.noFileToast = page.locator("[class*='digit-toast'], [role='alert'], .Toastify__toast")
                 .filter(new Locator.FilterOptions().setHasText("Please upload a file"));
-        this.cancelButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cancel"));
+        this.cancelIcon = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cancel"));
     }
 
     // --- Actions ---
@@ -50,8 +50,8 @@ public class UploadFilePage extends BasePage {
         wait(3000);
     }
 
-    public void closePopupByClickingOutside() {
-        cancelButton.click();
+    public void closePopup() {
+        cancelIcon.click();
         page.locator(".digit-popup-overlay").waitFor(
                 new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }

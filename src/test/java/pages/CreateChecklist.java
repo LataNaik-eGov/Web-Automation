@@ -6,7 +6,7 @@ import com.microsoft.playwright.Page;
 public class CreateChecklist extends BasePage {
 
     // Create checklist
-    private Locator createChecklist;
+    private Locator createChecklistButton;
     private Locator configureList;
     private Locator configureChecklist;
     private Locator confirmChecklist;
@@ -16,7 +16,7 @@ public class CreateChecklist extends BasePage {
 
     public CreateChecklist(Page page) {
         super(page);
-        this.createChecklist = page.locator("#campaign-details-page-button-checklist");
+        this.createChecklistButton = page.locator("#campaign-details-page-button-checklist");
         this.configureList = page.locator(".digit-button-secondary.medium").first();
         this.configureChecklist = page.locator("#campaign-checklist-create-standalone-form-field-primary");
         this.confirmChecklist = page.locator(".digit-button-primary.large");
@@ -28,7 +28,7 @@ public class CreateChecklist extends BasePage {
     // --- Actions ---
 
     public void clickCreateChecklist() {
-        createChecklist.click();
+        createChecklistButton.click();
     }
 
     public void clickConfigureList() {

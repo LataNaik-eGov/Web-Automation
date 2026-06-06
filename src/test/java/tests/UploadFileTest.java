@@ -32,6 +32,7 @@ public class UploadFileTest extends BaseTest {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
+
         uploadFilePage.closePopupByClickingOutside();
 
         Download download = uploadFilePage.downloadTemplate();
@@ -47,9 +48,9 @@ public class UploadFileTest extends BaseTest {
         URL resource = getClass().getClassLoader().getResource(templateFile);
         Assert.assertNotNull(resource, templateFile + " should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();
+        
         uploadFilePage.uploadFile(filePath);
 
-        uploadFilePage.closePopupByClickingOutside();
         uploadFilePage.clickSubmit();
     }
 }

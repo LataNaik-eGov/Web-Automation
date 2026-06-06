@@ -74,7 +74,7 @@ public class AppConfigurationPage extends BasePage {
 
     public void clickSetUpMobileApp() {
         waitForVisible(setUpMobileAppButton);
-      wait(4000);
+      wait(6000);
         setUpMobileAppButton.click();
     }
 
@@ -90,94 +90,95 @@ public class AppConfigurationPage extends BasePage {
 
     public void configureRegistrationAndDelivery() {
         waitForVisible(registrationAndDeliveryModule);
-      wait(4000);
+      wait(6000);
         registrationAndDeliveryModule.click();
-      wait(4000);
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void configureCloseHousehold() {
         waitForVisible(closeHouseholdModule);
-      wait(4000);
+      wait(6000);
         closeHouseholdModule.click();
-      wait(4000);
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void configureReferral() {
         if (!"MR-DN".equals(campaignType)) return;
         waitForVisible(referralModule);
-      wait(4000);
+      wait(6000);
         referralModule.click();
-      wait(4000);
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void configureComplaints() {
         waitForVisible(complaintsModule);
-      wait(4000);
+      wait(6000);
         complaintsModule.click();
-      wait(4000);
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void configureInventory() {
         waitForVisible(inventoryModule);
-      wait(4000);
+      wait(6000);
         inventoryModule.click();
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void configureStockReconciliation() {
         waitForVisible(stockReconciliationModule);
-      wait(4000);
+      wait(6000);
         stockReconciliationModule.click();
-      wait(4000);
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void configureReports() {
         waitForVisible(reportsModule);
-      wait(4000);
+      wait(6000);
         reportsModule.click();
-      wait(4000);
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void configurePermissionHandler() {
         waitForVisible(permissionHandlerModule);
-      wait(4000);
+      wait(6000);
         permissionHandlerModule.click();
-      wait(4000);
+      wait(6000);
         clickSaveConfiguration();
     }
 
     public void clickRegistrationAndDeliveryConfigure() {
         waitForVisible(registrationAndDeliveryModule);
-      wait(4000);
+      wait(6000);
         registrationAndDeliveryModule.click();
-        wait(4000);
+        wait(6000);
     }
 
     public void clickSearchBeneficiaryFlow() {
         searchBeneficiaryFlow.click();
-        wait(4000);
+        wait(6000);
     }
 
     public void clickProximitySearchElement() {
         proximitySearchElement.dispatchEvent("click");
-        wait(4000);
+        wait(6000);
     }
 
     public void clearLabelField() {
         labelInput.click();
         labelInput.fill("");
-        wait(4000);
+        wait(6000);
     }
 
     public boolean isLabelLocalizationToastVisible() {
         waitForVisible(labelLocalizationToast);
-        wait(4000);
+        wait(6000);
         return labelLocalizationToast.isVisible();
     }
 

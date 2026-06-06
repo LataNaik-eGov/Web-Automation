@@ -186,6 +186,7 @@ public class NavigationHelper {
         appConfig.clickSetUpMobileApp();
         appConfig.configureRegistrationAndDelivery();
         appConfig.configureCloseHousehold();
+        appConfig.configureReferral();
         appConfig.configureComplaints();
         appConfig.configureInventory();
         appConfig.configureStockReconciliation();

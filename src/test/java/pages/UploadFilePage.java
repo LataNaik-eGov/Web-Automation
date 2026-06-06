@@ -5,32 +5,34 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
+import com.microsoft.playwright.options.WaitForSelectorState;
+
 import java.nio.file.Paths;
 
-public class UploadFilePage {
-
-    private Page page;
+public class UploadFilePage extends BasePage {
 
     // Upload file elements
     private Locator uploadDataButton;
     private Locator downloadTemplateButton;
-    private Locator fileInputBody;
     private Locator submit;
     private Locator noFileToast;
+    private Locator cancelButton;
 
     public UploadFilePage(Page page) {
-        this.page = page;
+        super(page);
         this.uploadDataButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Upload Data"));
         this.downloadTemplateButton = page.locator("#file-download-template");
-        this.fileInputBody = page.locator("input[type='file']");
         this.submit = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
-        this.noFileToast = page.getByText("Please upload a file");
+        this.noFileToast = page.locator("[class*='digit-toast'], [role='alert'], .Toastify__toast")
+                .filter(new Locator.FilterOptions().setHasText("Please upload a file"));
+        this.cancelButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cancel"));
     }
 
     // --- Actions ---
 
     public void clickUploadData() {
         uploadDataButton.click();
+        wait(1000);
     }
 
     public Download downloadTemplate() {
@@ -41,19 +43,27 @@ public class UploadFilePage {
     }
 
     public void uploadFile(String filePath) {
-        fileInputBody.setInputFiles(Paths.get(filePath));
+        wait(2000);
+        page.waitForFileChooser(() -> {
+            page.getByText("Browse in my files").click();
+        }).setFiles(Paths.get(filePath));
+        wait(3000);
     }
 
     public void closePopupByClickingOutside() {
-        page.mouse().click(50, 50);
+        cancelButton.click();
+        page.locator(".digit-popup-overlay").waitFor(
+                new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }
 
     public void clickSubmit() {
-        submit.dispatchEvent("click");
+        submit.click();
     }
 
     public boolean isNoFileToastVisible() {
         noFileToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return noFileToast.isVisible();
+        boolean visible = noFileToast.isVisible();
+        wait(3000);
+        return visible;
     }
 }

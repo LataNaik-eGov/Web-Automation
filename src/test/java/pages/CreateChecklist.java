@@ -3,9 +3,7 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-public class CreateChecklist {
-
-    private Page page;
+public class CreateChecklist extends BasePage {
 
     // Create checklist
     private Locator createChecklist;
@@ -17,7 +15,7 @@ public class CreateChecklist {
     private Locator goMyCampaign;
 
     public CreateChecklist(Page page) {
-        this.page = page;
+        super(page);
         this.createChecklist = page.locator("#campaign-details-page-button-checklist");
         this.configureList = page.locator(".digit-button-secondary.medium").first();
         this.configureChecklist = page.locator("#campaign-checklist-create-standalone-form-field-primary");

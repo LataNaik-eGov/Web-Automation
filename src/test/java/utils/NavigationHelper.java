@@ -174,6 +174,14 @@ public class NavigationHelper {
         return new ConfigureDeliveryRulesPage(page);
     }
 
+    public ConfigureDeliveryRulesPage goToDeliveryRulesSecondStep() {
+        ConfigureDeliveryRulesPage delivery = goToConfigureDeliveryRules();
+        delivery.clickConfigureDelivery();
+        delivery.fillDates();
+        delivery.clickNext();
+        return delivery;
+    }
+
     public AppConfigurationPage goToAppConfiguration() {
         ConfigureDeliveryRulesPage delivery = goToConfigureDeliveryRules();
         delivery.clickConfigureDelivery();

@@ -20,6 +20,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     private Locator nextButton;
     private Locator submitButton;
     private Locator cycleDateToast;
+    private Locator deliveryErrorToast;
 
     // Date picker elements
     private Locator currentMonthLabel;
@@ -36,6 +37,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
         this.cycleDateToast = page.getByText("Please fill the cycle dates to move ahead.");
+        this.deliveryErrorToast = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
 
     }
 
@@ -113,8 +115,22 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     }
 
     public boolean isCycleDateToastVisible() {
+        wait(3000);
         cycleDateToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
         return cycleDateToast.isVisible();
+    }
+
+    public boolean isDeliveryErrorToastVisible() {
+        wait(3000);
+        deliveryErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return deliveryErrorToast.isVisible();
+    }
+
+    public void fillNthTextbox(int index, String value) {
+        Locator textbox = page.getByRole(AriaRole.TEXTBOX).nth(index);
+        waitForVisible(textbox);
+        textbox.click();
+        textbox.fill(value);
     }
 
     public void clickNext() {
@@ -127,5 +143,12 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         waitForVisible(submitButton);
        wait(3000);
         submitButton.click();
+    }
+
+    public void removeResource(String resourceName) {
+        Locator removeBtn = page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Remove " + resourceName));
+        waitForVisible(removeBtn);
+        removeBtn.click();
     }
 }

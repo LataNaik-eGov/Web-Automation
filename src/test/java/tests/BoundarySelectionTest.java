@@ -25,6 +25,8 @@ public class BoundarySelectionTest extends BaseTest {
                 "Should navigate to Configure Delivery Rules page after completing boundary selection");
     }
 
+
+    // Negative tests
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyBoundarySelectionWithPartialSelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();

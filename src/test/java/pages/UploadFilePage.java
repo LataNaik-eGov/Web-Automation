@@ -47,12 +47,12 @@ public class UploadFilePage extends BasePage {
         page.waitForFileChooser(() -> {
             page.getByText("Browse in my files").click();
         }).setFiles(Paths.get(filePath));
-        wait(3000);
+        wait(5000);
     }
 
     public void closePopup() {
         cancelIcon.click();
-        page.locator(".digit-popup-overlay").waitFor(
+    page.locator(".digit-popup-overlay").waitFor(
                 new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }
 

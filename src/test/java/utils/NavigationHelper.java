@@ -7,6 +7,9 @@ import com.microsoft.playwright.options.WaitUntilState;
 
 import pages.*;
 
+import java.net.URL;
+import java.nio.file.Paths;
+
 /**
  * NavigationHelper - Central place for all page navigation.
  *
@@ -194,6 +197,25 @@ public class NavigationHelper {
         appConfig.configurePermissionHandler();
         appConfig.clickGoBack();
         return new UploadFilePage(page);
+    }
+
+    public CreateChecklist goToCreateChecklist() {
+        UploadFilePage uploadFilePage = goToUploadFile();
+        uploadFilePage.clickUploadData();
+        uploadFilePage.closePopup();
+
+        String templateFile = ConfigReader.getTemplateFileName();
+
+        try {
+            URL resource = getClass().getClassLoader().getResource(templateFile);
+            String filePath = Paths.get(resource.toURI()).toString();
+            uploadFilePage.uploadFile(filePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load template file: " + templateFile, e);
+        }
+
+        uploadFilePage.clickSubmit();
+        return new CreateChecklist(page);
     }
 
     // ==================== PAGE OBJECT GETTERS ====================

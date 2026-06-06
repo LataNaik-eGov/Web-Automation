@@ -34,6 +34,7 @@ public class AppConfigurationPage extends BasePage {
     private Locator proximitySearchElement;
     private Locator labelInput;
     private Locator labelLocalizationToast;
+    private Locator firstToggleSwitchOn;
 
     public AppConfigurationPage(Page page) {
         super(page);
@@ -68,6 +69,8 @@ public class AppConfigurationPage extends BasePage {
         this.proximitySearchElement = page.getByText("Search by proximity").locator("..");
         this.labelInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Label"));
         this.labelLocalizationToast = page.getByText("Label localization is empty for field");
+        this.firstToggleSwitchOn = page.getByRole(AriaRole.SWITCH,
+                new Page.GetByRoleOptions().setName("Toggle switch on")).first();
     }
 
     // --- Actions ---
@@ -173,6 +176,17 @@ public class AppConfigurationPage extends BasePage {
     public void clearLabelField() {
         labelInput.click();
         labelInput.fill("");
+        wait(6000);
+    }
+
+    public void fillLabelField(String value) {
+        labelInput.dblclick();
+        labelInput.fill(value);
+        wait(6000);
+    }
+
+    public void clickFirstToggleSwitchOff() {
+        firstToggleSwitchOn.click();
         wait(6000);
     }
 

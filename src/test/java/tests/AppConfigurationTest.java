@@ -8,22 +8,7 @@ import pages.AppConfigurationPage;
 
 public class AppConfigurationTest extends BaseTest {
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
-    public void verifyProximitySearchWithEmptyLabel() {
-        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
-
-        appConfigPage.clickSetUpMobileApp();
-
-        appConfigPage.clickRegistrationAndDeliveryConfigure();
-        appConfigPage.clickSearchBeneficiaryFlow();
-        appConfigPage.clickProximitySearchElement();
-        appConfigPage.clearLabelField();
-
-        appConfigPage.clickSaveConfiguration();
-
-        Assert.assertTrue(appConfigPage.isLabelLocalizationToastVisible(),
-                "Toast 'Label localization is empty for field' should appear when Proximity Search label is cleared");
-    }
+   
 
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyAppConfiguration() {
@@ -48,5 +33,52 @@ public class AppConfigurationTest extends BaseTest {
         appConfigPage.configurePermissionHandler();
 
         appConfigPage.clickGoBack();
+    }
+
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    public void verifyAppConfigurationByLabelChange() {
+        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
+
+        appConfigPage.clickSetUpMobileApp();
+
+        appConfigPage.clickRegistrationAndDeliveryConfigure();
+        appConfigPage.clickSearchBeneficiaryFlow();
+        appConfigPage.clickProximitySearchElement();
+        appConfigPage.fillLabelField("Near by Beneficiary");
+
+        appConfigPage.clickSaveConfiguration();
+    }
+
+    @Test(groups = {"regression", "workbench-ui" ,"sanity"})
+    public void verifyAppConfigurationBySwitchingToggleOff() {
+        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
+
+        appConfigPage.clickSetUpMobileApp();
+
+        appConfigPage.clickRegistrationAndDeliveryConfigure();
+        appConfigPage.clickFirstToggleSwitchOff();
+        appConfigPage.clickFirstToggleSwitchOff();
+        appConfigPage.clickFirstToggleSwitchOff();
+        appConfigPage.clickFirstToggleSwitchOff();
+
+        appConfigPage.clickSaveConfiguration();
+    }
+
+// Negative test
+     @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyAppConfigurationWithEmptyLabel() {
+        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
+
+        appConfigPage.clickSetUpMobileApp();
+
+        appConfigPage.clickRegistrationAndDeliveryConfigure();
+        appConfigPage.clickSearchBeneficiaryFlow();
+        appConfigPage.clickProximitySearchElement();
+        appConfigPage.clearLabelField();
+
+        appConfigPage.clickSaveConfiguration();
+
+        Assert.assertTrue(appConfigPage.isLabelLocalizationToastVisible(),
+                "Toast 'Label localization is empty for field' should appear when Proximity Search label is cleared");
     }
 }

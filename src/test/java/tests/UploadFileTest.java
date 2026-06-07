@@ -92,4 +92,25 @@ public class UploadFileTest extends BaseTest {
         Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when an invalid Excel file is uploaded");
     }
+
+  
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyWithInvalidInputInFile() throws URISyntaxException {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
+        uploadFilePage.clickUploadData();
+
+        uploadFilePage.closePopup();
+
+        URL resource = getClass().getClassLoader().getResource("InvalidInputFile.xlsx");
+        Assert.assertNotNull(resource, "InvalidInputFile.xlsx should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when a file with invalid input data is uploaded");
+    }
 }

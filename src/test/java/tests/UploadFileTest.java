@@ -79,7 +79,7 @@ public class UploadFileTest extends BaseTest {
         uploadFilePage.clickUploadData();
 
         uploadFilePage.closePopup();
-        
+
 
         URL resource = getClass().getClassLoader().getResource("InvalidFile.xlsx");
         Assert.assertNotNull(resource, "InvalidFile.xlsx should exist in test resources");
@@ -91,5 +91,23 @@ public class UploadFileTest extends BaseTest {
 
         Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when an invalid Excel file is uploaded");
+    }
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyWithInvalidInputInFile() {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
+        uploadFilePage.clickUploadData();
+
+        uploadFilePage.closePopup();
+
+        String filePath = "/home/egov/Downloads/FILES/InvalidInputFile.xlsx";
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when a file with invalid input data is uploaded");
     }
 }

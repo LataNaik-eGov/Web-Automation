@@ -34,6 +34,8 @@ public class UploadFileTest extends BaseTest {
         
         uploadFilePage.uploadFile(filePath);
 
+        uploadFilePage.waitForUploadSuccessToast();
+
         uploadFilePage.clickSubmit();
     }
 

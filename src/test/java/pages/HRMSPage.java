@@ -5,32 +5,18 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
+import utils.ConfigReader;
+import utils.TestDataReader;
 
 public class HRMSPage extends BasePage {
 
-    // --- Create employee CSS locators ---
-    private final String submitButton = "button[type='submit']";
-    private final String confirmButton = "button.selector-button-primary[type='submit']";
-    private final String confirmButtonAlt = "button.selector-button-primary";
-    private final String confirmButtonAlt2 = "button[class*='selector-button-primary']";
-    private final String successMessage = "div.emp-success-wrap header";
-    private final String successEmpId = "div.emp-success-wrap p";
-
     // --- Employee inbox CSS locators ---
     private final String searchInput = "input[name='codes']";
-    private final String searchBtn = "button.submit-bar-search[type='submit']";
-    private final String takeActionBtn = "button.submit-bar[type='button']";
-    private final String menuItem = "div.menu-wrap p";
-    private final String employeeNameInput = "input[pattern*='1,50'][title*='Username']";
-    private final String saveBtnSelector = "div.action-bar-wrap button[type='submit']";
     private final String campaignDateInput = "input.employee-card-input[type='date'][min]";
-    private final String reasonDropdownSvg = "div.select svg.cp";
-    private final String deactivateConfirm = "button.selector-button-primary[type='submit']";
-    private final String goBackToHomeBtn = "div.emp-success-wrap button";
 
     // --- Aria-role locators (from recorded UI flow) ---
-    private final Locator hierarchyTypeDropdown;
     private final Locator nextButton;
     private final Locator usernameInput;
     private final Locator passwordInput;
@@ -43,34 +29,29 @@ public class HRMSPage extends BasePage {
     private final Locator emailInput;
     private final Locator addressInput;
     private final Locator doaInput;
-    private final Locator selectAnOption;
-    private final Locator roleSearchInput;
 
     public HRMSPage(Page page) {
         super(page);
-        this.hierarchyTypeDropdown = page.locator("#hrms-create-standalone-hierarchytype-dropdown");
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.usernameInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Username"));
         this.passwordInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Password").setExact(true));
         this.confirmPasswordInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Confirm Password"));
         this.nameInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Name").setExact(true));
-        this.mobileInput = page.getByRole(AriaRole.SPINBUTTON, new Page.GetByRoleOptions().setName("Mobile Number"));
+        this.mobileInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Mobile Number"));
         this.femaleRadio = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("Female"));
         this.maleRadio = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("Male"));
         this.dobInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Date of Birth"));
         this.emailInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Email"));
         this.addressInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Correspondence Address"));
         this.doaInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Date of Appointment"));
-        this.selectAnOption = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));
-        this.roleSearchInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Search options in"));
     }
 
     // ==================== STEP 1: HIERARCHY TYPE ====================
 
-    public HRMSPage selectHierarchyType(String searchText, String optionName) {
-        hierarchyTypeDropdown.click();
-        hierarchyTypeDropdown.fill(searchText);
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(optionName).setExact(true)).click();
+    public HRMSPage selectHierarchyType(String searchText, String optionText) {
+        page.getByRole(AriaRole.TEXTBOX).first().click();
+        page.getByRole(AriaRole.TEXTBOX).first().fill(searchText);
+        page.getByText(optionText, new Page.GetByTextOptions().setExact(true)).click();
         return this;
     }
 
@@ -118,135 +99,235 @@ public class HRMSPage extends BasePage {
     public HRMSPage fillEmploymentDetails(String empType, String doa,
             String department, String designation, String roleName, String jurisdiction) {
 
-        // Employment Type — first "Select an option" dropdown
-        selectAnOption.first().click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(empType)).click();
+        // Employment Type — textbox-based dropdown
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Employment Type")).click();
+        page.getByText(empType).first().click();
 
         // Date of Appointment
         doaInput.waitFor();
         doaInput.fill(doa);
-        doaInput.dispatchEvent("change");
 
-        // Department — second "Select an option" dropdown; options appear in #jk-dropdown-unique
-        selectAnOption.nth(1).click();
-        page.locator("#jk-dropdown-unique")
-                .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(department))
-                .click();
+        // Department — textbox-based dropdown; options appear in #jk-dropdown-unique
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Department")).click();
+        page.locator("#jk-dropdown-unique").getByText(department).click();
 
-        // Designation — third "Select an option" dropdown
-        selectAnOption.nth(2).click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(designation)).click();
+        // Designation — textbox-based dropdown
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Designation")).click();
+        page.getByText(designation).first().click();
 
-        // Role — click to open the multiselect, search, then pick the option from the dropdown
-        roleSearchInput.waitFor();
-        roleSearchInput.click();
-        roleSearchInput.fill(roleName);
-
-        // Wait for filtered options to appear, then click the matching item
-        Locator roleOption = page.locator(".profile-dropdown--item, li[role='option'], .dropdown-item")
+        // Role — open multi-select (last .digit-cursorPointer targets the Roles field)
+        page.locator(".digit-cursorPointer").last().click();
+        page.waitForTimeout(500);
+        // :has(> child) matches only the immediate row div (not ancestor wrappers that also contain all checkboxes)
+        page.locator("div:has(> .digit-multi-select-dropdown-menuitem)")
                 .filter(new Locator.FilterOptions().setHasText(roleName))
-                .first();
-        try {
-            roleOption.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-            roleOption.dispatchEvent("click");
-            System.out.println("[HRMS] Selected role via dropdown item: " + roleName);
-        } catch (Exception e) {
-            // Fallback: try aria checkbox
-            System.out.println("[HRMS] Dropdown item not found, trying checkbox for: " + roleName);
-            page.getByRole(AriaRole.CHECKBOX,
-                    new Page.GetByRoleOptions().setName("Select option: " + roleName))
-                    .dispatchEvent("click");
-        }
+                .first()
+                .locator(".digit-multi-select-dropdown-menuitem")
+                .check();
+        page.getByText("Login DetailsUsername *").click();
 
-        // Jurisdiction — expand the Country section and pick the jurisdiction option
+        // Jurisdiction — expand the Country section and pick by name
         page.locator("div")
-                .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Country$")))
-                .nth(1)
-                .click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(jurisdiction)).click();
+                .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Area 1\\*Country$")))
+                .first().click();
+        page.locator(".cp.profile-dropdown--item")
+                .filter(new Locator.FilterOptions().setHasText(jurisdiction))
+                .first().click();
 
         return this;
+    }
+
+    // ==================== FULL CREATE FLOW ====================
+
+    public static String generateMobile() {
+        return "8" + String.format("%09d", ThreadLocalRandom.current().nextInt(100000000, 999999999));
+    }
+
+    private void fillCreateForm(String username, String mobile) {
+        String[] roles = TestDataReader.get("HRMS_ROLES").split(",");
+        String role = roles[ThreadLocalRandom.current().nextInt(roles.length)].trim();
+        String country = ConfigReader.get("COUNTRY");
+
+        System.out.println("[HRMS] Username: " + username + " | Mobile: " + mobile + " | Role: " + role);
+
+        selectHierarchyType(country, country)
+            .clickNext()
+            .fillLoginDetails(username, TestDataReader.get("HRMS_PASSWORD"))
+            .fillPersonalDetails(
+                TestDataReader.get("HRMS_NAME"),
+                mobile,
+                TestDataReader.get("HRMS_GENDER"),
+                TestDataReader.get("HRMS_DOB"),
+                TestDataReader.get("HRMS_EMAIL"),
+                TestDataReader.get("HRMS_ADDRESS"))
+            .fillEmploymentDetails(
+                TestDataReader.get("HRMS_TYPE"),
+                TestDataReader.get("HRMS_DOA"),
+                TestDataReader.get("HRMS_DEPARTMENT"),
+                TestDataReader.get("HRMS_DESIGNATION"),
+                role,
+                TestDataReader.get("HRMS_JURISDICTION"));
+    }
+
+    public String createEmployee() {
+        String username = "Test-" + System.currentTimeMillis() % 100000;
+        fillCreateForm(username, generateMobile());
+        submitForm();
+        return getCreatedUsername();
+    }
+
+    public String createEmployeeWithMobile(String mobile) {
+        String username = "Test-" + System.currentTimeMillis() % 100000;
+        fillCreateForm(username, mobile);
+        submitForm();
+        return getCreatedUsername();
+    }
+
+    public boolean createEmployeeWithDuplicateUsername(String username) {
+        fillCreateForm(username, generateMobile());
+
+        Locator submitBtn = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        submitBtn.first().click();
+        page.waitForTimeout(2000);
+        submitBtn.last().click();
+
+        try {
+            page.getByText("Username exists")
+                    .waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            System.out.println("[HRMS] Toast confirmed: 'Username exists' for duplicate username: " + username);
+            return true;
+        } catch (Exception e) {
+            System.out.println("[HRMS] 'Username exists' toast not found for: " + username);
+            return false;
+        }
+    }
+
+    public boolean createEmployeeWithDuplicateMobile(String mobile) {
+        String username = "Test-" + System.currentTimeMillis() % 100000;
+        fillCreateForm(username, mobile);
+
+        Locator submitBtn = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        submitBtn.first().click();
+        page.waitForTimeout(2000);
+        submitBtn.last().click();
+
+        try {
+            page.getByText("Mobile number already exist!")
+                    .waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            System.out.println("[HRMS] Toast confirmed: 'Mobile number already exist!' for: " + mobile);
+            return true;
+        } catch (Exception e) {
+            System.out.println("[HRMS] 'Mobile number already exist!' toast not found for: " + mobile);
+            return false;
+        }
+    }
+
+    public boolean searchAndVerifyEmployee(String username) {
+        goBackToHome();
+        goToSearchFromHome();
+        page.waitForTimeout(3000);
+        searchEmployee(username);
+
+        // Click the username link in results to open Employee Details
+        Locator link = page.getByRole(AriaRole.LINK,
+                new Page.GetByRoleOptions().setName(username));
+        link.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        link.click();
+
+        // On Employee Details screen verify the Username field matches
+        return verifyUsernameOnDetailsPage(username);
+    }
+
+    private boolean verifyUsernameOnDetailsPage(String username) {
+        try {
+            // Employee Details shows "Username" label with the value below it
+            page.getByText("Username").waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            page.getByText(username).waitFor(new Locator.WaitForOptions().setTimeout(5000));
+            System.out.println("[HRMS] Employee details verified — Username: " + username);
+            return true;
+        } catch (Exception e) {
+            System.out.println("[HRMS] Username not found on Employee Details page: " + username);
+            return false;
+        }
     }
 
     // ==================== STEP 6: SUBMIT ====================
 
     public void submitForm() {
-        page.evaluate("window.scrollTo(0, document.body.scrollHeight)");
-        page.locator(submitButton).first().waitFor(new Locator.WaitForOptions().setTimeout(15000));
+        Locator submitBtn = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        submitBtn.first().click();
 
-        Locator submitBtns = page.locator(submitButton);
-        int count = submitBtns.count();
-        System.out.println("[HRMS] Submit buttons found: " + count);
-        if (count == 0) return;
+        // Popup appears with a second Submit — wait for it to render then click last()
+        // .last() targets popup button even if the original Submit is still in the DOM
+        page.waitForTimeout(1000);
+        submitBtn.last().click();
 
-        Locator lastBtn = submitBtns.nth(count - 1);
-        lastBtn.scrollIntoViewIfNeeded();
-
-        // First click — enables the button if React marked it disabled
-        lastBtn.dispatchEvent("click");
-        try {
-            page.waitForFunction(
-                    "() => { const btns = document.querySelectorAll('button[type=\"submit\"]');"
-                    + " const btn = btns[btns.length - 1];"
-                    + " return btn && !btn.className.includes('disable'); }",
-                    null,
-                    new Page.WaitForFunctionOptions().setTimeout(10000));
-        } catch (Exception ignored) {}
-
-        // Second click — actual submission once button is enabled
-        String btnClass = lastBtn.getAttribute("class");
-        if (btnClass != null && !btnClass.contains("disable")) {
-            System.out.println("[HRMS] Button enabled — submitting");
-            lastBtn.dispatchEvent("click");
-            page.locator(confirmButton + ", " + successMessage).first()
-                    .waitFor(new Locator.WaitForOptions().setTimeout(15000));
-        }
-
-        // Confirmation popup
-        String[] confirmSelectors = { confirmButton, confirmButtonAlt, confirmButtonAlt2 };
-        for (String sel : confirmSelectors) {
-            if (page.locator(sel).count() > 0) {
-                page.locator(sel).first().dispatchEvent("click");
-                System.out.println("[HRMS] Confirmed with: " + sel);
-                break;
-            }
-        }
-        page.locator(successMessage).first().waitFor(new Locator.WaitForOptions().setTimeout(60000));
+        page.getByText("Employee Created Successfully")
+                .waitFor(new Locator.WaitForOptions().setTimeout(60000));
     }
 
     // ==================== VERIFICATION ====================
 
     public boolean isEmployeeCreatedSuccessfully() {
         try {
-            page.locator(successMessage).waitFor(new Locator.WaitForOptions().setTimeout(60000));
-            String text = page.locator(successMessage).textContent();
-            System.out.println("[HRMS] Success message: " + text);
-            return text.contains("Employee Created Successfully");
+            page.getByText("Employee Created Successfully")
+                    .waitFor(new Locator.WaitForOptions().setTimeout(60000));
+            return true;
         } catch (Exception e) {
-            System.out.println("[HRMS] Success not found: " + e.getMessage().split("\n")[0]);
+            System.out.println("[HRMS] Success screen not found: " + e.getMessage().split("\n")[0]);
             return false;
         }
     }
 
-    public String getEmployeeId() {
+    public String getCreatedUsername() {
         try {
-            page.locator(successEmpId).waitFor();
-            return page.locator(successEmpId).textContent();
+            // Success screen: "Username" label / "Test-XXXXX" value on the next line
+            // Find innermost element whose complete text is exactly "Test-<digits>"
+            Locator usernameLocator = page.locator("*")
+                    .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Test-\\d+$")))
+                    .last();
+            usernameLocator.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            String username = usernameLocator.textContent().trim();
+            System.out.println("[HRMS] Captured username from success screen: " + username);
+            return username;
         } catch (Exception e) {
-            return "Could not get Employee ID";
+            System.out.println("[HRMS] Could not read username from success screen: " + e.getMessage().split("\n")[0]);
+            return null;
         }
     }
 
     // ==================== EMPLOYEE INBOX: SEARCH ====================
 
+    public HRMSPage openEmployeeByUsername(String username) {
+        Locator link = page.getByRole(AriaRole.LINK,
+                new Page.GetByRoleOptions().setName(username));
+        link.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        link.click();
+        return this;
+    }
+
     public HRMSPage searchEmployee(String empId) {
-        form.waitFor(searchInput);
-        form.fill(searchInput, empId);
+        page.locator(searchInput).waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        page.locator(searchInput).fill(empId);
         page.waitForTimeout(500);
-        form.clickDispatch(searchBtn);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search")).click();
         page.waitForTimeout(2000);
         System.out.println("[HRMS] Searched for employee: " + empId);
         return this;
+    }
+
+    public boolean isEmployeeFound(String username) {
+        try {
+            // Search results show the username as a link
+            Locator link = page.getByRole(AriaRole.LINK,
+                    new Page.GetByRoleOptions().setName(username));
+            link.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            System.out.println("[HRMS] Employee found in results: " + username);
+            return link.isVisible();
+        } catch (Exception e) {
+            System.out.println("[HRMS] Employee not found in results: " + username);
+            return false;
+        }
     }
 
     public HRMSPage openEmployeeResult() {
@@ -270,142 +351,68 @@ public class HRMSPage extends BasePage {
     }
 
     public HRMSPage openTakeActionMenu() {
-        form.waitFor(takeActionBtn);
-        form.clickDispatch(takeActionBtn);
-        page.waitForTimeout(1000);
-        System.out.println("[HRMS] Opened Take Action menu");
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Take Action")).click();
+        page.waitForTimeout(500);
         return this;
     }
 
     private void clickMenuItemByText(String menuText) {
-        page.locator(menuItem + ":has-text('" + menuText + "')")
-                .first().dispatchEvent("click");
-        page.waitForTimeout(2000);
-        System.out.println("[HRMS] Clicked menu: " + menuText);
+        page.getByText(menuText).click();
+        page.waitForTimeout(500);
     }
 
     // ==================== EMPLOYEE INBOX: EDIT EMPLOYEE ====================
 
-    public HRMSPage clickEditEmployee() {
-        clickMenuItemByText("Edit Employee");
-        return this;
-    }
+    public HRMSPage editAndSave() {
+        String updatedName = TestDataReader.get("HRMS_NAME") + " Updated";
 
-    public HRMSPage editEmployeeName() {
-        form.waitFor(employeeNameInput);
-        String currentName = page.locator(employeeNameInput).first().inputValue();
-        String updatedName = currentName + " one";
-        page.locator(employeeNameInput).first().fill(updatedName);
-        page.waitForTimeout(500);
-        System.out.println("[HRMS] Updated employee name: " + currentName + " → " + updatedName);
-        return this;
-    }
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Take Action")).click();
+        page.getByText("Edit Employee").click();
 
-    public HRMSPage fillRequiredEditFields() {
-        form.selectDropdown(0, 0);
-        page.waitForTimeout(500);
+        nameInput.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        nameInput.fill(updatedName);
+        System.out.println("[HRMS] Updated name to: " + updatedName);
 
-        page.locator("div.master input.cursorPointer").first().scrollIntoViewIfNeeded();
-        page.waitForTimeout(500);
-        try {
-            page.locator("div.master input.cursorPointer").first()
-                    .click(new Locator.ClickOptions().setForce(true));
-        } catch (Exception e) {
-            form.clickDispatch("div.master input.cursorPointer");
-        }
-        page.waitForTimeout(1500);
+        // Same two-Submit pattern as create
+        Locator submitBtn = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        submitBtn.first().click();
+        page.waitForTimeout(2000);
+        submitBtn.last().click();
 
-        if (page.locator("div.server input[type='checkbox'], .profile-dropdown--item").count() == 0) {
-            page.locator("div.master input.cursorPointer").first().press("ArrowDown");
-            page.waitForTimeout(1500);
-        }
-
-        if (page.locator("div.server input[type='checkbox']").count() > 0) {
-            boolean isChecked = page.locator("div.server input[type='checkbox']").first().isChecked();
-            if (isChecked) {
-                System.out.println("[HRMS] Role already assigned — not changing");
-            } else {
-                System.out.println("[HRMS] Role not assigned — selecting first available role");
-                page.locator("div.server input[type='checkbox']").first().dispatchEvent("click");
-            }
-        } else if (page.locator(".profile-dropdown--item").count() > 0) {
-            System.out.println("[HRMS] Role dropdown items found (no checkbox) — skipping to preserve existing");
-        }
-
-        page.waitForTimeout(500);
-        page.keyboard().press("Escape");
-        page.waitForTimeout(400);
-        try {
-            page.locator("h1, h2, .form-heading").first()
-                    .click(new Locator.ClickOptions().setForce(true));
-        } catch (Exception e) {
-            page.evaluate("document.body.click()");
-        }
-        page.waitForTimeout(400);
-        System.out.println("[HRMS] Filled required edit fields");
-        return this;
-    }
-
-    public HRMSPage saveEmployeeEdit() {
-        form.waitFor(saveBtnSelector);
-        form.scrollTo(saveBtnSelector);
-
-        Locator btn = page.locator(saveBtnSelector).first();
-        btn.dispatchEvent("click");
-        page.waitForTimeout(3000);
-
-        try {
-            String btnClass = btn.getAttribute("class",
-                    new Locator.GetAttributeOptions().setTimeout(5000));
-            if (btnClass != null && !btnClass.contains("disable")) {
-                btn.dispatchEvent("click");
-                page.waitForTimeout(3000);
-            }
-        } catch (Exception e) {
-            System.out.println("[HRMS] Save button no longer present — form submitted on first click");
-        }
-
-        String[] confirmSelectors = {
-                "button.selector-button-primary[type='submit']",
-                "button.selector-button-primary"
-        };
-        for (String sel : confirmSelectors) {
-            if (page.locator(sel).count() > 0) {
-                page.locator(sel).first().dispatchEvent("click");
-                System.out.println("[HRMS] Confirmed save popup: " + sel);
-                page.waitForTimeout(3000);
-                break;
-            }
-        }
-        System.out.println("[HRMS] Save completed");
+        page.getByText("Employee Details Updated")
+                .waitFor(new Locator.WaitForOptions().setTimeout(30000));
         return this;
     }
 
     // ==================== EMPLOYEE INBOX: DEACTIVATE ====================
 
-    public HRMSPage clickDeactivateEmployee() {
-        clickMenuItemByText("Deactivate Employee");
-        return this;
-    }
+    public boolean performDeactivate(String username) {
+        openTakeActionMenu();
+        page.getByText("Deactivate Employee").click();
 
-    public HRMSPage selectDeactivateReason() {
-        form.waitFor(reasonDropdownSvg);
-        form.clickDispatch(reasonDropdownSvg);
-        page.waitForTimeout(1500);
-        if (page.locator(".profile-dropdown--item").count() > 0) {
-            page.locator(".profile-dropdown--item").first().dispatchEvent("click");
-            System.out.println("[HRMS] Selected deactivate reason");
+        // Select deactivation reason
+        page.getByRole(AriaRole.TEXTBOX).first().click();
+        page.getByText(TestDataReader.get("HRMS_DEACTIVATION_REASON")).click();
+
+        // Enter remarks
+        Locator remarks = page.getByRole(AriaRole.TEXTBOX,
+                new Page.GetByRoleOptions().setName("Enter Remarks"));
+        remarks.click();
+        remarks.fill(TestDataReader.get("HRMS_DEACTIVATION_REMARKS"));
+
+        // Confirm deactivation
+        page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Deactivate Employee")).click();
+
+        try {
+            page.getByText("Employee Deactivated")
+                    .waitFor(new Locator.WaitForOptions().setTimeout(30000));
+            System.out.println("[HRMS] Employee deactivated: " + username);
+            return true;
+        } catch (Exception e) {
+            System.out.println("[HRMS] Deactivation failed: " + e.getMessage().split("\n")[0]);
+            return false;
         }
-        page.waitForTimeout(500);
-        return this;
-    }
-
-    public HRMSPage confirmDeactivate() {
-        form.waitFor(deactivateConfirm);
-        form.clickDispatch(deactivateConfirm);
-        page.waitForTimeout(3000);
-        System.out.println("[HRMS] Confirmed deactivation");
-        return this;
     }
 
     // ==================== EMPLOYEE INBOX: CAMPAIGN ASSIGNMENT ====================
@@ -431,11 +438,10 @@ public class HRMSPage extends BasePage {
 
     public boolean isSuccessMessageVisible(String expectedText) {
         try {
-            page.locator(successMessage)
+            page.getByText(expectedText)
                     .waitFor(new Locator.WaitForOptions().setTimeout(30000));
-            String text = page.locator(successMessage).textContent();
-            System.out.println("[HRMS] Success message: " + text);
-            return text.contains(expectedText);
+            System.out.println("[HRMS] Success message visible: " + expectedText);
+            return true;
         } catch (Exception e) {
             System.out.println("[HRMS] Primary success banner not found: " + e.getMessage().split("\n")[0]);
         }
@@ -462,14 +468,32 @@ public class HRMSPage extends BasePage {
     }
 
     public void goBackToHome() {
+        Locator btn = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Go Back to Home"));
         try {
-            page.locator(goBackToHomeBtn).first()
-                    .waitFor(new Locator.WaitForOptions().setTimeout(5000));
-            page.locator(goBackToHomeBtn).first().dispatchEvent("click");
+            btn.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            btn.click();
         } catch (Exception e) {
             page.navigate(page.url().split("/hrms")[0] + "/digit-ui/employee");
         }
-        page.waitForTimeout(2000);
+        // Wait for home page cards to render (React SPA — load event fires before components mount)
+        page.locator("h2.digit-button-label").first()
+                .waitFor(new Locator.WaitForOptions().setTimeout(15000));
         System.out.println("[HRMS] Navigated back to home");
+    }
+
+    public HRMSPage goToSearchFromHome() {
+        // Use the same CSS locator as HomePage — the card may be a div, not a <button>
+        Locator searchUserCard = page.locator("h2.digit-button-label")
+                .filter(new Locator.FilterOptions().setHasText("Search User"));
+        searchUserCard.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        searchUserCard.click();
+
+        // Hierarchy selection screen appears first — click Next to reach the search form
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"))
+                .waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next")).click();
+
+        page.locator(searchInput).waitFor(new Locator.WaitForOptions().setTimeout(15000));
+        return this;
     }
 }

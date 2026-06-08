@@ -4,113 +4,105 @@ import base.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.HRMSPage;
-import utils.ConfigReader;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 public class HRMSTest extends BaseTest {
 
     @Test(groups = {"payments-ui"})
     public void createHRMS() {
-        String username = "Test-" + System.currentTimeMillis() % 100000;
-        String mobile = "8" + String.format("%09d", ThreadLocalRandom.current().nextInt(100000000, 999999999));
-
-        System.out.println("[HRMS] Username: " + username + " | Mobile: " + mobile);
-
         HRMSPage hrms = homePage.goToCreateUser();
-
-        hrms.selectHierarchyType(
-                ConfigReader.get("hrms.hierarchy.search"),
-                ConfigReader.get("hrms.hierarchy.option"))
-            .clickNext()
-            .fillLoginDetails(
-                username,
-                ConfigReader.get("hrms.emp.password"))
-            .fillPersonalDetails(
-                ConfigReader.get("hrms.emp.name"),
-                mobile,
-                ConfigReader.get("hrms.emp.gender"),
-                ConfigReader.get("hrms.emp.dob"),
-                ConfigReader.get("hrms.emp.email"),
-                ConfigReader.get("hrms.emp.address"))
-            .fillEmploymentDetails(
-                ConfigReader.get("hrms.emp.type"),
-                ConfigReader.get("hrms.emp.doa"),
-                ConfigReader.get("hrms.emp.department"),
-                ConfigReader.get("hrms.emp.designation"),
-                ConfigReader.get("hrms.emp.role"),
-                ConfigReader.get("hrms.emp.jurisdiction"));
-
-        hrms.submitForm();
+        String createdUsername = hrms.createEmployee();
 
         Assert.assertTrue(hrms.isEmployeeCreatedSuccessfully(),
                 "Employee should be created successfully");
-
-        System.out.println("[HRMS] Created employee ID: " + hrms.getEmployeeId());
+        Assert.assertNotNull(createdUsername,
+                "Username should be visible on the success screen");
+        Assert.assertTrue(hrms.searchAndVerifyEmployee(createdUsername),
+                "Employee '" + createdUsername + "' should be searchable and verified on Employee Details screen");
     }
 
-    @Test(priority = 1, groups = {"payments-ui"})
+    @Test(groups = {"payments-ui"})
     public void editEmployee() {
-        HRMSPage hrms = nav.goToSearchEmployee();
+        HRMSPage hrms = homePage.goToCreateUser();
+        String createdUsername = hrms.createEmployee();
 
-        hrms.searchEmployee(ConfigReader.get("search.emp.id"))
-                .openEmployeeResult()
-                .openTakeActionMenu()
-                .clickEditEmployee()
-                .editEmployeeName()
-                .fillRequiredEditFields()
-                .saveEmployeeEdit();
+        Assert.assertTrue(hrms.isEmployeeCreatedSuccessfully(),
+                "Employee should be created before editing");
+        Assert.assertNotNull(createdUsername,
+                "Username should be visible on the success screen");
+
+        hrms.goBackToHome();
+        hrms.goToSearchFromHome();
+        page.waitForTimeout(3000);
+
+        hrms.searchEmployee(createdUsername)
+                .openEmployeeByUsername(createdUsername)
+                .editAndSave();
 
         Assert.assertTrue(
-                hrms.isSuccessMessageVisible("Employee Details Updated Successfully"),
+                hrms.isSuccessMessageVisible("Employee Details Updated"),
                 "Edit Employee: success message not found");
 
         hrms.goBackToHome();
     }
 
-    @Test(priority = 2, groups = {"payments-ui"})
-    public void deactivateEmployee() {
-        HRMSPage hrms = nav.goToSearchEmployee();
+    @Test(groups = {"payments-ui"})
+    public void createEmployeeWithDuplicateUsername() {
+        // Step 1: Create first employee and capture username
+        HRMSPage hrms = homePage.goToCreateUser();
+        String username = hrms.createEmployee();
 
-        hrms.searchEmployee(ConfigReader.get("search.emp.id"))
-                .openEmployeeResult()
-                .openTakeActionMenu()
-                .clickDeactivateEmployee()
-                .selectDeactivateReason()
-                .confirmDeactivate();
+        Assert.assertTrue(hrms.isEmployeeCreatedSuccessfully(),
+                "First employee should be created successfully");
+        Assert.assertNotNull(username,
+                "Username should be visible on the success screen");
 
-        Assert.assertTrue(
-                hrms.isSuccessMessageVisible("Employee Deactivated Successfully"),
-                "Deactivate Employee: success message not found");
-
+        // Step 2: Attempt to create second employee with the same username
         hrms.goBackToHome();
+        hrms = homePage.goToCreateUser();
+
+        Assert.assertTrue(hrms.createEmployeeWithDuplicateUsername(username),
+                "Creating employee with duplicate username '" + username + "' should be blocked");
     }
 
-    @Test(priority = 3, groups = {"payments-ui"})
-    public void searchAndVerifyEmployee() {
-        String empId = ConfigReader.get("search.emp.id");
-        HRMSPage hrms = nav.goToSearchEmployee();
+    @Test(groups = {"payments-ui"})
+    public void createEmployeeWithDuplicateMobile() {
+        String mobile = HRMSPage.generateMobile();
 
-        hrms.searchEmployee(empId);
+        // Create first employee with this mobile
+        HRMSPage hrms = homePage.goToCreateUser();
+        String username = hrms.createEmployeeWithMobile(mobile);
 
-        String[] selectors = {
-                "table tbody tr td:first-child a",
-                "tbody tr td a",
-                "tbody a"
-        };
+        Assert.assertTrue(hrms.isEmployeeCreatedSuccessfully(),
+                "First employee should be created successfully");
+        Assert.assertNotNull(username,
+                "Username should be visible on the success screen");
 
-        boolean resultFound = false;
-        for (String sel : selectors) {
-            int count = page.locator(sel).count();
-            System.out.println("[SearchVerify] Selector '" + sel + "' count: " + count);
-            if (count > 0) {
-                resultFound = true;
-                System.out.println("[SearchVerify] Result link found with: " + sel);
-                break;
-            }
-        }
+        // Attempt to create second employee with the same mobile
+        hrms.goBackToHome();
+        hrms = homePage.goToCreateUser();
 
-        Assert.assertTrue(resultFound,
-                "Employee '" + empId + "' result link not found in search results table");
+        Assert.assertTrue(hrms.createEmployeeWithDuplicateMobile(mobile),
+                "Creating employee with duplicate mobile '" + mobile + "' should be blocked");
+    }
+
+    @Test(groups = {"payments-ui"})
+    public void deactivateEmployee() {
+        HRMSPage hrms = homePage.goToCreateUser();
+        String createdUsername = hrms.createEmployee();
+
+        Assert.assertTrue(hrms.isEmployeeCreatedSuccessfully(),
+                "Employee should be created before deactivating");
+        Assert.assertNotNull(createdUsername,
+                "Username should be visible on the success screen");
+
+        hrms.goBackToHome();
+        hrms.goToSearchFromHome();
+        page.waitForTimeout(3000);
+
+        hrms.searchEmployee(createdUsername)
+                .openEmployeeByUsername(createdUsername);
+
+        Assert.assertTrue(hrms.performDeactivate(createdUsername),
+                "Employee '" + createdUsername + "' should be deactivated successfully");
     }
 }

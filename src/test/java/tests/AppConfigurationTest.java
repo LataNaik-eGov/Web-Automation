@@ -10,7 +10,7 @@ public class AppConfigurationTest extends BaseTest {
 
    
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    @Test(groups = { "workbench-ui", "sanity"})
     public void verifyAppConfiguration() {
         AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
 
@@ -35,7 +35,7 @@ public class AppConfigurationTest extends BaseTest {
         appConfigPage.clickGoBack();
     }
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    @Test(groups = { "workbench-ui", "sanity"})
     public void verifyAppConfigurationByLabelChange() {
         AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
 
@@ -49,7 +49,7 @@ public class AppConfigurationTest extends BaseTest {
         appConfigPage.clickSaveConfiguration();
     }
 
-    @Test(groups = {"regression", "workbench-ui" ,"sanity"})
+    @Test(groups = { "workbench-ui" ,"sanity"})
     public void verifyAppConfigurationBySwitchingToggleOff() {
         AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
 
@@ -65,7 +65,7 @@ public class AppConfigurationTest extends BaseTest {
     }
 
 // Negative test
-     @Test(groups = {"negative", "regression", "workbench-ui"})
+     @Test(groups = {"negative",  "workbench-ui"})
     public void verifyAppConfigurationWithEmptyLabel() {
         AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
 

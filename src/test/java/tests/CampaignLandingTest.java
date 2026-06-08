@@ -6,7 +6,7 @@ import base.BaseTest;
 
 public class CampaignLandingTest extends BaseTest {
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    @Test(groups = { "workbench-ui", "sanity"})
     public void verifyCreateCampaignFromScratch() {
         nav.goToCampaignDraft();
     }

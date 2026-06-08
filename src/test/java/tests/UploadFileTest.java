@@ -16,7 +16,7 @@ public class UploadFileTest extends BaseTest {
 
   
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    @Test(groups = { "workbench-ui", "sanity"})
     public void verifyUploadFile() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
@@ -39,7 +39,7 @@ public class UploadFileTest extends BaseTest {
 
 //Negative tests
 
-      @Test(groups = {"negative", "regression", "workbench-ui"})
+      @Test(groups = {"negative",  "workbench-ui"})
     public void verifySubmitWithoutFile() {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
@@ -52,7 +52,7 @@ public class UploadFileTest extends BaseTest {
                 "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyUploadInvalidFileType() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
@@ -72,7 +72,7 @@ public class UploadFileTest extends BaseTest {
                 "Error toast should appear when an invalid file type (PDF) is uploaded");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyUploadInvalidExcelFile() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
@@ -94,7 +94,7 @@ public class UploadFileTest extends BaseTest {
     }
 
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyWithInvalidInputInFile() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 

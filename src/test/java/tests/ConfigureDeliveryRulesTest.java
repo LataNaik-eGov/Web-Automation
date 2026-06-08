@@ -9,7 +9,7 @@ import pages.ConfigureDeliveryRulesPage;
 public class ConfigureDeliveryRulesTest extends BaseTest {
 
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    @Test(groups = { "workbench-ui", "sanity"})
     public void verifyConfigureDeliveryRules() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToConfigureDeliveryRules();
 
@@ -25,7 +25,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
     }
 // Negative tests
 
-   @Test(groups = {"negative", "regression", "workbench-ui"})
+   @Test(groups = {"negative",  "workbench-ui"})
     public void verifyNextWithFirstStartDateOnly() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToConfigureDeliveryRules();
 
@@ -39,7 +39,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Toast 'Please fill the cycle dates to move ahead.' should appear when only the start date is filled");
     }
 
-       @Test(groups = {"negative", "regression", "workbench-ui"})
+       @Test(groups = {"negative",  "workbench-ui"})
     public void verifyNextWithoutFillingDates() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToConfigureDeliveryRules();
 
@@ -52,7 +52,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Toast 'Please fill the cycle dates to move ahead.' should appear when no dates are filled");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyDeliveryRulesWithInvalidInput() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
 
@@ -64,7 +64,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Toast error should appear when invalid value '30' is entered in the second step");
     }
 
-       @Test(groups = {"negative", "regression", "workbench-ui"})
+       @Test(groups = {"negative",  "workbench-ui"})
     public void verifyDeliveryRulesWithZeroInput() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
 
@@ -77,7 +77,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
     }
 
 
-           @Test(groups = {"negative", "regression", "workbench-ui"})
+           @Test(groups = {"negative",  "workbench-ui"})
     public void verifyDeliveryRulesWithEmptyInput() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
         deliveryRulesPage.fillNthTextbox(2, "");

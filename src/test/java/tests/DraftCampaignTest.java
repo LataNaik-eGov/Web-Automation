@@ -8,7 +8,7 @@ import pages.DraftCampaignPage;
 
 public class DraftCampaignTest extends BaseTest {
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    @Test(groups = { "workbench-ui", "sanity"})
     public void verifyDraftCampaignFlow() {
         DraftCampaignPage draftPage = nav.goToCampaignDraft();
 
@@ -39,7 +39,7 @@ public class DraftCampaignTest extends BaseTest {
 
     // ==================== Campaign Name Negative Test Cases ====================
 
-//     @Test(groups = {"regression", "workbench-ui"})
+//     @Test(groups = { "workbench-ui"})
 //     public void verifyValidCampaignName() {
 //         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
 //         draftPage.clearAndEnterDynamicCampaignName();
@@ -48,7 +48,7 @@ public class DraftCampaignTest extends BaseTest {
 //                 "Should proceed to date step after entering a valid campaign name");
 //     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyCampaignNameTooLong() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("ThisCampaignNameIsWayTooLong123"); // 31 chars - above maximum of 30
@@ -57,7 +57,7 @@ public class DraftCampaignTest extends BaseTest {
                 "Error should be shown for campaign name longer than 30 characters");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyCampaignNameStartsWithSpecialChar() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("_Campaign");
@@ -66,7 +66,7 @@ public class DraftCampaignTest extends BaseTest {
                 "Error should be shown for campaign name starting with an underscore");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyCampaignNameContainsEmoji() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("Camp🎉ign1"); // 🎉 emoji
@@ -75,7 +75,7 @@ public class DraftCampaignTest extends BaseTest {
                 "Error should be shown for campaign name containing an emoji");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyCampaignNameConsecutiveUnderscores() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("Camp__aign");
@@ -86,7 +86,7 @@ public class DraftCampaignTest extends BaseTest {
 
     // ==================== Date Negative Test Cases ====================
 
-        @Test(groups = {"negative", "regression", "workbench-ui"})
+        @Test(groups = {"negative",  "workbench-ui"})
     public void verifySubmitWithoutFillingDates() {
          DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.clickSubmit();
@@ -94,7 +94,7 @@ public class DraftCampaignTest extends BaseTest {
                 "Toast error should appear without any date filled when submitting the form");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifySubmitWithStartDateOnly() {
         DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.fillStartDate();
@@ -103,7 +103,7 @@ public class DraftCampaignTest extends BaseTest {
                 "Toast error should appear when submitting with only start date filled");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifySubmitWithEndDateOnly() {
         DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.fillEndDate();

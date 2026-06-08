@@ -28,6 +28,7 @@ public class TestDataReader {
     }
 
     public static String get(String key) {
-        return props.getProperty(env + "." + key);
+        String value = props.getProperty(env + "." + key);
+        return value != null ? value : props.getProperty(key);
     }
 }

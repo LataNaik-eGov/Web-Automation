@@ -109,14 +109,14 @@ public class BaseTest {
 
     @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult result) {
-        try {
-            if (result.getStatus() == ITestResult.FAILURE && page != null) {
+        if (result.getStatus() == ITestResult.FAILURE && page != null && !page.isClosed()) {
+            try {
                 String testName = result.getMethod().getMethodName();
                 String className = result.getTestClass().getRealClass().getSimpleName();
                 screenshot.captureOnFailure(className, testName);
+            } catch (Exception e) {
+                System.err.println("Failed to capture failure screenshot: " + e.getMessage());
             }
-        } catch (Exception e) {
-            // Ignore screenshot failures during teardown
         }
 
         try { if (context != null) context.close(); } catch (Exception ignored) {}

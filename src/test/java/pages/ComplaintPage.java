@@ -82,6 +82,7 @@ public class ComplaintPage extends BasePage {
     public String fillFormWithFile(String description, String filePath) {
         waitForVisible(complaintTypeDropdown);
         wait(5000);
+        page.waitForLoadState();
         waitForVisible(complaintTypeDropdown);
         selectComplaintType();
         selectDate(LocalDate.now().toString());
@@ -218,6 +219,7 @@ public class ComplaintPage extends BasePage {
     }
 
     public void searchComplaint(String complaintNumber) {
+        page.waitForTimeout(1000);
         complaintNumberInput.click();
         complaintNumberInput.fill(complaintNumber);
         searchButton.click();

@@ -12,10 +12,8 @@ public class ConfigReader {
 
     static {
         String envPath = System.getProperty("env.file", ".env");
-        // Try absolute path first, then relative
         File envFile = new File(envPath);
         if (!envFile.isAbsolute()) {
-            // Try to find .env in the working directory or project root
             String[] paths = {".env", "../.env", "src/test/resources/.env"};
             for (String path : paths) {
                 envFile = new File(path);

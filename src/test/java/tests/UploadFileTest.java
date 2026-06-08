@@ -2,9 +2,9 @@ package tests;
 
 import com.microsoft.playwright.Download;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import base.BaseTest;
 import pages.UploadFilePage;
 import utils.ConfigReader;
 
@@ -12,100 +12,105 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-public class UploadFileTest extends AppConfigurationTest {
+public class UploadFileTest extends BaseTest {
 
-    protected UploadFilePage uploadFilePage;
+  
 
-    @BeforeMethod(alwaysRun = true, dependsOnMethods = "navigateToAppConfiguration")
-    public void navigateToUploadFile() {
-        // Complete app configuration to reach upload file page
-        appConfigPage.clickSetUpMobileApp();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
+    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    public void verifyUploadFile() throws URISyntaxException {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
 
-        appConfigPage.configureRegistrationAndDelivery();
-        page.waitForTimeout(2000);
+        uploadFilePage.clickUploadData();
 
-        appConfigPage.configureCloseHousehold();
-        page.waitForTimeout(2000);
+        uploadFilePage.closePopup();
 
-        appConfigPage.configureComplaints();
-        page.waitForTimeout(2000);
+        Download download = uploadFilePage.downloadTemplate();
+        Assert.assertNotNull(download, "Template download should have started");
 
-        appConfigPage.configureInventory();
-        page.waitForTimeout(2000);
+        String templateFile = ConfigReader.getTemplateFileName();
+        URL resource = getClass().getClassLoader().getResource(templateFile);
+        Assert.assertNotNull(resource, templateFile + " should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+        
+        uploadFilePage.uploadFile(filePath);
 
-        appConfigPage.configureStockReconciliation();
-        page.waitForTimeout(2000);
-
-        appConfigPage.configureReports();
-        page.waitForTimeout(2000);
-
-        appConfigPage.configurePermissionHandler();
-        page.waitForTimeout(2000);
-
-        appConfigPage.clickGoBack();
-        page.waitForLoadState();
-        page.waitForTimeout(3000);
-
-        uploadFilePage = new UploadFilePage(page);
+        uploadFilePage.clickSubmit();
     }
 
-    @Override
-    @Test(enabled = false)
-    public void verifyAppConfiguration() {}
+//Negative tests
 
-    @Override
-    @Test(enabled = false)
-    public void verifyProximitySearchWithEmptyLabel() {}
-
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+      @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifySubmitWithoutFile() {
-        // Step 1: Click Upload Data to open the popup
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
         uploadFilePage.clickUploadData();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
 
-        // Step 2: Close the popup by clicking outside it
-        uploadFilePage.closePopupByClickingOutside();
-
-        // Step 3: Click Submit without uploading any file
+        uploadFilePage.closePopup();
         uploadFilePage.clickSubmit();
 
-        // Step 4: Verify toast message appears
         Assert.assertTrue(uploadFilePage.isNoFileToastVisible(),
                 "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
     }
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
-    public void verifyUploadFile() throws URISyntaxException {
-        // Step 1: Click Upload Data, then click somewhere on the page
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyUploadInvalidFileType() throws URISyntaxException {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
         uploadFilePage.clickUploadData();
-        page.waitForLoadState();
-        page.waitForTimeout(2000);
-        uploadFilePage.closePopupByClickingOutside();
 
-        // Step 2: Download Template
-        Download download = uploadFilePage.downloadTemplate();
-        Assert.assertNotNull(download, "Template download should have started");
-        page.waitForTimeout(2000);
+        uploadFilePage.closePopup();
 
-        // Step 3: Upload filled file from resources
-        String baseUrl = ConfigReader.get("BASE_URL");
-        String templateFile;
-        if (baseUrl != null && baseUrl.contains("bauchi")) {
-            templateFile = "bauchi-unifiedtemplate.xlsx";
-        } else {
-            templateFile = ConfigReader.getTemplateFileName();
-        }
-        URL resource = getClass().getClassLoader().getResource(templateFile);
-        Assert.assertNotNull(resource, templateFile + " should exist in test resources");
+        URL resource = getClass().getClassLoader().getResource("complaint.pdf");
+        Assert.assertNotNull(resource, "complaint.pdf should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();
-        uploadFilePage.uploadFile(filePath);
-        page.waitForTimeout(2000);
 
-        // Step 4: Close popup by clicking outside, then submit
-        uploadFilePage.closePopupByClickingOutside();
+        uploadFilePage.uploadFile(filePath);
+
         uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when an invalid file type (PDF) is uploaded");
+    }
+
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyUploadInvalidExcelFile() throws URISyntaxException {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
+        uploadFilePage.clickUploadData();
+
+        uploadFilePage.closePopup();
+        
+
+        URL resource = getClass().getClassLoader().getResource("InvalidFile.xlsx");
+        Assert.assertNotNull(resource, "InvalidFile.xlsx should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when an invalid Excel file is uploaded");
+    }
+
+  
+    @Test(groups = {"negative", "regression", "workbench-ui"})
+    public void verifyWithInvalidInputInFile() throws URISyntaxException {
+        UploadFilePage uploadFilePage = nav.goToUploadFile();
+
+        uploadFilePage.clickUploadData();
+
+        uploadFilePage.closePopup();
+
+        URL resource = getClass().getClassLoader().getResource("InvalidInputFile.xlsx");
+        Assert.assertNotNull(resource, "InvalidInputFile.xlsx should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.clickSubmit();
+
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when a file with invalid input data is uploaded");
     }
 }

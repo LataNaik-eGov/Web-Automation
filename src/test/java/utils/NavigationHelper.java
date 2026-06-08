@@ -7,6 +7,9 @@ import com.microsoft.playwright.options.WaitUntilState;
 
 import pages.*;
 
+import java.net.URL;
+import java.nio.file.Paths;
+
 /**
  * NavigationHelper - Central place for all page navigation.
  *
@@ -121,6 +124,108 @@ public class NavigationHelper {
         System.out.println("[Nav] All sidebar attempts exhausted — returning page as-is");
         return new HRMSPage(page);
     }
+    // ==================== CAMPAIGN NAVIGATION ====================
+
+    public CampaignLandingPage campaignLandingPage() {
+        return new CampaignLandingPage(page);
+    }
+
+    public DraftCampaignPage goToCampaignDraft() {
+        CampaignLandingPage landing = new CampaignLandingPage(page);
+        landing.clickCreateCampaign();
+        landing.clickScratchCard();
+        landing.clickContinue();
+        return new DraftCampaignPage(page);
+    }
+
+    public DraftCampaignPage goToCampaignNameStep() {
+        DraftCampaignPage draft = goToCampaignDraft();
+        draft.clickCampaignTypeDropdown();
+        draft.selectCampaignType();
+        draft.clickNext();
+        return draft;
+    }
+
+    public DraftCampaignPage goToCampaignDateStep() {
+        DraftCampaignPage draft = goToCampaignNameStep();
+        draft.clearAndEnterDynamicCampaignName();
+        draft.clickNext();
+        return draft;
+    }
+
+    public BoundarySelectionPage goToBoundarySelection() {
+        DraftCampaignPage draft = goToCampaignDateStep();
+        draft.fillStartDate();
+        draft.fillEndDate();
+        draft.clickSubmit();
+        BoundarySelectionPage boundary = new BoundarySelectionPage(page);
+        boundary.clickDefineTarget();
+        return boundary;
+    }
+
+    public ConfigureDeliveryRulesPage goToConfigureDeliveryRules() {
+        BoundarySelectionPage boundary = goToBoundarySelection();
+        boundary.clickFirstLevel();
+        boundary.clickSecondLevel();
+        boundary.clickThirdLevel();
+        boundary.clickFourthLevel();
+        boundary.clickNextButton();
+        boundary.clickSubmitButton();
+        return new ConfigureDeliveryRulesPage(page);
+    }
+
+    public ConfigureDeliveryRulesPage goToDeliveryRulesSecondStep() {
+        ConfigureDeliveryRulesPage delivery = goToConfigureDeliveryRules();
+        delivery.clickConfigureDelivery();
+        delivery.fillDates();
+        delivery.clickNext();
+        return delivery;
+    }
+
+    public AppConfigurationPage goToAppConfiguration() {
+        ConfigureDeliveryRulesPage delivery = goToConfigureDeliveryRules();
+        delivery.clickConfigureDelivery();
+        delivery.fillDates();
+        delivery.clickNext();
+        delivery.clickNext();
+        delivery.clickSubmit();
+        return new AppConfigurationPage(page);
+    }
+
+    public UploadFilePage goToUploadFile() {
+        AppConfigurationPage appConfig = goToAppConfiguration();
+        appConfig.clickSetUpMobileApp();
+        appConfig.configureRegistrationAndDelivery();
+        appConfig.configureCloseHousehold();
+        appConfig.configureReferral();
+        appConfig.configureComplaints();
+        appConfig.configureInventory();
+        appConfig.configureStockReconciliation();
+        appConfig.configureReports();
+        appConfig.configurePermissionHandler();
+        appConfig.clickGoBack();
+        return new UploadFilePage(page);
+    }
+
+    public CreateChecklist goToCreateChecklist() {
+        UploadFilePage uploadFilePage = goToUploadFile();
+        uploadFilePage.clickUploadData();
+        uploadFilePage.closePopup();
+
+        String templateFile = ConfigReader.getTemplateFileName();
+
+        try {
+            URL resource = getClass().getClassLoader().getResource(templateFile);
+            String filePath = Paths.get(resource.toURI()).toString();
+            uploadFilePage.uploadFile(filePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load template file: " + templateFile, e);
+        }
+
+        uploadFilePage.clickSubmit();
+        return new CreateChecklist(page);
+    }
+
     // ==================== PAGE OBJECT GETTERS ====================
     // Use these when you're already on the page
 

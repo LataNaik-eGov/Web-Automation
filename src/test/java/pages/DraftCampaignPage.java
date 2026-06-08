@@ -10,9 +10,7 @@ import java.time.Month;
 import java.util.Locale;
 import java.util.Map;
 
-public class DraftCampaignPage {
-
-    private Page page;
+public class DraftCampaignPage extends BasePage {
 
     private Locator campaignTypeDropdown;
     private Locator nextButton;
@@ -36,7 +34,7 @@ public class DraftCampaignPage {
     );
 
     public DraftCampaignPage(Page page) {
-        this.page = page;
+        super(page);
         this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
 
@@ -44,8 +42,8 @@ public class DraftCampaignPage {
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.campaignName = page.locator("input[placeholder='CampaignName_Month_Year']");
-        this.startDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
-        this.endDateInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
+        this.startDateInput = page.getByPlaceholder("Start date");
+        this.endDateInput = page.getByPlaceholder("End date");
         this.campaignNameError = page.getByText("Please add valid campaign name as per the guidelines.");
         this.dateToastError = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
@@ -55,13 +53,16 @@ public class DraftCampaignPage {
     // --- Actions ---
 
     public void clickCampaignTypeDropdown() {
+        waitForVisible(campaignTypeDropdown);
+       wait(3000);
         campaignTypeDropdown.click();
-        page.waitForTimeout(1000);
     }
 
     public void selectCampaignType() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).click();
-        page.waitForTimeout(1000);
+        Locator option = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true));
+        waitForVisible(option);
+       wait(3000);
+        option.click();
     }
 
     public boolean isCampaignTypeVisible() {
@@ -69,38 +70,49 @@ public class DraftCampaignPage {
     }
 
     public void clickNext() {
+        waitForVisible(nextButton);
+       wait(3000);
         nextButton.click();
     }
 
     public void clickSubmit() {
+        waitForVisible(submitButton);
+       wait(3000);
         submitButton.click();
     }
 
     public void clearAndEnterDynamicCampaignName() {
+        waitForVisible(campaignName);
+       wait(3000);
         campaignName.clear();
         String prefix = campaignType.replace(" ", "");
-        if (prefix.length() > 22) prefix = prefix.substring(0, 22);
+        if (prefix.length() > 21) prefix = prefix.substring(0, 21);
         String dynamicName = prefix + java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("HHssSSS"));
+                .format(java.time.format.DateTimeFormatter.ofPattern("HHmmssSSS"));
         campaignName.fill(dynamicName);
-        campaignName.press("Enter");
+        campaignName.press("Tab");
     }
 
     public void enterCampaignName(String name) {
+        waitForVisible(campaignName);
+       wait(3000);
         campaignName.clear();
         campaignName.fill(name);
         campaignName.press("Tab");
-        page.waitForTimeout(500);
     }
 
     public boolean isCampaignNameErrorVisible() {
         campaignNameError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return campaignNameError.isVisible();
+        boolean visible = campaignNameError.isVisible();
+        wait(2000);
+        return visible;
     }
 
     public boolean isDateToastErrorVisible() {
         dateToastError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return dateToastError.isVisible();
+        boolean visible = dateToastError.isVisible();
+        wait(2000);
+        return visible;
     }
 
     public String getCampaignNameErrorText() {
@@ -126,9 +138,9 @@ public class DraftCampaignPage {
     }
 
     private void selectDate(Locator input, LocalDate date) {
-        input.waitFor(new Locator.WaitForOptions().setTimeout(45000));
+        input.waitFor(new Locator.WaitForOptions().setTimeout(15000));
         input.click();
-        page.waitForTimeout(500);
+        currentMonthLabel.waitFor(new Locator.WaitForOptions().setTimeout(10000));
 
         String headerText = currentMonthLabel.innerText().trim();
         String[] parts = headerText.split(" ");
@@ -140,11 +152,9 @@ public class DraftCampaignPage {
 
         for (int i = 0; i < targetTotal - displayedTotal; i++) {
             nextMonthButton.click();
-            page.waitForTimeout(300);
         }
 
         dateCell(date).click();
-        page.waitForTimeout(500);
     }
 
     public void fillStartAndEndDates() {

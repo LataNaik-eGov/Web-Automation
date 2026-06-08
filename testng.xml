@@ -35,6 +35,17 @@
         </classes>
     </test>
 
+    <test name="Smoke Tests">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CreateChecklistTest"/>
+        </classes>
+    </test>
+
     <test name="1 - Draft Campaign Negative Tests">
         <groups>
             <run>

@@ -9,9 +9,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import utils.ConfigReader;
 
-public class ConfigureDeliveryRulesPage {
+public class ConfigureDeliveryRulesPage extends BasePage {
 
-    private Page page;
     private String campaignType;
 
     // Delivery rules elements
@@ -21,14 +20,14 @@ public class ConfigureDeliveryRulesPage {
     private Locator nextButton;
     private Locator submitButton;
     private Locator cycleDateToast;
+    private Locator deliveryErrorToast;
 
     // Date picker elements
     private Locator currentMonthLabel;
     private Locator nextMonthButton;
 
     public ConfigureDeliveryRulesPage(Page page) {
-
-        this.page = page;
+        super(page);
         this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
         this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Start Planning Deliveries"));
         this.startDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
@@ -38,14 +37,16 @@ public class ConfigureDeliveryRulesPage {
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
         this.cycleDateToast = page.getByText("Please fill the cycle dates to move ahead.");
+        this.deliveryErrorToast = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
 
     }
 
     // --- Actions ---
 
     public void clickConfigureDelivery() {
+        waitForVisible(configureDeliveryButton);
+       wait(3000);
         configureDeliveryButton.click();
-        page.waitForTimeout(1000);
     }
 
     private Locator dateCell(LocalDate date) {
@@ -54,8 +55,9 @@ public class ConfigureDeliveryRulesPage {
     }
 
     private void selectDate(Locator textbox, LocalDate date) {
+        waitForVisible(textbox);
+       wait(3000);
         textbox.click();
-        page.waitForTimeout(500);
 
         // Navigate months if needed
         String headerText = currentMonthLabel.innerText().trim();
@@ -70,11 +72,9 @@ public class ConfigureDeliveryRulesPage {
 
         for (int i = 0; i < monthDiff; i++) {
             nextMonthButton.click();
-            page.waitForTimeout(300);
         }
 
         dateCell(date).click();
-        page.waitForTimeout(500);
     }
 
     public void fillStartDate() {
@@ -109,18 +109,46 @@ public class ConfigureDeliveryRulesPage {
         }
     }
 
+    public boolean isConfigureDeliveryButtonVisible() {
+        configureDeliveryButton.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return configureDeliveryButton.isVisible();
+    }
+
     public boolean isCycleDateToastVisible() {
+        wait(3000);
         cycleDateToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
         return cycleDateToast.isVisible();
     }
 
+    public boolean isDeliveryErrorToastVisible() {
+        wait(3000);
+        deliveryErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        return deliveryErrorToast.isVisible();
+    }
+
+    public void fillNthTextbox(int index, String value) {
+        Locator textbox = page.getByRole(AriaRole.TEXTBOX).nth(index);
+        waitForVisible(textbox);
+        textbox.click();
+        textbox.fill(value);
+    }
+
     public void clickNext() {
+        waitForVisible(nextButton);
+       wait(3000);
         nextButton.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickSubmit() {
+        waitForVisible(submitButton);
+       wait(3000);
         submitButton.click();
-        page.waitForTimeout(1000);
+    }
+
+    public void removeResource(String resourceName) {
+        Locator removeBtn = page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Remove " + resourceName));
+        waitForVisible(removeBtn);
+        removeBtn.click();
     }
 }

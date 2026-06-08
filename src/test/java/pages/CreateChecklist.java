@@ -3,12 +3,10 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-public class CreateChecklist {
-
-    private Page page;
+public class CreateChecklist extends BasePage {
 
     // Create checklist
-    private Locator createChecklist;
+    private Locator createChecklistButton;
     private Locator configureList;
     private Locator configureChecklist;
     private Locator confirmChecklist;
@@ -17,8 +15,8 @@ public class CreateChecklist {
     private Locator goMyCampaign;
 
     public CreateChecklist(Page page) {
-        this.page = page;
-        this.createChecklist = page.locator("#campaign-details-page-button-checklist");
+        super(page);
+        this.createChecklistButton = page.locator("#campaign-details-page-button-checklist");
         this.configureList = page.locator(".digit-button-secondary.medium").first();
         this.configureChecklist = page.locator("#campaign-checklist-create-standalone-form-field-primary");
         this.confirmChecklist = page.locator(".digit-button-primary.large");
@@ -30,35 +28,30 @@ public class CreateChecklist {
     // --- Actions ---
 
     public void clickCreateChecklist() {
-        createChecklist.click();
-        page.waitForTimeout(1000);
+        createChecklistButton.click();
     }
 
     public void clickConfigureList() {
         configureList.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickConfigureChecklist() {
         configureChecklist.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickConfirmChecklist() {
         confirmChecklist.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickBackToHomepage() {
         backToHomepage.click();
-        page.waitForTimeout(1000);
     }
 
     public void clickCreateCampaign() {
         page.mouse().wheel(0, 500);
-        page.waitForTimeout(1000);
         createCampaign.click();
-        page.waitForTimeout(1000);
+        wait(1000);
         goMyCampaign.click();
+        wait (1000);
     }
 }

@@ -5,69 +5,75 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
+import com.microsoft.playwright.options.WaitForSelectorState;
+
 import java.nio.file.Paths;
 
-public class UploadFilePage {
-
-    private Page page;
+public class UploadFilePage extends BasePage {
 
     // Upload file elements
     private Locator uploadDataButton;
     private Locator downloadTemplateButton;
-    private Locator dragAndDropLabel;
-    private Locator fileInputBody;
     private Locator submit;
     private Locator noFileToast;
-    private Locator uploadDataLabel;
+    private Locator cancelIcon;
+    private Locator fileErrorToast;
 
     public UploadFilePage(Page page) {
-        this.page = page;
+        super(page);
         this.uploadDataButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Upload Data"));
         this.downloadTemplateButton = page.locator("#file-download-template");
-        this.dragAndDropLabel = page.locator("label").filter(new Locator.FilterOptions().setHasText("Drag and drop your filled"));
-        this.fileInputBody = page.locator("input[type='file']");
         this.submit = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
-        this.noFileToast = page.getByText("Please upload a file");
-        this.uploadDataLabel = page.getByText("Upload Data").first();
+        this.noFileToast = page.locator("[class*='digit-toast'], [role='alert'], .Toastify__toast")
+                .filter(new Locator.FilterOptions().setHasText("Please upload a file"));
+        this.cancelIcon = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cancel"));
+        this.fileErrorToast = page.locator("[class*='digit-toast--error'], [role='alert'][aria-live='assertive'], .Toastify__toast--error").first();
     }
 
     // --- Actions ---
 
     public void clickUploadData() {
         uploadDataButton.click();
-        page.waitForTimeout(1000);
+        wait(1000);
     }
 
     public Download downloadTemplate() {
         Download download = page.waitForDownload(() -> {
             downloadTemplateButton.click();
         });
-        page.waitForTimeout(1000);
         return download;
     }
 
     public void uploadFile(String filePath) {
-        fileInputBody.setInputFiles(Paths.get(filePath));
-        page.waitForTimeout(3000);
+        wait(2000);
+        page.waitForFileChooser(() -> {
+            page.getByText("Browse in my files").click();
+        }).setFiles(Paths.get(filePath));
+        wait(5000);
     }
 
-    public void closePopupByClickingOutside() {
-        page.mouse().click(50, 50);
-        page.waitForTimeout(1000);
+    public void closePopup() {
+        cancelIcon.click();
+        wait(500);
+        page.locator(".digit-popup-overlay").waitFor(
+                new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }
 
     public void clickSubmit() {
-        submit.dispatchEvent("click");
-        page.waitForTimeout(2000);
-    }
-
-    public void clickUploadDataLabel() {
-        uploadDataLabel.click();
-        page.waitForTimeout(1000);
+        submit.click();
     }
 
     public boolean isNoFileToastVisible() {
         noFileToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return noFileToast.isVisible();
+        boolean visible = noFileToast.isVisible();
+        wait(3000);
+        return visible;
+    }
+
+    public boolean isFileErrorToastVisible() {
+        fileErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        boolean visible = fileErrorToast.isVisible();
+        wait(3000);
+        return visible;
     }
 }

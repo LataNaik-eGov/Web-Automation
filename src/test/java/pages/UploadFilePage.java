@@ -26,7 +26,7 @@ public class UploadFilePage extends BasePage {
         this.submit = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.noFileToast = page.locator("[class*='digit-toast'], [role='alert'], .Toastify__toast")
                 .filter(new Locator.FilterOptions().setHasText("Please upload a file"));
-        this.cancelIcon = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cancel"));
+        this.cancelIcon = page.locator("button[aria-label='Cancel']");
         this.fileErrorToast = page.locator("[class*='digit-toast--error'], [role='alert'][aria-live='assertive'], .Toastify__toast--error").first();
     }
 

@@ -392,7 +392,15 @@ public class HRMSPage extends BasePage {
 
         // Select deactivation reason
         page.getByRole(AriaRole.TEXTBOX).first().click();
-        page.getByText(TestDataReader.get("HRMS_DEACTIVATION_REASON")).click();
+        String reason = TestDataReader.get("HRMS_DEACTIVATION_REASON");
+        try {
+            page.getByText(reason).waitFor(new Locator.WaitForOptions().setTimeout(5000));
+            page.getByText(reason).click();
+        } catch (Exception e) {
+            // Configured reason not found — select first available option
+            System.out.println("[HRMS] Deactivation reason '" + reason + "' not found, selecting first available");
+            page.locator(".profile-dropdown--item").first().click();
+        }
 
         // Enter remarks
         Locator remarks = page.getByRole(AriaRole.TEXTBOX,

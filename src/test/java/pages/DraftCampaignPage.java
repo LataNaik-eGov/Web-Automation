@@ -3,7 +3,7 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-import utils.ConfigReader;
+import utils.TestDataReader;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -35,9 +35,9 @@ public class DraftCampaignPage extends BasePage {
 
     public DraftCampaignPage(Page page) {
         super(page);
-        this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
+        this.campaignType = TestDataReader.getSessionValue("CAMPAIGN_TYPE");
         if (campaignType == null || campaignType.isEmpty()) {
-            throw new IllegalStateException("CAMPAIGN_TYPE is not configured. Set it as a GitHub variable (vars.CAMPAIGN_TYPE) for the target environment.");
+            throw new IllegalStateException("CAMPAIGN_TYPE is not set in testdata.properties for this environment.");
         }
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
 

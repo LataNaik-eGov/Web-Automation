@@ -19,6 +19,7 @@ import utils.ConfigReader;
 import utils.FormHelper;
 import utils.NavigationHelper;
 import utils.ScreenshotHelper;
+import utils.TestDataReader;
 
 /**
  * Base class for all test classes.
@@ -58,6 +59,7 @@ public class BaseTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setup() {
+        TestDataReader.clearSession();
         playwright = Playwright.create();
 
         // Read config from .env file via ConfigReader (works for local and CI)
@@ -87,7 +89,7 @@ public class BaseTest {
 
         context = browser.newContext(new Browser.NewContextOptions().setViewportSize(null));
         page = context.newPage();
-        page.setDefaultTimeout(120000);
+        page.setDefaultTimeout(30000);
 
         // Initialize helpers
         nav = new NavigationHelper(page);

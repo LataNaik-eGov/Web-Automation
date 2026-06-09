@@ -2,12 +2,19 @@ package utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 public class TestDataReader {
 
     private static final Properties props = new Properties();
     private static final String env;
+
+    // Per-thread cache: random pick from a comma-separated value is made once per test
+    private static final ThreadLocal<Map<String, String>> sessionCache =
+            ThreadLocal.withInitial(HashMap::new);
 
     static {
         String baseUrl = ConfigReader.get("BASE_URL");
@@ -30,5 +37,24 @@ public class TestDataReader {
     public static String get(String key) {
         String value = props.getProperty(env + "." + key);
         return value != null ? value : props.getProperty(key);
+    }
+
+    /**
+     * Picks one value at random from a comma-separated testdata entry and caches
+     * the result for the life of the current test thread. All calls with the same
+     * key within one test return the same value, so multi-step flows stay consistent.
+     */
+    public static String getSessionValue(String key) {
+        return sessionCache.get().computeIfAbsent(key, k -> {
+            String raw = get(k);
+            if (raw == null || raw.trim().isEmpty()) return "";
+            String[] values = raw.split(",");
+            return values[new Random().nextInt(values.length)].trim();
+        });
+    }
+
+    /** Call once per test (in BaseTest.setup) to reset session-scoped picks. */
+    public static void clearSession() {
+        sessionCache.get().clear();
     }
 }

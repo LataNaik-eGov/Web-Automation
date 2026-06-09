@@ -7,7 +7,7 @@ import java.util.Locale;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-import utils.ConfigReader;
+import utils.TestDataReader;
 
 public class ConfigureDeliveryRulesPage extends BasePage {
 
@@ -28,7 +28,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
 
     public ConfigureDeliveryRulesPage(Page page) {
         super(page);
-        this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
+        this.campaignType = TestDataReader.getSessionValue("CAMPAIGN_TYPE");
         this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Start Planning Deliveries"));
         this.startDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
         this.endDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
@@ -129,8 +129,9 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     public void fillNthTextbox(int index, String value) {
         Locator textbox = page.getByRole(AriaRole.TEXTBOX).nth(index);
         waitForVisible(textbox);
-        textbox.click();
-        textbox.fill(value);
+        // dispatchEvent bypasses pointer-interception from overlapping DIGIT UI elements
+        textbox.dispatchEvent("click");
+        textbox.fill(value, new Locator.FillOptions().setForce(true));
     }
 
     public void clickNext() {

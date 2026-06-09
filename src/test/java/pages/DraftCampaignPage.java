@@ -36,6 +36,9 @@ public class DraftCampaignPage extends BasePage {
     public DraftCampaignPage(Page page) {
         super(page);
         this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
+        if (campaignType == null || campaignType.isEmpty()) {
+            throw new IllegalStateException("CAMPAIGN_TYPE is not configured. Set it as a GitHub variable (vars.CAMPAIGN_TYPE) for the target environment.");
+        }
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
 
         this.campaignTypeDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));

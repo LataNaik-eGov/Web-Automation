@@ -159,7 +159,7 @@ jobs:
         run: |
           echo "Validating .env file..."
           missing=0
-          for key in BASE_URL USERNAME COUNTRY STATE; do
+          for key in BASE_URL USERNAME COUNTRY STATE CAMPAIGN_TYPE; do
             value=$(grep "^$key=" .env | cut -d'=' -f2)
             if [ -z "$value" ]; then
               echo "ERROR: $key is empty in .env file"

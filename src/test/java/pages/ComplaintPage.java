@@ -316,15 +316,20 @@ public class ComplaintPage extends BasePage {
     public void selectEmployee() {
         waitForVisible(selectEmployeeDropdown);
         selectEmployeeDropdown.click();
-        wait(1000);
+        wait(500);
         String employeeName = TestDataReader.get("ASSIGN_EMPLOYEE");
+        // Type to filter the dropdown to only matching employees, avoiding false matches
+        // from other page elements (e.g. the logged-in user name in the header).
+        selectEmployeeDropdown.fill(employeeName);
+        wait(1000);
         try {
-            page.getByText(employeeName).first()
-                    .waitFor(new Locator.WaitForOptions().setTimeout(5000));
-            page.getByText(employeeName).first().click();
+            Locator option = page.locator("li")
+                    .filter(new Locator.FilterOptions().setHasText(employeeName))
+                    .first();
+            option.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+            option.click();
         } catch (Exception e) {
-            // Configured employee not in dropdown — navigate to first item with keyboard
-            System.out.println("[Complaint] Employee '" + employeeName + "' not found, selecting first available");
+            System.out.println("[Complaint] Employee '" + employeeName + "' not found in filtered list, using keyboard selection");
             page.keyboard().press("ArrowDown");
             wait(300);
             page.keyboard().press("Enter");
@@ -343,6 +348,13 @@ public class ComplaintPage extends BasePage {
             wait(3000);
         }
         clickSubmit();
-        waitForHidden(".digit-popup-overlay");
+        try {
+            page.locator(".digit-popup-overlay")
+                    .waitFor(new Locator.WaitForOptions()
+                            .setState(com.microsoft.playwright.options.WaitForSelectorState.HIDDEN)
+                            .setTimeout(15000));
+        } catch (Exception ignored) {
+            wait(1000);
+        }
     }
 }

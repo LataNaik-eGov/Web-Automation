@@ -29,6 +29,14 @@ on:
         description: 'Run negative tests'
         type: boolean
         default: false
+      group_hrms:
+        description: 'Run HRMS tests'
+        type: boolean
+        default: false
+      group_complaint:
+        description: 'Run Complaint tests'
+        type: boolean
+        default: false
       test_class:
         description: 'Specific test class to run (e.g., tests.LoginTest)'
         required: false
@@ -101,6 +109,8 @@ jobs:
           [ "${{ github.event.inputs.group_regression }}"   == "true" ] && add_group "regression"
           [ "${{ github.event.inputs.group_sanity }}"       == "true" ] && add_group "sanity"
           [ "${{ github.event.inputs.group_negative }}"     == "true" ] && add_group "negative"
+          [ "${{ github.event.inputs.group_hrms }}"         == "true" ] && add_group "HRMS"
+          [ "${{ github.event.inputs.group_complaint }}"    == "true" ] && add_group "Complaint"
           # push to main (non-dispatch) always runs the default group
           if [ -z "$groups" ]; then groups="payments-ui"; fi
           echo "groups=$groups" >> $GITHUB_OUTPUT

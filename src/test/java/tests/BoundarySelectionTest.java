@@ -25,7 +25,6 @@ public class BoundarySelectionTest extends BaseTest {
                 "Should navigate to Configure Delivery Rules page after completing boundary selection");
     }
 
-
     // Negative tests
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyBoundarySelectionWithPartialSelection() {
@@ -44,13 +43,11 @@ public class BoundarySelectionTest extends BaseTest {
     public void verifyBoundarySelectionWithoutSelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
-
         boundaryPage.clickNextButton();
 
         Assert.assertTrue(boundaryPage.isMandatoryFieldsToastVisible(),
                 "Toast error 'Please fill all the mandatory fields.' should appear when no boundary is selected and Next button is clicked");
     }
-
 
     @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyBoundarySelectionWithMissingLowestLevel() {

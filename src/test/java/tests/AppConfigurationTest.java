@@ -8,8 +8,6 @@ import pages.AppConfigurationPage;
 
 public class AppConfigurationTest extends BaseTest {
 
-   
-
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyAppConfiguration() {
         AppConfigurationPage appConfigPage = nav.goToAppConfiguration();

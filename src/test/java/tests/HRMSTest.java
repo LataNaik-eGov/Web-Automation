@@ -7,8 +7,8 @@ import pages.HRMSPage;
 
 public class HRMSTest extends BaseTest {
 
-    @Test(groups = {"payments-ui"})
-    public void createHRMS() {
+    @Test(groups = {"payments-ui", "HRMS", "sanity"})
+    public void createEmployee() {
         HRMSPage hrms = homePage.goToCreateUser();
         String createdUsername = hrms.createEmployee();
 
@@ -20,7 +20,7 @@ public class HRMSTest extends BaseTest {
                 "Employee '" + createdUsername + "' should be searchable and verified on Employee Details screen");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "HRMS", "sanity"})
     public void editEmployee() {
         HRMSPage hrms = homePage.goToCreateUser();
         String createdUsername = hrms.createEmployee();
@@ -45,7 +45,7 @@ public class HRMSTest extends BaseTest {
         hrms.goBackToHome();
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "HRMS", "regression"})
     public void createEmployeeWithDuplicateUsername() {
         // Step 1: Create first employee and capture username
         HRMSPage hrms = homePage.goToCreateUser();
@@ -64,7 +64,7 @@ public class HRMSTest extends BaseTest {
                 "Creating employee with duplicate username '" + username + "' should be blocked");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "HRMS", "regression"})
     public void createEmployeeWithDuplicateMobile() {
         String mobile = HRMSPage.generateMobile();
 
@@ -85,7 +85,7 @@ public class HRMSTest extends BaseTest {
                 "Creating employee with duplicate mobile '" + mobile + "' should be blocked");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "HRMS", "sanity"})
     public void deactivateEmployee() {
         HRMSPage hrms = homePage.goToCreateUser();
         String createdUsername = hrms.createEmployee();
@@ -104,5 +104,37 @@ public class HRMSTest extends BaseTest {
 
         Assert.assertTrue(hrms.performDeactivate(createdUsername),
                 "Employee '" + createdUsername + "' should be deactivated successfully");
+    }
+
+    @Test(groups = {"payments-ui", "HRMS", "sanity"})
+    public void reactivateEmployee() {
+        // Step 1: Create employee
+        HRMSPage hrms = homePage.goToCreateUser();
+        String createdUsername = hrms.createEmployee();
+
+        Assert.assertTrue(hrms.isEmployeeCreatedSuccessfully(),
+                "Employee should be created successfully");
+        Assert.assertNotNull(createdUsername,
+                "Username should be visible on the success screen");
+
+        // Step 2: Search and deactivate
+        hrms.goBackToHome();
+        hrms.goToSearchFromHome();
+        page.waitForTimeout(3000);
+        hrms.searchEmployee(createdUsername)
+                .openEmployeeByUsername(createdUsername);
+
+        Assert.assertTrue(hrms.performDeactivate(createdUsername),
+                "Employee '" + createdUsername + "' should be deactivated");
+
+        // Step 3: Search and reactivate
+        hrms.goBackToHome();
+        hrms.goToSearchFromHome();
+        page.waitForTimeout(3000);
+        hrms.searchEmployee(createdUsername)
+                .openEmployeeByUsername(createdUsername);
+
+        Assert.assertTrue(hrms.performReactivate(createdUsername),
+                "Employee '" + createdUsername + "' should be reactivated successfully");
     }
 }

@@ -8,7 +8,6 @@ import pages.ConfigureDeliveryRulesPage;
 
 public class ConfigureDeliveryRulesTest extends BaseTest {
 
-
     @Test(groups = {"regression", "workbench-ui", "sanity"})
     public void verifyConfigureDeliveryRules() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToConfigureDeliveryRules();
@@ -45,7 +44,6 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
 
         deliveryRulesPage.clickConfigureDelivery();
 
-
         deliveryRulesPage.clickNext();
 
         Assert.assertTrue(deliveryRulesPage.isCycleDateToastVisible(),
@@ -76,7 +74,6 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Toast error should appear when invalid value '30' is entered in the second step");
     }
 
-
            @Test(groups = {"negative", "regression", "workbench-ui"})
     public void verifyDeliveryRulesWithEmptyInput() {
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
@@ -90,6 +87,4 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Toast error should appear when invalid value '30' is entered in the second step");
     }
 
-
 }
-

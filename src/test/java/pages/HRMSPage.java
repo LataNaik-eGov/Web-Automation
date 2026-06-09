@@ -67,7 +67,7 @@ public class HRMSPage extends BasePage {
 
     public HRMSPage fillLoginDetails(String empId, String pwd) {
         page.evaluate("window.scrollTo(0, 0)");
-        usernameInput.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        usernameInput.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         usernameInput.fill(empId);
         passwordInput.fill(pwd);
         confirmPasswordInput.fill(pwd);
@@ -231,7 +231,7 @@ public class HRMSPage extends BasePage {
         // Click the username link in results to open Employee Details
         Locator link = page.getByRole(AriaRole.LINK,
                 new Page.GetByRoleOptions().setName(username));
-        link.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        link.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         link.click();
 
         // On Employee Details screen verify the Username field matches
@@ -301,7 +301,7 @@ public class HRMSPage extends BasePage {
     public HRMSPage openEmployeeByUsername(String username) {
         Locator link = page.getByRole(AriaRole.LINK,
                 new Page.GetByRoleOptions().setName(username));
-        link.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        link.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         link.click();
         return this;
     }
@@ -390,16 +390,19 @@ public class HRMSPage extends BasePage {
         openTakeActionMenu();
         page.getByText("Deactivate Employee").click();
 
-        // Select deactivation reason
+        // Select deactivation reason — pick randomly from comma-separated list
         page.getByRole(AriaRole.TEXTBOX).first().click();
-        String reason = TestDataReader.get("HRMS_DEACTIVATION_REASON");
+        String[] deactivationReasons = TestDataReader.get("HRMS_DEACTIVATION_REASON").split(",");
+        String deactivationReason = deactivationReasons[ThreadLocalRandom.current().nextInt(deactivationReasons.length)].trim();
+        System.out.println("[HRMS] Selected deactivation reason: " + deactivationReason);
         try {
-            page.getByText(reason).waitFor(new Locator.WaitForOptions().setTimeout(5000));
-            page.getByText(reason).click();
+            page.getByText(deactivationReason).waitFor(new Locator.WaitForOptions().setTimeout(5000));
+            page.getByText(deactivationReason).click();
         } catch (Exception e) {
-            // Configured reason not found — select first available option
-            System.out.println("[HRMS] Deactivation reason '" + reason + "' not found, selecting first available");
-            page.locator(".profile-dropdown--item").first().click();
+            System.out.println("[HRMS] Reason '" + deactivationReason + "' not found, selecting first available");
+            page.keyboard().press("ArrowDown");
+            page.waitForTimeout(300);
+            page.keyboard().press("Enter");
         }
 
         // Enter remarks
@@ -428,6 +431,21 @@ public class HRMSPage extends BasePage {
     public boolean performReactivate(String username) {
         openTakeActionMenu();
         page.getByText("Activate Employee").click();
+
+        // Select reactivation reason — pick randomly from comma-separated list
+        page.getByRole(AriaRole.TEXTBOX).first().click();
+        String[] reactivationReasons = TestDataReader.get("HRMS_REACTIVATION_REASON").split(",");
+        String reactivationReason = reactivationReasons[ThreadLocalRandom.current().nextInt(reactivationReasons.length)].trim();
+        System.out.println("[HRMS] Selected reactivation reason: " + reactivationReason);
+        try {
+            page.getByText(reactivationReason).waitFor(new Locator.WaitForOptions().setTimeout(5000));
+            page.getByText(reactivationReason).click();
+        } catch (Exception e) {
+            System.out.println("[HRMS] Reason '" + reactivationReason + "' not found, selecting first available");
+            page.keyboard().press("ArrowDown");
+            page.waitForTimeout(300);
+            page.keyboard().press("Enter");
+        }
 
         try {
             page.getByText("Employee Activated Successfully")

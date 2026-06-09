@@ -170,14 +170,14 @@ public class HRMSPage extends BasePage {
     }
 
     public String createEmployee() {
-        String username = "Test-" + System.currentTimeMillis() % 100000;
+        String username = "Auto-Test-" + System.currentTimeMillis() % 100000;
         fillCreateForm(username, generateMobile());
         submitForm();
         return getCreatedUsername();
     }
 
     public String createEmployeeWithMobile(String mobile) {
-        String username = "Test-" + System.currentTimeMillis() % 100000;
+        String username = "Auto-Test-" + System.currentTimeMillis() % 100000;
         fillCreateForm(username, mobile);
         submitForm();
         return getCreatedUsername();
@@ -203,7 +203,7 @@ public class HRMSPage extends BasePage {
     }
 
     public boolean createEmployeeWithDuplicateMobile(String mobile) {
-        String username = "Test-" + System.currentTimeMillis() % 100000;
+        String username = "Auto-Test-" + System.currentTimeMillis() % 100000;
         fillCreateForm(username, mobile);
 
         Locator submitBtn = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));

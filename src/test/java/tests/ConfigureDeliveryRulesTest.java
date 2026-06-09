@@ -45,7 +45,6 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
 
         deliveryRulesPage.clickConfigureDelivery();
 
-
         deliveryRulesPage.clickNext();
 
         Assert.assertTrue(deliveryRulesPage.isCycleDateToastVisible(),
@@ -90,6 +89,4 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Toast error should appear when invalid value '30' is entered in the second step");
     }
 
-
 }
-

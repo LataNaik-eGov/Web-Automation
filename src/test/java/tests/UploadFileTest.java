@@ -31,7 +31,7 @@ public class UploadFileTest extends BaseTest {
         URL resource = getClass().getClassLoader().getResource(templateFile);
         Assert.assertNotNull(resource, templateFile + " should exist in test resources");
         String filePath = Paths.get(resource.toURI()).toString();
-        
+
         uploadFilePage.uploadFile(filePath);
 
         uploadFilePage.waitForUploadSuccessToast();

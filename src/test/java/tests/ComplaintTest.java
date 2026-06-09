@@ -13,7 +13,7 @@ public class ComplaintTest extends BaseTest {
         return complaint.fillForm("not working");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "sanity"})
     public void createComplaint() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillForm("not working");
@@ -24,7 +24,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isComplaintFound(complaintNumber), "Complaint " + complaintNumber + " should appear in search results");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void createComplaintWithJpeg() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
@@ -35,7 +35,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isComplaintFound(complaintNumber), "Complaint " + complaintNumber + " should appear in search results");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void createComplaintWithPdf() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
@@ -46,7 +46,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isComplaintFound(complaintNumber), "Complaint " + complaintNumber + " should appear in search results");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "sanity"})
     public void resolveComplaint() {
         String complaintNumber = createAndCaptureComplaint();
         ComplaintPage complaint = nav.complaintPage();
@@ -55,7 +55,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void resolveComplaintWithJpeg() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
@@ -65,7 +65,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void resolveComplaintWithPdf() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
@@ -75,7 +75,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "sanity"})
     public void assignComplaint() {
         String complaintNumber = createAndCaptureComplaint();
         ComplaintPage complaint = nav.complaintPage();
@@ -84,7 +84,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void assignComplaintWithJpeg() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
@@ -94,7 +94,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void assignComplaintWithPdf() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
@@ -104,7 +104,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Assigned"), "Status should be updated to Assigned");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "sanity"})
     public void createAssignAndResolveComplaint() {
         String complaintNumber = createAndCaptureComplaint();
         ComplaintPage complaint = nav.complaintPage();
@@ -115,7 +115,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void createAssignAndResolveComplaintWithJpeg() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
@@ -127,7 +127,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void createAssignAndResolveComplaintWithPdf() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
@@ -139,7 +139,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Resolved"), "Status should be updated to Resolved");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "sanity"})
     public void createAssignAndRejectComplaint() {
         String complaintNumber = createAndCaptureComplaint();
         ComplaintPage complaint = nav.complaintPage();
@@ -150,7 +150,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void createAssignAndRejectComplaintWithJpeg() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
@@ -162,7 +162,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void createAssignAndRejectComplaintWithPdf() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");
@@ -174,7 +174,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "sanity"})
     public void rejectComplaint() {
         String complaintNumber = createAndCaptureComplaint();
         ComplaintPage complaint = nav.complaintPage();
@@ -183,7 +183,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void rejectComplaintWithJpeg() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.jpeg");
@@ -193,7 +193,7 @@ public class ComplaintTest extends BaseTest {
         Assert.assertTrue(complaint.isStatusVisible("Rejected"), "Status should be updated to Rejected");
     }
 
-    @Test(groups = {"payments-ui"})
+    @Test(groups = {"payments-ui", "Complaint", "regression"})
     public void rejectComplaintWithPdf() {
         ComplaintPage complaint = nav.goToCreateComplaint();
         String complaintNumber = complaint.fillFormWithFile("not working", "src/test/resources/complaint.pdf");

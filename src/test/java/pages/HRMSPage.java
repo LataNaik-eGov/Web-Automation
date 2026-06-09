@@ -415,6 +415,23 @@ public class HRMSPage extends BasePage {
         }
     }
 
+    // ==================== EMPLOYEE INBOX: REACTIVATE ====================
+
+    public boolean performReactivate(String username) {
+        openTakeActionMenu();
+        page.getByText("Activate Employee").click();
+
+        try {
+            page.getByText("Employee Activated Successfully")
+                    .waitFor(new Locator.WaitForOptions().setTimeout(30000));
+            System.out.println("[HRMS] Employee reactivated: " + username);
+            return true;
+        } catch (Exception e) {
+            System.out.println("[HRMS] Reactivation failed: " + e.getMessage().split("\n")[0]);
+            return false;
+        }
+    }
+
     // ==================== EMPLOYEE INBOX: CAMPAIGN ASSIGNMENT ====================
 
     public HRMSPage clickEditCampaignAssignment() {

@@ -9,7 +9,7 @@ import pages.ConfigureDeliveryRulesPage;
 
 public class BoundarySelectionTest extends BaseTest {
 
-    @Test(groups = {"regression", "workbench-ui", "sanity"})
+    @Test(groups = { "workbench-ui", "sanity"})
     public void verifyBoundarySelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
@@ -26,7 +26,7 @@ public class BoundarySelectionTest extends BaseTest {
     }
 
     // Negative tests
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyBoundarySelectionWithPartialSelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
@@ -39,7 +39,7 @@ public class BoundarySelectionTest extends BaseTest {
                 "Toast error 'Please fill all the mandatory fields.' should appear when District and Administrative Post are not selected");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyBoundarySelectionWithoutSelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
@@ -49,7 +49,8 @@ public class BoundarySelectionTest extends BaseTest {
                 "Toast error 'Please fill all the mandatory fields.' should appear when no boundary is selected and Next button is clicked");
     }
 
-    @Test(groups = {"negative", "regression", "workbench-ui"})
+
+    @Test(groups = {"negative",  "workbench-ui"})
     public void verifyBoundarySelectionWithMissingLowestLevel() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 

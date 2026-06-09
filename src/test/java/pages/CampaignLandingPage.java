@@ -14,7 +14,7 @@ public class CampaignLandingPage extends BasePage {
         super(page);
         this.createCampaignLink = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create campaign"));
         this.scratchCardTitle = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Create a New Campaign from"));
-        this.continueButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Proceed"));
+        this.continueButton = page.locator("button[aria-label='Proceed']");
     }
 
     // --- Actions ---

@@ -22,7 +22,7 @@ public class CreateChecklist extends BasePage {
         this.confirmChecklist = page.locator(".digit-button-primary.large");
         this.backToHomepage = page.locator(".digit-button-primary.large");
         this.createCampaign = page.locator("#campaign-details-page-final-save-campaign");
-         this.goMyCampaign = page.locator(".digit-button-primary.large");
+         this.goMyCampaign = page.locator("button[aria-label*='My Campaigns']");
     }
 
     // --- Actions ---

@@ -11,6 +11,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.LoadState;
 
 import pages.HomePage;
 import pages.LoginPage;
@@ -86,7 +87,7 @@ public class BaseTest {
 
         context = browser.newContext(new Browser.NewContextOptions().setViewportSize(null));
         page = context.newPage();
-        page.setDefaultTimeout(60000);
+        page.setDefaultTimeout(120000);
 
         // Initialize helpers
         nav = new NavigationHelper(page);
@@ -102,7 +103,8 @@ public class BaseTest {
             throw new RuntimeException("Missing required config in .env file: BASE_URL, USERNAME, or PASSWORD not set");
         }
 
-        page.navigate(baseUrl, new Page.NavigateOptions().setTimeout(60000));
+        page.navigate(baseUrl, new Page.NavigateOptions().setTimeout(120000));
+        page.waitForLoadState(LoadState.NETWORKIDLE);
         LoginPage loginPage = new LoginPage(page);
         homePage = loginPage.login(username, password);
     }

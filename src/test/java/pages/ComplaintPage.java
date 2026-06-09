@@ -343,5 +343,6 @@ public class ComplaintPage extends BasePage {
             wait(3000);
         }
         clickSubmit();
+        waitForHidden(".digit-popup-overlay");
     }
 }

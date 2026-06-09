@@ -111,8 +111,8 @@ jobs:
           [ "${{ github.event.inputs.group_negative }}"     == "true" ] && add_group "negative"
           [ "${{ github.event.inputs.group_hrms }}"         == "true" ] && add_group "HRMS"
           [ "${{ github.event.inputs.group_complaint }}"    == "true" ] && add_group "Complaint"
-          # push to main (non-dispatch) always runs the default group
-          if [ -z "$groups" ]; then groups="payments-ui"; fi
+          # push to main (non-dispatch) always runs the default groups
+          if [ -z "$groups" ]; then groups="payments-ui,workbench-ui"; fi
           echo "groups=$groups" >> $GITHUB_OUTPUT
           echo "Test groups to run: $groups"
 

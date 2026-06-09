@@ -447,6 +447,9 @@ public class HRMSPage extends BasePage {
             page.keyboard().press("Enter");
         }
 
+        page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Activate Employee")).click();
+
         try {
             page.getByText("Employee Activated Successfully")
                     .waitFor(new Locator.WaitForOptions().setTimeout(30000));

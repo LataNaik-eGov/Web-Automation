@@ -47,8 +47,7 @@ on:
         default: ''
       environment:
         description: 'Environment to use (UAT or DEMO)'
-        required: false
-        default: 'DEMO'
+        required: true
         type: choice
         options:
           - UAT
@@ -59,7 +58,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    environment: ${{ github.event.inputs.environment || 'DEMO' }}
+    # workflow_dispatch uses the selected environment; push/repository_dispatch uses UAT
+    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'UAT' }}
 
     steps:
       - name: Checkout code
@@ -133,7 +133,7 @@ jobs:
         run: |
           echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
 
-          echo "Using ${{ github.event.inputs.environment || 'DEMO' }} environment"
+          echo "Using ${{ github.event.inputs.environment || 'UAT' }} environment"
           {
             echo "BASE_URL=$BASE_URL"
             echo "BROWSER=${BROWSER:-chromium}"
@@ -179,7 +179,7 @@ jobs:
           echo "=========================================="
           echo "  TEST EXECUTION ENVIRONMENT"
           echo "=========================================="
-          echo "Environment  : ${{ github.event.inputs.environment || 'DEMO' }}"
+          echo "Environment  : ${{ github.event.inputs.environment || 'UAT' }}"
           echo "Test Groups  : ${{ steps.test-config.outputs.groups }}"
           if [ -n "${{ github.event.inputs.test_class }}" ]; then
             echo "Test Class   : ${{ github.event.inputs.test_class }}"

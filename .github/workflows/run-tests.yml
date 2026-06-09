@@ -129,7 +129,6 @@ jobs:
           WARD: ${{ vars.WARD || secrets.WARD }}
           VILLAGE: ${{ vars.VILLAGE || secrets.VILLAGE }}
           AREA: ${{ vars.AREA || secrets.AREA }}
-          CAMPAIGN_TYPE: ${{ vars.CAMPAIGN_TYPE || secrets.CAMPAIGN_TYPE }}
         run: |
           echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
 
@@ -146,7 +145,6 @@ jobs:
             echo "WARD=$WARD"
             echo "VILLAGE=$VILLAGE"
             echo "AREA=$AREA"
-            echo "CAMPAIGN_TYPE=$CAMPAIGN_TYPE"
           } > .env
 
           echo "Generated .env file:"
@@ -159,7 +157,7 @@ jobs:
         run: |
           echo "Validating .env file..."
           missing=0
-          for key in BASE_URL USERNAME COUNTRY STATE CAMPAIGN_TYPE; do
+          for key in BASE_URL USERNAME COUNTRY STATE; do
             value=$(grep "^$key=" .env | cut -d'=' -f2)
             if [ -z "$value" ]; then
               echo "ERROR: $key is empty in .env file"

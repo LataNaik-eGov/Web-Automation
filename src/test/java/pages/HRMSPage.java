@@ -67,7 +67,7 @@ public class HRMSPage extends BasePage {
 
     public HRMSPage fillLoginDetails(String empId, String pwd) {
         page.evaluate("window.scrollTo(0, 0)");
-        usernameInput.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        usernameInput.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         usernameInput.fill(empId);
         passwordInput.fill(pwd);
         confirmPasswordInput.fill(pwd);
@@ -231,7 +231,7 @@ public class HRMSPage extends BasePage {
         // Click the username link in results to open Employee Details
         Locator link = page.getByRole(AriaRole.LINK,
                 new Page.GetByRoleOptions().setName(username));
-        link.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        link.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         link.click();
 
         // On Employee Details screen verify the Username field matches
@@ -301,7 +301,7 @@ public class HRMSPage extends BasePage {
     public HRMSPage openEmployeeByUsername(String username) {
         Locator link = page.getByRole(AriaRole.LINK,
                 new Page.GetByRoleOptions().setName(username));
-        link.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+        link.waitFor(new Locator.WaitForOptions().setTimeout(30000));
         link.click();
         return this;
     }

@@ -390,17 +390,12 @@ public class HRMSPage extends BasePage {
         openTakeActionMenu();
         page.getByText("Deactivate Employee").click();
 
-        // Select deactivation reason
+        // Select deactivation reason — pick randomly from comma-separated list
         page.getByRole(AriaRole.TEXTBOX).first().click();
-        String reason = TestDataReader.get("HRMS_DEACTIVATION_REASON");
-        try {
-            page.getByText(reason).waitFor(new Locator.WaitForOptions().setTimeout(5000));
-            page.getByText(reason).click();
-        } catch (Exception e) {
-            // Configured reason not found — select first available option
-            System.out.println("[HRMS] Deactivation reason '" + reason + "' not found, selecting first available");
-            page.locator(".profile-dropdown--item").first().click();
-        }
+        String[] deactivationReasons = TestDataReader.get("HRMS_DEACTIVATION_REASON").split(",");
+        String reason = deactivationReasons[ThreadLocalRandom.current().nextInt(deactivationReasons.length)].trim();
+        System.out.println("[HRMS] Selected deactivation reason: " + reason);
+        page.getByText(reason).click();
 
         // Enter remarks
         Locator remarks = page.getByRole(AriaRole.TEXTBOX,
@@ -428,6 +423,13 @@ public class HRMSPage extends BasePage {
     public boolean performReactivate(String username) {
         openTakeActionMenu();
         page.getByText("Activate Employee").click();
+
+        // Select reactivation reason — pick randomly from comma-separated list
+        page.getByRole(AriaRole.TEXTBOX).first().click();
+        String[] reactivationReasons = TestDataReader.get("HRMS_REACTIVATION_REASON").split(",");
+        String reason = reactivationReasons[ThreadLocalRandom.current().nextInt(reactivationReasons.length)].trim();
+        System.out.println("[HRMS] Selected reactivation reason: " + reason);
+        page.getByText(reason).click();
 
         try {
             page.getByText("Employee Activated Successfully")

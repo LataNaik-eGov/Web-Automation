@@ -129,8 +129,9 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     public void fillNthTextbox(int index, String value) {
         Locator textbox = page.getByRole(AriaRole.TEXTBOX).nth(index);
         waitForVisible(textbox);
-        textbox.click();
-        textbox.fill(value);
+        // dispatchEvent bypasses pointer-interception from overlapping DIGIT UI elements
+        textbox.dispatchEvent("click");
+        textbox.fill(value, new Locator.FillOptions().setForce(true));
     }
 
     public void clickNext() {

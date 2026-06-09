@@ -393,9 +393,17 @@ public class HRMSPage extends BasePage {
         // Select deactivation reason — pick randomly from comma-separated list
         page.getByRole(AriaRole.TEXTBOX).first().click();
         String[] deactivationReasons = TestDataReader.get("HRMS_DEACTIVATION_REASON").split(",");
-        String reason = deactivationReasons[ThreadLocalRandom.current().nextInt(deactivationReasons.length)].trim();
-        System.out.println("[HRMS] Selected deactivation reason: " + reason);
-        page.getByText(reason).click();
+        String deactivationReason = deactivationReasons[ThreadLocalRandom.current().nextInt(deactivationReasons.length)].trim();
+        System.out.println("[HRMS] Selected deactivation reason: " + deactivationReason);
+        try {
+            page.getByText(deactivationReason).waitFor(new Locator.WaitForOptions().setTimeout(5000));
+            page.getByText(deactivationReason).click();
+        } catch (Exception e) {
+            System.out.println("[HRMS] Reason '" + deactivationReason + "' not found, selecting first available");
+            page.keyboard().press("ArrowDown");
+            page.waitForTimeout(300);
+            page.keyboard().press("Enter");
+        }
 
         // Enter remarks
         Locator remarks = page.getByRole(AriaRole.TEXTBOX,
@@ -427,9 +435,17 @@ public class HRMSPage extends BasePage {
         // Select reactivation reason — pick randomly from comma-separated list
         page.getByRole(AriaRole.TEXTBOX).first().click();
         String[] reactivationReasons = TestDataReader.get("HRMS_REACTIVATION_REASON").split(",");
-        String reason = reactivationReasons[ThreadLocalRandom.current().nextInt(reactivationReasons.length)].trim();
-        System.out.println("[HRMS] Selected reactivation reason: " + reason);
-        page.getByText(reason).click();
+        String reactivationReason = reactivationReasons[ThreadLocalRandom.current().nextInt(reactivationReasons.length)].trim();
+        System.out.println("[HRMS] Selected reactivation reason: " + reactivationReason);
+        try {
+            page.getByText(reactivationReason).waitFor(new Locator.WaitForOptions().setTimeout(5000));
+            page.getByText(reactivationReason).click();
+        } catch (Exception e) {
+            System.out.println("[HRMS] Reason '" + reactivationReason + "' not found, selecting first available");
+            page.keyboard().press("ArrowDown");
+            page.waitForTimeout(300);
+            page.keyboard().press("Enter");
+        }
 
         try {
             page.getByText("Employee Activated Successfully")

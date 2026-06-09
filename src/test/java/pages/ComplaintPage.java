@@ -323,9 +323,11 @@ public class ComplaintPage extends BasePage {
                     .waitFor(new Locator.WaitForOptions().setTimeout(5000));
             page.getByText(employeeName).first().click();
         } catch (Exception e) {
-            // Configured employee not in dropdown — select first available
+            // Configured employee not in dropdown — navigate to first item with keyboard
             System.out.println("[Complaint] Employee '" + employeeName + "' not found, selecting first available");
-            page.locator(".profile-dropdown--item").first().click();
+            page.keyboard().press("ArrowDown");
+            wait(300);
+            page.keyboard().press("Enter");
         }
     }
 

@@ -38,6 +38,8 @@
         <version>3.2.5</version>
         <configuration>
           <groups>${test.groups}</groups>
+          <parallel>classes</parallel>
+          <threadCount>3</threadCount>
         </configuration>
       </plugin>
 

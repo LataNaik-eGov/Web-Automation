@@ -212,7 +212,7 @@ public class NavigationHelper {
         uploadFilePage.clickUploadData();
         uploadFilePage.closePopup();
 
-        String templateFile = ConfigReader.getTemplateFileName();
+        String templateFile = TestDataReader.getTemplateFileName();
 
         try {
             URL resource = getClass().getClassLoader().getResource(templateFile);

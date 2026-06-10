@@ -3,7 +3,7 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-import utils.ConfigReader;
+import utils.TestDataReader;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class AppConfigurationPage extends BasePage {
 
     public AppConfigurationPage(Page page) {
         super(page);
-        this.campaignType = ConfigReader.get("CAMPAIGN_TYPE");
+        this.campaignType = TestDataReader.getSessionValue("CAMPAIGN_TYPE");
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
         this.deliveryTypeDropdown = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Select an option"));

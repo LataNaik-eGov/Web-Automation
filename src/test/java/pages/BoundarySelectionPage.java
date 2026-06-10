@@ -1,6 +1,5 @@
 package pages;
 
-import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -32,7 +31,7 @@ public class BoundarySelectionPage extends BasePage {
         this.secondBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(1);
         this.thirdBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(2);
         this.fourthBoundaryLevel = page.getByRole(AriaRole.TEXTBOX).nth(3);
-        this.outsideClick = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName(Pattern.compile("Country")));
+        this.outsideClick = page.getByText("Select the boundaries where you want to run the campaign");
         this.firstCheckbox = page.getByRole(AriaRole.CHECKBOX).first();
         this.secondCheckbox = page.getByRole(AriaRole.CHECKBOX).nth(2);
         this.secondCheckboxWrong = page.getByRole(AriaRole.CHECKBOX).nth(1);

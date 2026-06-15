@@ -1,8 +1,6 @@
 package pages;
 
 import java.time.LocalDate;
-import java.time.Month;
-import java.util.Locale;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -45,7 +43,6 @@ public class ConfigureDeliveryRulesPage extends BasePage {
 
     public void clickConfigureDelivery() {
         waitForVisible(configureDeliveryButton);
-       wait(3000);
         configureDeliveryButton.click();
     }
 
@@ -56,24 +53,8 @@ public class ConfigureDeliveryRulesPage extends BasePage {
 
     private void selectDate(Locator textbox, LocalDate date) {
         waitForVisible(textbox);
-       wait(3000);
         textbox.click();
-
-        // Navigate months if needed
-        String headerText = currentMonthLabel.innerText().trim();
-        String[] parts = headerText.split(" ");
-        String displayedMonthStr = parts[0];
-        int displayedYear = Integer.parseInt(parts[1]);
-        int displayedMonth = Month.valueOf(displayedMonthStr.toUpperCase(Locale.ENGLISH)).getValue();
-
-        int targetMonthTotal = date.getYear() * 12 + date.getMonthValue();
-        int displayedMonthTotal = displayedYear * 12 + displayedMonth;
-        int monthDiff = targetMonthTotal - displayedMonthTotal;
-
-        for (int i = 0; i < monthDiff; i++) {
-            nextMonthButton.click();
-        }
-
+        navigateToMonth(currentMonthLabel, nextMonthButton, date);
         dateCell(date).click();
     }
 
@@ -115,15 +96,11 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     }
 
     public boolean isCycleDateToastVisible() {
-        wait(3000);
-        cycleDateToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return cycleDateToast.isVisible();
+        return waitAndCheckVisible(cycleDateToast, 5000);
     }
 
     public boolean isDeliveryErrorToastVisible() {
-        wait(3000);
-        deliveryErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return deliveryErrorToast.isVisible();
+        return waitAndCheckVisible(deliveryErrorToast, 5000);
     }
 
     public void fillNthTextbox(int index, String value) {
@@ -136,13 +113,11 @@ public class ConfigureDeliveryRulesPage extends BasePage {
 
     public void clickNext() {
         waitForVisible(nextButton);
-       wait(3000);
         nextButton.click();
     }
 
     public void clickSubmit() {
         waitForVisible(submitButton);
-       wait(3000);
         submitButton.click();
     }
 

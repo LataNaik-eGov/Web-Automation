@@ -39,7 +39,7 @@
         <configuration>
           <groups>${test.groups}</groups>
           <parallel>classes</parallel>
-          <threadCount>5</threadCount>
+          <threadCount>10</threadCount>
         </configuration>
       </plugin>
 

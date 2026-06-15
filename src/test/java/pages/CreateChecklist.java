@@ -50,8 +50,7 @@ public class CreateChecklist extends BasePage {
     public void clickCreateCampaign() {
         page.mouse().wheel(0, 500);
         createCampaign.click();
-        wait(1000);
+        waitForVisible(goMyCampaign);
         goMyCampaign.click();
-        wait (1000);
     }
 }

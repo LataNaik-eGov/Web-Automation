@@ -4,7 +4,7 @@ import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-
+import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitForSelectorState;
 
 import java.nio.file.Paths;
@@ -38,7 +38,6 @@ public class UploadFilePage extends BasePage {
 
     public void clickUploadData() {
         uploadDataButton.click();
-        wait(1000);
     }
 
     public Download downloadTemplate() {
@@ -49,16 +48,15 @@ public class UploadFilePage extends BasePage {
     }
 
     public void uploadFile(String filePath) {
-        wait(2000);
+        page.getByText("Browse in my files").waitFor();
         page.waitForFileChooser(() -> {
             page.getByText("Browse in my files").click();
         }).setFiles(Paths.get(filePath));
-        wait(5000);
+        page.waitForLoadState(LoadState.NETWORKIDLE);
     }
 
     public void closePopup() {
         cancelIcon.click();
-        wait(500);
         page.locator(".digit-popup-overlay").waitFor(
                 new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }
@@ -72,16 +70,10 @@ public class UploadFilePage extends BasePage {
     }
 
     public boolean isNoFileToastVisible() {
-        noFileToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        boolean visible = noFileToast.isVisible();
-        wait(3000);
-        return visible;
+        return waitAndCheckVisible(noFileToast, 5000);
     }
 
     public boolean isFileErrorToastVisible() {
-        fileErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        boolean visible = fileErrorToast.isVisible();
-        wait(3000);
-        return visible;
+        return waitAndCheckVisible(fileErrorToast, 5000);
     }
 }

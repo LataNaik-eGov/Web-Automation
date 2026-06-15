@@ -84,13 +84,13 @@ public class LoginPage extends BasePage {
 
     public void selectFirstTenant() {
         tenantDropdown.click();
-        wait(1000);
+        tenantOption.first().waitFor();
         tenantOption.first().click();
     }
 
     public void selectTenant(String tenantName) {
         tenantDropdown.click();
-        wait(1000);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(tenantName)).waitFor();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(tenantName)).click();
     }
 

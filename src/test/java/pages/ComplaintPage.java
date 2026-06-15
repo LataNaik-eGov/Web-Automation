@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
 import utils.ConfigReader;
@@ -80,8 +81,6 @@ public class ComplaintPage extends BasePage {
     }
 
     public String fillFormWithFile(String description, String filePath) {
-        waitForVisible(complaintTypeDropdown);
-        wait(5000);
         page.waitForLoadState();
         waitForVisible(complaintTypeDropdown);
         selectComplaintType();
@@ -129,11 +128,11 @@ public class ComplaintPage extends BasePage {
     // ==================== INDIVIDUAL ACTIONS ====================
 
     public void selectComplaintType() {
-        complaintTypeDropdown.click();
-        complaintTypeDropdown.click();
-        wait(1000);
         String[] types = TestDataReader.get("COMPLAINT_TYPES").split(",");
-        String type = types[new java.util.Random().nextInt(types.length)].trim();
+        String type = types[ThreadLocalRandom.current().nextInt(types.length)].trim();
+        complaintTypeDropdown.click();
+        complaintTypeDropdown.click();
+        page.getByText(type, new Page.GetByTextOptions().setExact(true)).waitFor();
         page.getByText(type, new Page.GetByTextOptions().setExact(true)).click();
     }
 
@@ -142,39 +141,30 @@ public class ComplaintPage extends BasePage {
     }
 
     public void selectCountry() {
+        Locator option = page.locator("div").filter(new Locator.FilterOptions().setHasText(Pattern.compile("^" + ConfigReader.get("COUNTRY") + "$"))).nth(3);
         countryDropdown.click();
-        wait(1000);
-        page.locator("div").filter(new Locator.FilterOptions().setHasText(Pattern.compile("^" + ConfigReader.get("COUNTRY") + "$"))).nth(3).click();
+        option.waitFor();
+        option.click();
     }
 
     public void selectState() {
-        stateDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("STATE")).click();
+        selectFromDropdown(stateDropdown, ConfigReader.get("STATE"));
     }
 
     public void selectLGA() {
-        lgaDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("LGA")).click();
+        selectFromDropdown(lgaDropdown, ConfigReader.get("LGA"));
     }
 
     public void selectWard() {
-        wardDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("WARD")).click();
+        selectFromDropdown(wardDropdown, ConfigReader.get("WARD"));
     }
 
     public void selectVillage() {
-        villageDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("VILLAGE")).click();
+        selectFromDropdown(villageDropdown, ConfigReader.get("VILLAGE"));
     }
 
     public void selectArea() {
-        areaDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("AREA")).click();
+        selectFromDropdown(areaDropdown, ConfigReader.get("AREA"));
     }
 
     public void selectComplainant() {
@@ -219,7 +209,6 @@ public class ComplaintPage extends BasePage {
     }
 
     public void searchComplaint(String complaintNumber) {
-        page.waitForTimeout(1000);
         complaintNumberInput.click();
         complaintNumberInput.fill(complaintNumber);
         searchButton.click();
@@ -274,10 +263,10 @@ public class ComplaintPage extends BasePage {
     }
 
     public void selectRejectionReason() {
-        rejectionReasonDropdown.click();
-        wait(1000);
         String[] reasons = TestDataReader.get("REJECTION_REASON").split(",");
-        String reason = reasons[new java.util.Random().nextInt(reasons.length)].trim();
+        String reason = reasons[ThreadLocalRandom.current().nextInt(reasons.length)].trim();
+        rejectionReasonDropdown.click();
+        page.getByText(reason, new Page.GetByTextOptions().setExact(true)).waitFor();
         page.getByText(reason, new Page.GetByTextOptions().setExact(true)).click();
     }
 
@@ -340,7 +329,6 @@ public class ComplaintPage extends BasePage {
         takeAction();
         clickAssign();
         selectEmployee();
-        wait(1000);
         waitForVisible(employeeComments);
         enterComments(comments);
         if (filePath != null) {

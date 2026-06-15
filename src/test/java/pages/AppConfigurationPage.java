@@ -73,11 +73,19 @@ public class AppConfigurationPage extends BasePage {
                 new Page.GetByRoleOptions().setName("Toggle switch on")).first();
     }
 
+    // --- Private helper ---
+
+    private void configureModule(Locator module) {
+        waitForVisible(module);
+        module.click();
+        saveConfigurationButton.last().waitFor();
+        saveConfigurationButton.last().click();
+    }
+
     // --- Actions ---
 
     public void clickSetUpMobileApp() {
         waitForVisible(setUpMobileAppButton);
-      wait(6000);
         setUpMobileAppButton.click();
     }
 
@@ -85,115 +93,73 @@ public class AppConfigurationPage extends BasePage {
         saveConfigurationButton.last().click();
     }
 
-
     public void selectDeliveryType() {
         deliveryTypeDropdown.click();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).click();
     }
 
     public void configureRegistrationAndDelivery() {
-        waitForVisible(registrationAndDeliveryModule);
-      wait(6000);
-        registrationAndDeliveryModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(registrationAndDeliveryModule);
     }
 
     public void configureCloseHousehold() {
-        waitForVisible(closeHouseholdModule);
-      wait(6000);
-        closeHouseholdModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(closeHouseholdModule);
     }
 
     public void configureReferral() {
         if (!"MR-DN".equals(campaignType)) return;
-        waitForVisible(referralModule);
-      wait(6000);
-        referralModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(referralModule);
     }
 
     public void configureComplaints() {
-        waitForVisible(complaintsModule);
-      wait(6000);
-        complaintsModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(complaintsModule);
     }
 
     public void configureInventory() {
-        waitForVisible(inventoryModule);
-      wait(6000);
-        inventoryModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(inventoryModule);
     }
 
     public void configureStockReconciliation() {
-        waitForVisible(stockReconciliationModule);
-      wait(6000);
-        stockReconciliationModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(stockReconciliationModule);
     }
 
     public void configureReports() {
-        waitForVisible(reportsModule);
-      wait(6000);
-        reportsModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(reportsModule);
     }
 
     public void configurePermissionHandler() {
-        waitForVisible(permissionHandlerModule);
-      wait(6000);
-        permissionHandlerModule.click();
-      wait(6000);
-        clickSaveConfiguration();
+        configureModule(permissionHandlerModule);
     }
 
     public void clickRegistrationAndDeliveryConfigure() {
         waitForVisible(registrationAndDeliveryModule);
-      wait(6000);
         registrationAndDeliveryModule.click();
-        wait(6000);
     }
 
     public void clickSearchBeneficiaryFlow() {
         searchBeneficiaryFlow.click();
-        wait(6000);
     }
 
     public void clickProximitySearchElement() {
         proximitySearchElement.dispatchEvent("click");
-        wait(6000);
     }
 
     public void clearLabelField() {
         labelInput.click();
         labelInput.fill("");
-        wait(6000);
     }
 
     public void fillLabelField(String value) {
         labelInput.dblclick();
         labelInput.fill(value);
-        wait(6000);
     }
 
     public void clickFirstToggleSwitchOff() {
         firstToggleSwitchOn.click();
-        wait(6000);
     }
 
     public boolean isLabelLocalizationToastVisible() {
-        waitForVisible(labelLocalizationToast);
-        wait(6000);
-        return labelLocalizationToast.isVisible();
+        return waitAndCheckVisible(labelLocalizationToast, 5000);
     }
 
     public void clickGoBack() {

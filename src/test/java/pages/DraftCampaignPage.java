@@ -6,8 +6,6 @@ import com.microsoft.playwright.options.AriaRole;
 import utils.TestDataReader;
 
 import java.time.LocalDate;
-import java.time.Month;
-import java.util.Locale;
 import java.util.Map;
 
 public class DraftCampaignPage extends BasePage {
@@ -57,14 +55,12 @@ public class DraftCampaignPage extends BasePage {
 
     public void clickCampaignTypeDropdown() {
         waitForVisible(campaignTypeDropdown);
-       wait(3000);
         campaignTypeDropdown.click();
     }
 
     public void selectCampaignType() {
         Locator option = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true));
         waitForVisible(option);
-       wait(3000);
         option.click();
     }
 
@@ -74,19 +70,16 @@ public class DraftCampaignPage extends BasePage {
 
     public void clickNext() {
         waitForVisible(nextButton);
-       wait(3000);
         nextButton.click();
     }
 
     public void clickSubmit() {
         waitForVisible(submitButton);
-       wait(3000);
         submitButton.click();
     }
 
     public void clearAndEnterDynamicCampaignName() {
         waitForVisible(campaignName);
-       wait(3000);
         campaignName.clear();
         String prefix = campaignType.replace(" ", "");
         if (prefix.length() > 21) prefix = prefix.substring(0, 21);
@@ -98,24 +91,17 @@ public class DraftCampaignPage extends BasePage {
 
     public void enterCampaignName(String name) {
         waitForVisible(campaignName);
-       wait(3000);
         campaignName.clear();
         campaignName.fill(name);
         campaignName.press("Tab");
     }
 
     public boolean isCampaignNameErrorVisible() {
-        campaignNameError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        boolean visible = campaignNameError.isVisible();
-        wait(2000);
-        return visible;
+        return waitAndCheckVisible(campaignNameError, 5000);
     }
 
     public boolean isDateToastErrorVisible() {
-        dateToastError.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        boolean visible = dateToastError.isVisible();
-        wait(2000);
-        return visible;
+        return waitAndCheckVisible(dateToastError, 5000);
     }
 
     public String getCampaignNameErrorText() {
@@ -144,19 +130,7 @@ public class DraftCampaignPage extends BasePage {
         input.waitFor(new Locator.WaitForOptions().setTimeout(15000));
         input.click();
         currentMonthLabel.waitFor(new Locator.WaitForOptions().setTimeout(10000));
-
-        String headerText = currentMonthLabel.innerText().trim();
-        String[] parts = headerText.split(" ");
-        int displayedMonth = Month.valueOf(parts[0].toUpperCase(Locale.ENGLISH)).getValue();
-        int displayedYear = Integer.parseInt(parts[1]);
-
-        int targetTotal = date.getYear() * 12 + date.getMonthValue();
-        int displayedTotal = displayedYear * 12 + displayedMonth;
-
-        for (int i = 0; i < targetTotal - displayedTotal; i++) {
-            nextMonthButton.click();
-        }
-
+        navigateToMonth(currentMonthLabel, nextMonthButton, date);
         dateCell(date).click();
     }
 

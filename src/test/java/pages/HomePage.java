@@ -51,16 +51,8 @@ public class HomePage extends BasePage {
         createComplaintBtn.click();
     }
 
-    public void navigateToSearchComplaint() {
-        searchComplaintBtn.click();
-    }
-
     public void navigateToCreateUser() {
         createUserBtn.click();
-    }
-
-    public void navigateToSearchUser() {
-        searchUserBtn.click();
     }
 
     // ==================== VERIFICATION ====================
@@ -68,10 +60,6 @@ public class HomePage extends BasePage {
     public boolean isHomeDisplayed() {
         waitForVisible(homeElement);
         return homeElement.isVisible();
-    }
-
-    public boolean isHomeVisible() {
-        return isHomeDisplayed();
     }
 
     public boolean isCreateComplaintVisible() {

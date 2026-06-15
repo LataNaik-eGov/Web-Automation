@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TestDataReader {
 
@@ -49,7 +49,7 @@ public class TestDataReader {
             String raw = get(k);
             if (raw == null || raw.trim().isEmpty()) return "";
             String[] values = raw.split(",");
-            return values[new Random().nextInt(values.length)].trim();
+            return values[ThreadLocalRandom.current().nextInt(values.length)].trim();
         });
     }
 

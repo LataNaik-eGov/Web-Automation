@@ -41,6 +41,16 @@ public class BoundarySelectionPage extends BasePage {
         this.mandatoryFieldsToast = page.getByText("Please fill all the mandatory fields.");
     }
 
+    // --- Private helper ---
+
+    private void clickBoundaryLevel(Locator level, Locator checkbox) {
+        waitForVisible(level);
+        level.click();
+        waitForVisible(checkbox);
+        checkbox.check();
+        outsideClick.click();
+    }
+
     // --- Actions ---
 
     public void clickDefineTarget() {
@@ -48,70 +58,36 @@ public class BoundarySelectionPage extends BasePage {
     }
 
     public void clickFirstLevel() {
-        waitForVisible(firstBoundaryLevel);
-        wait(3000);
-        firstBoundaryLevel.click();
-        waitForVisible(firstCheckbox);
-        wait(3000);
-        firstCheckbox.check();
-        outsideClick.click();
+        clickBoundaryLevel(firstBoundaryLevel, firstCheckbox);
     }
 
     public void clickSecondLevel() {
-        waitForVisible(secondBoundaryLevel);
-        wait(3000);
-        secondBoundaryLevel.click();
-        waitForVisible(secondCheckbox);
-        wait(3000);
-        secondCheckbox.check();
-        outsideClick.click();
+        clickBoundaryLevel(secondBoundaryLevel, secondCheckbox);
     }
 
     public void clickSecondLevelWrong() {
-        waitForVisible(secondBoundaryLevel);
-        wait(3000);
-        secondBoundaryLevel.click();
-        waitForVisible(secondCheckboxWrong);
-        wait(3000);
-        secondCheckboxWrong.check();
-        outsideClick.click();
+        clickBoundaryLevel(secondBoundaryLevel, secondCheckboxWrong);
     }
 
     public void clickThirdLevel() {
-        waitForVisible(thirdBoundaryLevel);
-        wait(3000);
-        thirdBoundaryLevel.click();
-        waitForVisible(thirdCheckbox);
-        wait(3000);
-        thirdCheckbox.check();
-        outsideClick.click();
+        clickBoundaryLevel(thirdBoundaryLevel, thirdCheckbox);
     }
 
     public void clickFourthLevel() {
-        waitForVisible(fourthBoundaryLevel);
-        wait(3000);
-        fourthBoundaryLevel.click();
-        waitForVisible(thirdCheckbox);
-        wait(3000);
-        thirdCheckbox.check();
-        outsideClick.click();
+        clickBoundaryLevel(fourthBoundaryLevel, thirdCheckbox);
     }
 
     public void clickNextButton() {
         waitForVisible(nextButton);
-        wait(3000);
         nextButton.click();
     }
 
     public void clickSubmitButton() {
         waitForVisible(submitButton);
-        wait(3000);
         submitButton.click();
     }
 
     public boolean isMandatoryFieldsToastVisible() {
-        wait(500);
-        waitForVisible(mandatoryFieldsToast);
-        return mandatoryFieldsToast.isVisible();
+        return waitAndCheckVisible(mandatoryFieldsToast, 5000);
     }
 }

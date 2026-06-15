@@ -4,6 +4,10 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import utils.FormHelper;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Locale;
+
 /**
  * Base class for all Page Objects.
  * Provides common functionality like navigation, waits, and form handling.
@@ -163,5 +167,50 @@ public abstract class BasePage {
      */
     public boolean isVisible(String selector) {
         return page.locator(selector).isVisible();
+    }
+
+    // ==================== SHARED INTERACTION HELPERS ====================
+
+    /**
+     * Click a dropdown then wait for and click an exact-text option.
+     *
+     * @param dropdown   The dropdown locator to open
+     * @param optionText The exact visible text of the option to select
+     */
+    protected void selectFromDropdown(Locator dropdown, String optionText) {
+        dropdown.click();
+        Locator option = page.getByText(optionText, new Page.GetByTextOptions().setExact(true));
+        option.waitFor();
+        option.click();
+    }
+
+    /**
+     * Navigate a react-datepicker forward to the target month by clicking the next-month button.
+     *
+     * @param currentMonthLabel Locator for the ".react-datepicker__current-month" element
+     * @param nextMonthButton   Locator for the next-month navigation button
+     * @param targetDate        The date whose month/year we want to reach
+     */
+    protected void navigateToMonth(Locator currentMonthLabel, Locator nextMonthButton, LocalDate targetDate) {
+        String headerText = currentMonthLabel.innerText().trim();
+        String[] parts = headerText.split(" ");
+        int displayedMonth = Month.valueOf(parts[0].toUpperCase(Locale.ENGLISH)).getValue();
+        int displayedYear = Integer.parseInt(parts[1]);
+        int diff = (targetDate.getYear() * 12 + targetDate.getMonthValue()) - (displayedYear * 12 + displayedMonth);
+        for (int i = 0; i < diff; i++) {
+            nextMonthButton.click();
+        }
+    }
+
+    /**
+     * Wait for a locator with a specified timeout then return whether it is visible.
+     *
+     * @param locator   The locator to wait for
+     * @param timeoutMs Timeout in milliseconds
+     * @return true if the locator is visible after waiting
+     */
+    protected boolean waitAndCheckVisible(Locator locator, int timeoutMs) {
+        locator.waitFor(new Locator.WaitForOptions().setTimeout(timeoutMs));
+        return locator.isVisible();
     }
 }

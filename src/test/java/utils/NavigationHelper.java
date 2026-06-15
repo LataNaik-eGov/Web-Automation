@@ -157,7 +157,7 @@ public class NavigationHelper {
         DraftCampaignPage draft = goToCampaignDateStep();
         draft.fillStartDate();
         draft.fillEndDate();
-        draft.clickSubmit();
+        draft.clickNext();
         BoundarySelectionPage boundary = new BoundarySelectionPage(page);
         boundary.clickDefineTarget();
         return boundary;

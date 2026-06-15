@@ -46,7 +46,7 @@ public class DraftCampaignTest extends BaseTest {
         Assert.assertFalse(draftPage.getEndDateValue().isEmpty(),
                 "End date input should not be empty after filling");
 
-        draftPage.clickSubmit();
+        draftPage.clickNext();
         Assert.assertTrue(page.url().contains("create-campaign"),
                 "Should remain in the create campaign flow after submitting the full draft form");
     }

@@ -56,6 +56,13 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         textbox.click();
         navigateToMonth(currentMonthLabel, nextMonthButton, date);
         dateCell(date).click();
+        // Wait for the date picker overlay to close before proceeding
+        try {
+            page.locator(".react-datepicker-popper")
+                    .waitFor(new Locator.WaitForOptions()
+                            .setState(com.microsoft.playwright.options.WaitForSelectorState.HIDDEN)
+                            .setTimeout(5000));
+        } catch (Exception ignored) {}
     }
 
     public void fillStartDate() {

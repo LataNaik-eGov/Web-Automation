@@ -2,7 +2,6 @@ package tests;
 
 import com.microsoft.playwright.Download;
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
@@ -15,18 +14,24 @@ import java.nio.file.Paths;
 
 public class UploadFileTest extends BaseTest {
 
-    @DataProvider(name = "campaignTypes")
-    public Object[][] campaignTypes() {
-        return new Object[][]{{"BEDNET"}, {"MR-DN"}};
+    // ==================== Upload File Flow ====================
+
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyUploadFile_BEDNET() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyUploadFile();
     }
 
-    @Test(dataProvider = "campaignTypes", groups = { "workbench-ui", "sanity"})
-    public void verifyUploadFile(String campaignType) throws URISyntaxException {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyUploadFile_MR_DN() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyUploadFile();
+    }
+
+    private void verifyUploadFile() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
-
         uploadFilePage.closePopup();
 
         Download download = uploadFilePage.downloadTemplate();
@@ -38,21 +43,28 @@ public class UploadFileTest extends BaseTest {
         String filePath = Paths.get(resource.toURI()).toString();
 
         uploadFilePage.uploadFile(filePath);
-
         uploadFilePage.waitForUploadSuccessToast();
-
         uploadFilePage.clickSubmit();
     }
 
-    // Negative tests
+    // ==================== Negative Tests ====================
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifySubmitWithoutFile(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithoutFile_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifySubmitWithoutFile();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithoutFile_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifySubmitWithoutFile();
+    }
+
+    private void verifySubmitWithoutFile() {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
-
         uploadFilePage.closePopup();
         uploadFilePage.clickSubmit();
 
@@ -60,13 +72,22 @@ public class UploadFileTest extends BaseTest {
                 "Toast 'Please upload a file' should appear when Submit is clicked without uploading a file");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyUploadInvalidFileType(String campaignType) throws URISyntaxException {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyUploadInvalidFileType_BEDNET() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyUploadInvalidFileType();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyUploadInvalidFileType_MR_DN() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyUploadInvalidFileType();
+    }
+
+    private void verifyUploadInvalidFileType() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
-
         uploadFilePage.closePopup();
 
         URL resource = getClass().getClassLoader().getResource("complaint.pdf");
@@ -74,20 +95,28 @@ public class UploadFileTest extends BaseTest {
         String filePath = Paths.get(resource.toURI()).toString();
 
         uploadFilePage.uploadFile(filePath);
-
         uploadFilePage.clickSubmit();
 
         Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when an invalid file type (PDF) is uploaded");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyUploadInvalidExcelFile(String campaignType) throws URISyntaxException {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyUploadInvalidExcelFile_BEDNET() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyUploadInvalidExcelFile();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyUploadInvalidExcelFile_MR_DN() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyUploadInvalidExcelFile();
+    }
+
+    private void verifyUploadInvalidExcelFile() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
-
         uploadFilePage.closePopup();
 
         URL resource = getClass().getClassLoader().getResource("InvalidFile.xlsx");
@@ -95,20 +124,28 @@ public class UploadFileTest extends BaseTest {
         String filePath = Paths.get(resource.toURI()).toString();
 
         uploadFilePage.uploadFile(filePath);
-
         uploadFilePage.clickSubmit();
 
         Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when an invalid Excel file is uploaded");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyWithInvalidInputInFile(String campaignType) throws URISyntaxException {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyWithInvalidInputInFile_BEDNET() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyWithInvalidInputInFile();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyWithInvalidInputInFile_MR_DN() throws URISyntaxException {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyWithInvalidInputInFile();
+    }
+
+    private void verifyWithInvalidInputInFile() throws URISyntaxException {
         UploadFilePage uploadFilePage = nav.goToUploadFile();
 
         uploadFilePage.clickUploadData();
-
         uploadFilePage.closePopup();
 
         URL resource = getClass().getClassLoader().getResource("InvalidInputFile.xlsx");
@@ -116,7 +153,6 @@ public class UploadFileTest extends BaseTest {
         String filePath = Paths.get(resource.toURI()).toString();
 
         uploadFilePage.uploadFile(filePath);
-
         uploadFilePage.clickSubmit();
 
         Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),

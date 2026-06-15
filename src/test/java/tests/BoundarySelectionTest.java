@@ -1,7 +1,6 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
@@ -11,14 +10,21 @@ import utils.TestDataReader;
 
 public class BoundarySelectionTest extends BaseTest {
 
-    @DataProvider(name = "campaignTypes")
-    public Object[][] campaignTypes() {
-        return new Object[][]{{"BEDNET"}, {"MR-DN"}};
+    // ==================== Boundary Selection Flow ====================
+
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyBoundarySelection_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyBoundarySelection();
     }
 
-    @Test(dataProvider = "campaignTypes", groups = { "workbench-ui", "sanity"})
-    public void verifyBoundarySelection(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyBoundarySelection_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyBoundarySelection();
+    }
+
+    private void verifyBoundarySelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
         boundaryPage.clickFirstLevel();
@@ -33,24 +39,44 @@ public class BoundarySelectionTest extends BaseTest {
                 "Should navigate to Configure Delivery Rules page after completing boundary selection");
     }
 
-    // Negative tests
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyBoundarySelectionWithPartialSelection(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    // ==================== Negative Tests ====================
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyBoundarySelectionWithPartialSelection_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyBoundarySelectionWithPartialSelection();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyBoundarySelectionWithPartialSelection_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyBoundarySelectionWithPartialSelection();
+    }
+
+    private void verifyBoundarySelectionWithPartialSelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
         boundaryPage.clickFirstLevel();
         boundaryPage.clickSecondLevel();
-
         boundaryPage.clickNextButton();
 
         Assert.assertTrue(boundaryPage.isMandatoryFieldsToastVisible(),
                 "Toast error 'Please fill all the mandatory fields.' should appear when District and Administrative Post are not selected");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyBoundarySelectionWithoutSelection(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyBoundarySelectionWithoutSelection_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyBoundarySelectionWithoutSelection();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyBoundarySelectionWithoutSelection_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyBoundarySelectionWithoutSelection();
+    }
+
+    private void verifyBoundarySelectionWithoutSelection() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
         boundaryPage.clickNextButton();
@@ -59,9 +85,19 @@ public class BoundarySelectionTest extends BaseTest {
                 "Toast error 'Please fill all the mandatory fields.' should appear when no boundary is selected and Next button is clicked");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyBoundarySelectionWithMissingLowestLevel(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyBoundarySelectionWithMissingLowestLevel_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyBoundarySelectionWithMissingLowestLevel();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyBoundarySelectionWithMissingLowestLevel_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyBoundarySelectionWithMissingLowestLevel();
+    }
+
+    private void verifyBoundarySelectionWithMissingLowestLevel() {
         BoundarySelectionPage boundaryPage = nav.goToBoundarySelection();
 
         boundaryPage.clickFirstLevel();

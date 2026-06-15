@@ -1,7 +1,6 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import base.BaseTest;
@@ -10,14 +9,21 @@ import utils.TestDataReader;
 
 public class DraftCampaignTest extends BaseTest {
 
-    @DataProvider(name = "campaignTypes")
-    public Object[][] campaignTypes() {
-        return new Object[][]{{"BEDNET"}, {"MR-DN"}};
+    // ==================== Draft Campaign Flow ====================
+
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyDraftCampaignFlow_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyDraftCampaignFlow();
     }
 
-    @Test(dataProvider = "campaignTypes", groups = { "workbench-ui", "sanity"})
-    public void verifyDraftCampaignFlow(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyDraftCampaignFlow_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyDraftCampaignFlow();
+    }
+
+    private void verifyDraftCampaignFlow() {
         DraftCampaignPage draftPage = nav.goToCampaignDraft();
 
         draftPage.clickCampaignTypeDropdown();
@@ -47,18 +53,19 @@ public class DraftCampaignTest extends BaseTest {
 
     // ==================== Campaign Name Negative Test Cases ====================
 
-//     @Test(groups = { "workbench-ui"})
-//     public void verifyValidCampaignName() {
-//         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
-//         draftPage.clearAndEnterDynamicCampaignName();
-//         draftPage.clickNext();
-//         Assert.assertTrue(page.url().contains("create-campaign"),
-//                 "Should proceed to date step after entering a valid campaign name");
-//     }
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameTooLong_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyCampaignNameTooLong();
+    }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyCampaignNameTooLong(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameTooLong_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyCampaignNameTooLong();
+    }
+
+    private void verifyCampaignNameTooLong() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("ThisCampaignNameIsWayTooLong123"); // 31 chars - above maximum of 30
         draftPage.clickNext();
@@ -66,9 +73,19 @@ public class DraftCampaignTest extends BaseTest {
                 "Error should be shown for campaign name longer than 30 characters");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyCampaignNameStartsWithSpecialChar(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameStartsWithSpecialChar_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyCampaignNameStartsWithSpecialChar();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameStartsWithSpecialChar_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyCampaignNameStartsWithSpecialChar();
+    }
+
+    private void verifyCampaignNameStartsWithSpecialChar() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("_Campaign");
         draftPage.clickNext();
@@ -76,9 +93,19 @@ public class DraftCampaignTest extends BaseTest {
                 "Error should be shown for campaign name starting with an underscore");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyCampaignNameContainsEmoji(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameContainsEmoji_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyCampaignNameContainsEmoji();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameContainsEmoji_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyCampaignNameContainsEmoji();
+    }
+
+    private void verifyCampaignNameContainsEmoji() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("Camp🎉ign1"); // 🎉 emoji
         draftPage.clickNext();
@@ -86,9 +113,19 @@ public class DraftCampaignTest extends BaseTest {
                 "Error should be shown for campaign name containing an emoji");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifyCampaignNameConsecutiveUnderscores(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameConsecutiveUnderscores_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifyCampaignNameConsecutiveUnderscores();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifyCampaignNameConsecutiveUnderscores_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifyCampaignNameConsecutiveUnderscores();
+    }
+
+    private void verifyCampaignNameConsecutiveUnderscores() {
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
         draftPage.enterCampaignName("Camp__aign");
         draftPage.clickNext();
@@ -98,18 +135,38 @@ public class DraftCampaignTest extends BaseTest {
 
     // ==================== Date Negative Test Cases ====================
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifySubmitWithoutFillingDates(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithoutFillingDates_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifySubmitWithoutFillingDates();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithoutFillingDates_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifySubmitWithoutFillingDates();
+    }
+
+    private void verifySubmitWithoutFillingDates() {
         DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.clickSubmit();
         Assert.assertTrue(draftPage.isDateToastErrorVisible(),
                 "Toast error should appear without any date filled when submitting the form");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifySubmitWithStartDateOnly(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithStartDateOnly_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifySubmitWithStartDateOnly();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithStartDateOnly_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifySubmitWithStartDateOnly();
+    }
+
+    private void verifySubmitWithStartDateOnly() {
         DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.fillStartDate();
         draftPage.clickSubmit();
@@ -117,9 +174,19 @@ public class DraftCampaignTest extends BaseTest {
                 "Toast error should appear when submitting with only start date filled");
     }
 
-    @Test(dataProvider = "campaignTypes", groups = {"negative", "workbench-ui"})
-    public void verifySubmitWithEndDateOnly(String campaignType) {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", campaignType);
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithEndDateOnly_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        verifySubmitWithEndDateOnly();
+    }
+
+    @Test(groups = {"negative", "workbench-ui"})
+    public void verifySubmitWithEndDateOnly_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        verifySubmitWithEndDateOnly();
+    }
+
+    private void verifySubmitWithEndDateOnly() {
         DraftCampaignPage draftPage = nav.goToCampaignDateStep();
         draftPage.fillEndDate();
         draftPage.clickSubmit();

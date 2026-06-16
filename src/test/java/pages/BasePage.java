@@ -125,6 +125,18 @@ public abstract class BasePage {
         page.waitForTimeout(ms);
     }
 
+    /**
+     * Wait for the DIGIT popup overlay to disappear before interacting with elements beneath it.
+     */
+    protected void waitForOverlayToHide() {
+        try {
+            page.locator(".digit-popup-overlay")
+                    .waitFor(new Locator.WaitForOptions()
+                            .setState(com.microsoft.playwright.options.WaitForSelectorState.HIDDEN)
+                            .setTimeout(10000));
+        } catch (Exception ignored) {}
+    }
+
     // ==================== VERIFICATION ====================
 
     /**

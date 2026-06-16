@@ -284,7 +284,7 @@ public class HRMSPage extends BasePage {
             // Success screen: "Username" label / "Test-XXXXX" value on the next line
             // Find innermost element whose complete text is exactly "Test-<digits>"
             Locator usernameLocator = page.locator("*")
-                    .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Test-\\d+$")))
+                    .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Auto-Test-\\d+$")))
                     .last();
             usernameLocator.waitFor(new Locator.WaitForOptions().setTimeout(10000));
             String username = usernameLocator.textContent().trim();

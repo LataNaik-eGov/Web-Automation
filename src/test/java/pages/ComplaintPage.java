@@ -130,8 +130,7 @@ public class ComplaintPage extends BasePage {
 
     public void selectComplaintType() {
         complaintTypeDropdown.click();
-        complaintTypeDropdown.click();
-        wait(1000);
+        waitForOverlayToHide();
         String[] types = TestDataReader.get("COMPLAINT_TYPES").split(",");
         String type = types[new java.util.Random().nextInt(types.length)].trim();
         page.getByText(type, new Page.GetByTextOptions().setExact(true)).click();
@@ -230,6 +229,7 @@ public class ComplaintPage extends BasePage {
     }
 
     public void takeAction() {
+        waitForOverlayToHide();
         takeActionButton.click();
     }
 

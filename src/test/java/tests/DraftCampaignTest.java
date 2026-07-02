@@ -69,6 +69,36 @@ public class DraftCampaignTest extends BaseTest {
                 "Should remain in the create campaign flow after submitting the full draft form");
     }
 
+    // ==================== Boundary Hierarchy Test Cases ====================
+
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyBoundaryHierarchySelection_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        DraftCampaignPage draftPage = nav.goToBoundaryHierarchy();
+
+        draftPage.searchAndSelectHierarchy("NIGERIA");
+        Assert.assertTrue(draftPage.isHierarchyCardVisible("NIGERIA"),
+                "NIGERIA hierarchy card should be visible after searching");
+
+        draftPage.clickHierarchySubmit();
+        Assert.assertTrue(page.url().contains("create-campaign"),
+                "Should remain in the create campaign flow after selecting a boundary hierarchy and submitting");
+    }
+
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyBoundaryHierarchySelection_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        DraftCampaignPage draftPage = nav.goToBoundaryHierarchy();
+
+        draftPage.searchAndSelectHierarchy("NIGERIA");
+        Assert.assertTrue(draftPage.isHierarchyCardVisible("NIGERIA"),
+                "NIGERIA hierarchy card should be visible after searching");
+
+        draftPage.clickHierarchySubmit();
+        Assert.assertTrue(page.url().contains("create-campaign"),
+                "Should remain in the create campaign flow after selecting a boundary hierarchy and submitting");
+    }
+
     // ==================== Campaign Name Negative Test Cases ====================
 
 //     @Test(groups = { "workbench-ui"})

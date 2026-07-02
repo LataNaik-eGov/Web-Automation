@@ -153,11 +153,25 @@ public class NavigationHelper {
         return draft;
     }
 
-    public BoundarySelectionPage goToBoundarySelection() {
+    /**
+     * Navigate through the draft flow up to the "Select Boundary Hierarchy" step,
+     * i.e. the page shown after clicking Next on the campaign duration (date) step.
+     */
+    public DraftCampaignPage goToBoundaryHierarchy() {
         DraftCampaignPage draft = goToCampaignDateStep();
         draft.fillStartDate();
         draft.fillEndDate();
-        draft.clickSubmit();
+        draft.clickNext();
+        return draft;
+    }
+
+    public BoundarySelectionPage goToBoundarySelection() {
+        // The date step now advances via Next into the "Select Boundary Hierarchy"
+        // step, where a hierarchy must be searched and selected before reaching
+        // the "Define Target Areas" boundary selection page.
+        DraftCampaignPage draft = goToBoundaryHierarchy();
+        draft.searchAndSelectHierarchy("NIGERIA");
+        draft.clickHierarchySubmit();
         BoundarySelectionPage boundary = new BoundarySelectionPage(page);
         boundary.clickDefineTarget();
         return boundary;

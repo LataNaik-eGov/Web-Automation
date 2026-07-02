@@ -21,6 +21,10 @@ public class DraftCampaignPage extends BasePage {
     private Locator endDateInput;
     private Locator dateToastError;
 
+    // Boundary hierarchy step elements
+    private Locator hierarchySearchInput;
+    private Locator hierarchySubmitButton;
+
     // Date picker elements
     private Locator currentMonthLabel;
     private Locator nextMonthButton;
@@ -43,7 +47,7 @@ public class DraftCampaignPage extends BasePage {
 
         this.campaignTypeDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
-        this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
+        this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.campaignName = page.locator("input[placeholder='CampaignName_Month_Year']");
         this.startDateInput = page.getByPlaceholder("Start date");
         this.endDateInput = page.getByPlaceholder("End date");
@@ -51,6 +55,11 @@ public class DraftCampaignPage extends BasePage {
         this.dateToastError = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
+        // Boundary hierarchy step: search field renders as a searchbox (search icon)
+        this.hierarchySearchInput = page.getByRole(AriaRole.SEARCHBOX)
+                .or(page.getByRole(AriaRole.TEXTBOX)).first();
+        this.hierarchySubmitButton = page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Submit").setExact(true));
     }
 
     // --- Actions ---
@@ -82,6 +91,42 @@ public class DraftCampaignPage extends BasePage {
         waitForVisible(submitButton);
        wait(3000);
         submitButton.click();
+    }
+
+    // --- Boundary hierarchy step ---
+
+    /**
+     * On the "Select Boundary Hierarchy" step, type a hierarchy name into the
+     * "Search by Hierarchy Name" search bar and select the matching card.
+     *
+     * @param hierarchyName name of the hierarchy to search and select (e.g. "NIGERIA")
+     */
+    public void searchAndSelectHierarchy(String hierarchyName) {
+        waitForVisible(hierarchySearchInput);
+       wait(3000);
+        hierarchySearchInput.click();
+        hierarchySearchInput.fill(hierarchyName);
+       wait(3000);
+        Locator card = hierarchyCard(hierarchyName);
+        waitForVisible(card);
+        card.click();
+       wait(2000);
+    }
+
+    public boolean isHierarchyCardVisible(String hierarchyName) {
+        Locator card = hierarchyCard(hierarchyName);
+        waitForVisible(card);
+        return card.isVisible();
+    }
+
+    public void clickHierarchySubmit() {
+        waitForVisible(hierarchySubmitButton);
+       wait(3000);
+        hierarchySubmitButton.click();
+    }
+
+    private Locator hierarchyCard(String hierarchyName) {
+        return page.getByText(hierarchyName, new Page.GetByTextOptions().setExact(true)).first();
     }
 
     public void clearAndEnterDynamicCampaignName() {

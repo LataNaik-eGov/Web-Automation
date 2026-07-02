@@ -29,7 +29,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     public ConfigureDeliveryRulesPage(Page page) {
         super(page);
         this.campaignType = TestDataReader.getSessionValue("CAMPAIGN_TYPE");
-        this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Start Planning Deliveries"));
+        this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Configure Delivery").setExact(true));
         this.startDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
         this.endDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));

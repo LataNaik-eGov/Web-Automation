@@ -50,7 +50,10 @@ public class CreateChecklist extends BasePage {
     public void clickCreateCampaign() {
         page.mouse().wheel(0, 500);
         createCampaign.click();
-        wait(1000);
+        wait(4000);
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(java.nio.file.Paths.get("screenshots/debug_after_create_campaign.png"))
+                .setFullPage(true));
         goMyCampaign.click();
         wait (1000);
     }

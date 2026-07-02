@@ -35,6 +35,7 @@ public class AppConfigurationPage extends BasePage {
     private Locator labelInput;
     private Locator labelLocalizationToast;
     private Locator firstToggleSwitchOn;
+    private Locator noFlowConfigError;
 
     public AppConfigurationPage(Page page) {
         super(page);
@@ -43,7 +44,7 @@ public class AppConfigurationPage extends BasePage {
         this.deliveryTypeDropdown = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Select an option"));
         this.setUpMobileAppButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Set App Configurations"));
+                new Page.GetByRoleOptions().setName("Set Up Mobile App"));
         this.registrationAndDeliveryModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Register eligible children")).getByLabel("Configure");
 
@@ -62,7 +63,7 @@ public class AppConfigurationPage extends BasePage {
         this.permissionHandlerModule = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Manages user permissions")).getByLabel("Configure");
         this.saveConfigurationButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Submit"));
+                new Page.GetByRoleOptions().setName("Save Configuration"));
         this.goBackButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Go Back"));
         this.searchBeneficiaryFlow = page.getByText("Search Beneficiary").first();
@@ -71,6 +72,7 @@ public class AppConfigurationPage extends BasePage {
         this.labelLocalizationToast = page.getByText("Label localization is empty for field");
         this.firstToggleSwitchOn = page.getByRole(AriaRole.SWITCH,
                 new Page.GetByRoleOptions().setName("Toggle switch on")).first();
+        this.noFlowConfigError = page.getByText("No flow configuration found");
     }
 
     // --- Actions ---
@@ -82,7 +84,26 @@ public class AppConfigurationPage extends BasePage {
     }
 
     public void clickSaveConfiguration() {
-        saveConfigurationButton.last().click();
+        Locator submit = saveConfigurationButton.last();
+        // The module config screen intermittently renders "No flow configuration found";
+        // refreshing the page reloads the config screen correctly. Retry a few times.
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            if (noFlowConfigError.isVisible()) {
+                System.out.println("[AppConfig] 'No flow configuration found' shown — refreshing (attempt " + attempt + ")");
+                page.reload();
+                wait(6000);
+            }
+            try {
+                submit.waitFor(new Locator.WaitForOptions().setTimeout(15000));
+                submit.click();
+                return;
+            } catch (Exception e) {
+                System.out.println("[AppConfig] Submit not ready — refreshing (attempt " + attempt + ")");
+                page.reload();
+                wait(6000);
+            }
+        }
+        submit.click();
     }
 
 

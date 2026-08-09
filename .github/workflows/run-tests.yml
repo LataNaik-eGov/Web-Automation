@@ -48,12 +48,13 @@ on:
         required: false
         default: ''
       environment:
-        description: 'Environment to use (UAT or DEMO)'
+        description: 'Environment to use (UAT, DEMO, or Demo 2.0)'
         required: true
         type: choice
         options:
           - UAT
           - DEMO
+          - Demo 2.0
   repository_dispatch:
     types: [trigger-tests]
 

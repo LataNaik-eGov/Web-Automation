@@ -57,7 +57,7 @@ public class ComplaintPage extends BasePage {
         this.wardDropdown = page.locator("input[type=\"text\"]").nth(5);
         this.villageDropdown = page.locator("div:nth-child(5) > .digit-text-input-field-without-card > .digit-dropdown-employee-select-wrap > .digit-dropdown-select > .digit-dropdown-employee-select-wrap--elipses");
         this.areaDropdown = page.locator("div:nth-child(6) > .digit-text-input-field-without-card > .digit-dropdown-employee-select-wrap > .digit-dropdown-select > .digit-dropdown-employee-select-wrap--elipses");
-        this.complainantRadio = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("Are you raising a complaint"));
+        this.complainantRadio = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("Myself"));
         this.descriptionField = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Complaint description"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.complaintNumberLabel = page.locator(".digit-panel-response");
@@ -129,7 +129,7 @@ public class ComplaintPage extends BasePage {
     // ==================== INDIVIDUAL ACTIONS ====================
 
     public void selectComplaintType() {
-        complaintTypeDropdown.click();
+        clickDropdownWrapper(complaintTypeDropdown);
         waitForOverlayToHide();
         String[] types = TestDataReader.get("COMPLAINT_TYPES").split(",");
         String type = types[new java.util.Random().nextInt(types.length)].trim();
@@ -141,39 +141,49 @@ public class ComplaintPage extends BasePage {
     }
 
     public void selectCountry() {
-        countryDropdown.click();
+        clickDropdownWrapper(countryDropdown);
         wait(1000);
         page.locator("div").filter(new Locator.FilterOptions().setHasText(Pattern.compile("^" + ConfigReader.get("COUNTRY") + "$"))).nth(3).click();
     }
 
     public void selectState() {
-        stateDropdown.click();
+        clickDropdownWrapper(stateDropdown);
         wait(1000);
         page.getByText(ConfigReader.get("STATE")).click();
     }
 
     public void selectLGA() {
-        lgaDropdown.click();
+        clickDropdownWrapper(lgaDropdown);
         wait(1000);
         page.getByText(ConfigReader.get("LGA")).click();
     }
 
     public void selectWard() {
-        wardDropdown.click();
+        clickDropdownWrapper(wardDropdown);
         wait(1000);
         page.getByText(ConfigReader.get("WARD")).click();
     }
 
     public void selectVillage() {
-        villageDropdown.click();
+        clickDropdownWrapper(villageDropdown);
         wait(1000);
         page.getByText(ConfigReader.get("VILLAGE")).click();
     }
 
     public void selectArea() {
-        areaDropdown.click();
+        clickDropdownWrapper(areaDropdown);
         wait(1000);
         page.getByText(ConfigReader.get("AREA")).click();
+    }
+
+    /**
+     * Custom DIGIT dropdown widgets render the actual clickable "select" as a
+     * wrapping div (role="button") around an inner input/span. Clicking the
+     * inner element directly gets blocked because the wrapper intercepts the
+     * pointer event, so we click the wrapper instead.
+     */
+    private void clickDropdownWrapper(Locator innerField) {
+        innerField.locator("xpath=ancestor::div[contains(@class,'digit-dropdown-select')][1]").click();
     }
 
     public void selectComplainant() {

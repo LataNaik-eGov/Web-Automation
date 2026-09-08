@@ -90,7 +90,16 @@ public class BaseTest {
         }
         browser = playwright.chromium().launch(launchOptions);
 
-        context = browser.newContext(new Browser.NewContextOptions().setViewportSize(null));
+        Browser.NewContextOptions contextOptions = new Browser.NewContextOptions();
+        if (headless) {
+            // --start-maximized has no effect in headless mode, so the viewport
+            // would otherwise default to a small size that collapses the header
+            // and overlaps form fields.
+            contextOptions.setViewportSize(1920, 1080);
+        } else {
+            contextOptions.setViewportSize(null);
+        }
+        context = browser.newContext(contextOptions);
         page = context.newPage();
         page.setDefaultTimeout(30000);
 

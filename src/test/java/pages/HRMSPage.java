@@ -49,16 +49,18 @@ public class HRMSPage extends BasePage {
     // ==================== STEP 1: HIERARCHY TYPE ====================
 
     public HRMSPage selectHierarchyType(String searchText, String optionText) {
-        page.getByRole(AriaRole.TEXTBOX).first().click();
-        page.getByRole(AriaRole.TEXTBOX).first().fill(searchText);
-        page.getByText(optionText, new Page.GetByTextOptions().setExact(true)).click();
+        Locator hierarchyDropdown = page.getByRole(AriaRole.TEXTBOX).first();
+        hierarchyDropdown.click(new Locator.ClickOptions().setForce(true));
+        hierarchyDropdown.fill(searchText);
+        page.getByText(optionText.trim()).click();
+        nextButton.waitFor(new Locator.WaitForOptions().setTimeout(90000));
         return this;
     }
 
     // ==================== STEP 2: NEXT ====================
 
     public HRMSPage clickNext() {
-        nextButton.click();
+        nextButton.click(new Locator.ClickOptions().setForce(true));
         page.waitForLoadState();
         return this;
     }
@@ -100,7 +102,8 @@ public class HRMSPage extends BasePage {
             String department, String designation, String roleName, String jurisdiction) {
 
         // Employment Type — textbox-based dropdown
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Employment Type")).click();
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Employment Type"))
+                .click(new Locator.ClickOptions().setForce(true));
         page.getByText(empType).first().click();
 
         // Date of Appointment
@@ -108,11 +111,13 @@ public class HRMSPage extends BasePage {
         doaInput.fill(doa);
 
         // Department — textbox-based dropdown; options appear in #jk-dropdown-unique
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Department")).click();
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Department"))
+                .click(new Locator.ClickOptions().setForce(true));
         page.locator("#jk-dropdown-unique").getByText(department).click();
 
         // Designation — textbox-based dropdown
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Designation")).click();
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Designation"))
+                .click(new Locator.ClickOptions().setForce(true));
         page.getByText(designation).first().click();
 
         // Role — open multi-select (last .digit-cursorPointer targets the Roles field)
@@ -126,11 +131,10 @@ public class HRMSPage extends BasePage {
                 .check();
         page.getByText("Login DetailsUsername *").click();
 
-        // Jurisdiction — expand the Country section and pick by name
-        page.locator("div")
-                .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Area 1\\*Country$")))
-                .first().click();
-        page.locator(".cp.profile-dropdown--item")
+        // Jurisdiction — standard searchable dropdown (same pattern as every other
+        // custom dropdown in this app), not an expandable tree.
+        page.locator("#hrms-create-standalone-code-dropdown").click(new Locator.ClickOptions().setForce(true));
+        page.locator("div.digit-dropdown-item")
                 .filter(new Locator.FilterOptions().setHasText(jurisdiction))
                 .first().click();
 
@@ -146,11 +150,14 @@ public class HRMSPage extends BasePage {
     private void fillCreateForm(String username, String mobile) {
         String[] roles = TestDataReader.get("HRMS_ROLES").split(",");
         String role = roles[ThreadLocalRandom.current().nextInt(roles.length)].trim();
-        String country = ConfigReader.get("COUNTRY");
+        String hierarchyType = ConfigReader.get("HIERARCHY_TYPE");
+        if (hierarchyType == null) {
+            hierarchyType = ConfigReader.get("COUNTRY");
+        }
 
         System.out.println("[HRMS] Username: " + username + " | Mobile: " + mobile + " | Role: " + role);
 
-        selectHierarchyType(country, country)
+        selectHierarchyType(hierarchyType, hierarchyType)
             .clickNext()
             .fillLoginDetails(username, TestDataReader.get("HRMS_PASSWORD"))
             .fillPersonalDetails(
@@ -166,7 +173,7 @@ public class HRMSPage extends BasePage {
                 TestDataReader.get("HRMS_DEPARTMENT"),
                 TestDataReader.get("HRMS_DESIGNATION"),
                 role,
-                TestDataReader.get("HRMS_JURISDICTION"));
+                ConfigReader.get("COUNTRY"));
     }
 
     public String createEmployee() {
@@ -391,7 +398,7 @@ public class HRMSPage extends BasePage {
         page.getByText("Deactivate Employee").click();
 
         // Select deactivation reason — pick randomly from comma-separated list
-        page.getByRole(AriaRole.TEXTBOX).first().click();
+        page.getByRole(AriaRole.TEXTBOX).first().dispatchEvent("click");
         String[] deactivationReasons = TestDataReader.get("HRMS_DEACTIVATION_REASON").split(",");
         String deactivationReason = deactivationReasons[ThreadLocalRandom.current().nextInt(deactivationReasons.length)].trim();
         System.out.println("[HRMS] Selected deactivation reason: " + deactivationReason);
@@ -433,7 +440,7 @@ public class HRMSPage extends BasePage {
         page.getByText("Activate Employee").click();
 
         // Select reactivation reason — pick randomly from comma-separated list
-        page.getByRole(AriaRole.TEXTBOX).first().click();
+        page.getByRole(AriaRole.TEXTBOX).first().dispatchEvent("click");
         String[] reactivationReasons = TestDataReader.get("HRMS_REACTIVATION_REASON").split(",");
         String reactivationReason = reactivationReasons[ThreadLocalRandom.current().nextInt(reactivationReasons.length)].trim();
         System.out.println("[HRMS] Selected reactivation reason: " + reactivationReason);
@@ -451,7 +458,7 @@ public class HRMSPage extends BasePage {
                 new Page.GetByRoleOptions().setName("Activate Employee")).click();
 
         try {
-            page.getByText("Employee Activated Successfully")
+            page.getByText("Employee Reactivated Successfully")
                     .waitFor(new Locator.WaitForOptions().setTimeout(30000));
             System.out.println("[HRMS] Employee reactivated: " + username);
             return true;
@@ -534,7 +541,14 @@ public class HRMSPage extends BasePage {
         searchUserCard.waitFor(new Locator.WaitForOptions().setTimeout(10000));
         searchUserCard.click();
 
-        // Hierarchy selection screen appears first — click Next to reach the search form
+        // Hierarchy selection screen appears first — "Next" is a no-op until a
+        // hierarchy is chosen (the field is required).
+        String hierarchyType = ConfigReader.get("HIERARCHY_TYPE");
+        if (hierarchyType == null) {
+            hierarchyType = ConfigReader.get("COUNTRY");
+        }
+        selectHierarchyType(hierarchyType, hierarchyType);
+
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"))
                 .waitFor(new Locator.WaitForOptions().setTimeout(10000));
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next")).click();

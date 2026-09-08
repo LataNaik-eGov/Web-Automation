@@ -18,6 +18,7 @@ BROWSER=chromium
 HEADLESS=false
 USERNAME=LNMZ
 PASSWORD=eGov@1234
+HIERARCHY_TYPE=NIGERIA
 COUNTRY=Nigeria
 STATE=Bouenza
 LGA=Loudima
@@ -25,6 +26,8 @@ WARD=Loudima gare
 VILLAGE=Malela
 AREA=Village12
 ```
+
+`HIERARCHY_TYPE` is the name of the hierarchy tile selected on the "Select hierarchy type" screen (e.g. `NIGERIA`, `SIERRALEONE`) at the start of complaint/employee creation flows. It's a separate value from `COUNTRY` because the tile label doesn't always match the country boundary's display format (e.g. `SIERRALEONE` vs `Sierra Leone`) — keep it in sync whenever you change `COUNTRY`/`STATE`/`LGA`/etc. to a different country's boundary data.
 
 ## Running Tests
 
@@ -98,3 +101,25 @@ Add these secrets in your repository settings (**Settings → Secrets and variab
 - `workbench-ui`: Workbench-related tests
 - `common`: Common tests (login, navigation)
 - `regression`: Regression test suite
+
+## Allure Report
+
+Test runs write results to `target/allure-results` (configured in `pom.xml`).
+
+### View the report locally
+
+Requires the [Allure CLI](https://allurereport.org/docs/install/) (`npm install -g allure-commandline`, or `brew install allure`).
+
+```bash
+# Run tests first, then serve the report (opens in your browser, auto-cleans up after)
+allure serve target/allure-results
+```
+
+Or generate a static copy instead of serving it live:
+```bash
+allure generate target/allure-results --clean -o allure-report
+allure open allure-report
+```
+
+### CI report
+GitHub Actions generates and publishes the report automatically after every run (see `.github/workflows/run-tests.yml`), including history from previous runs. It's published to the `gh-pages` branch — check your repository's **Settings → Pages** for the published URL.

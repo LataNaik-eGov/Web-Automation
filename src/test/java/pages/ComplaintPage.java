@@ -19,16 +19,15 @@ import utils.TestDataReader;
  */
 public class ComplaintPage extends BasePage {
 
+    // Hierarchy selection locators
+    private final Locator nextButton;
+
     // Create complaint locators
     private final Locator complaintTypeDropdown;
     private final Locator complaintDateInput;
-    private final Locator countryDropdown;
-    private final Locator stateDropdown;
-    private final Locator lgaDropdown;
-    private final Locator wardDropdown;
-    private final Locator villageDropdown;
-    private final Locator areaDropdown;
     private final Locator complainantRadio;
+    private final Locator complainantNameInput;
+    private final Locator complainantContactInput;
     private final Locator descriptionField;
     private final Locator submitButton;
 
@@ -49,15 +48,12 @@ public class ComplaintPage extends BasePage {
 
     public ComplaintPage(Page page) {
         super(page);
-        this.complaintTypeDropdown = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Complaint Type"));
+        this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
+        this.complaintTypeDropdown = page.locator("#pgr-create-complaint-standalone-cs_complaint_details_complaint_type-field");
         this.complaintDateInput = page.locator("input[name=\"ComplaintDate\"]");
-        this.countryDropdown = page.getByRole(AriaRole.TEXTBOX).nth(3);
-        this.stateDropdown = page.getByRole(AriaRole.TEXTBOX).nth(4);
-        this.lgaDropdown = page.getByRole(AriaRole.TEXTBOX).nth(5);
-        this.wardDropdown = page.locator("input[type=\"text\"]").nth(5);
-        this.villageDropdown = page.locator("div:nth-child(5) > .digit-text-input-field-without-card > .digit-dropdown-employee-select-wrap > .digit-dropdown-select > .digit-dropdown-employee-select-wrap--elipses");
-        this.areaDropdown = page.locator("div:nth-child(6) > .digit-text-input-field-without-card > .digit-dropdown-employee-select-wrap > .digit-dropdown-select > .digit-dropdown-employee-select-wrap--elipses");
-        this.complainantRadio = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("Are you raising a complaint"));
+        this.complainantRadio = page.locator("#pgr-create-complaint-standalone-es_createcomplaint_for-field-0");
+        this.complainantNameInput = page.locator("#pgr-create-complaint-standalone-complaints_complainant_name-field");
+        this.complainantContactInput = page.locator("#pgr-create-complaint-standalone-complaints_complainant_contact_number-field");
         this.descriptionField = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Complaint description"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.complaintNumberLabel = page.locator(".digit-panel-response");
@@ -80,6 +76,7 @@ public class ComplaintPage extends BasePage {
     }
 
     public String fillFormWithFile(String description, String filePath) {
+        selectHierarchyType();
         waitForVisible(complaintTypeDropdown);
         wait(5000);
         page.waitForLoadState();
@@ -122,62 +119,94 @@ public class ComplaintPage extends BasePage {
     public boolean isComplaintFound(String complaintNumber) {
         searchComplaint(complaintNumber);
         Locator link = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(complaintNumber));
-        link.waitFor();
+        link.waitFor(new Locator.WaitForOptions().setTimeout(60000));
         return link.isVisible();
     }
 
     // ==================== INDIVIDUAL ACTIONS ====================
 
+    public void selectHierarchyType() {
+        String hierarchy = ConfigReader.get("HIERARCHY_TYPE");
+        selectHierarchyType(hierarchy != null ? hierarchy : "NIGERIA");
+    }
+
+    public void selectHierarchyType(String hierarchy) {
+        // The hierarchy tile is a div[role="button"] in this environment (not a literal
+        // <button>), and its inner content has pointer-events:none in headless Chromium,
+        // so a plain click is reported as intercepted by its own wrapper.
+        Locator card = page.locator(
+                "button:has-text('" + hierarchy + "'), div.select-hierarchy-campaign-selection-card:has-text('" + hierarchy + "')")
+                .first();
+        card.scrollIntoViewIfNeeded();
+        card.dispatchEvent("click");
+        nextButton.click();
+        page.waitForLoadState();
+    }
+
     public void selectComplaintType() {
-        complaintTypeDropdown.click();
+        complaintTypeDropdown.click(new Locator.ClickOptions().setForce(true));
         waitForOverlayToHide();
         String[] types = TestDataReader.get("COMPLAINT_TYPES").split(",");
         String type = types[new java.util.Random().nextInt(types.length)].trim();
-        page.getByText(type, new Page.GetByTextOptions().setExact(true)).click();
+        page.locator("div.digit-dropdown-item").filter(new Locator.FilterOptions().setHasText(type)).first().click();
     }
 
     public void selectDate(String date) {
         complaintDateInput.fill(date);
     }
 
+    // Locates a boundary dropdown's input by the label of its level (e.g. "Country",
+    // "Province"), scoped to its own boundary-dropdown-wrapper — avoids the fragile
+    // nth-index locators that broke whenever the boundary section's layout shifted.
+    private Locator boundaryDropdown(String levelLabel) {
+        return page.locator(
+                "xpath=//div[contains(@class,'boundary-dropdown-wrapper')]" +
+                "[.//div[starts-with(normalize-space(),'" + levelLabel + "')]]//input");
+    }
+
+    public void selectBoundaryOption(String levelLabel, String optionText) {
+        Locator dropdown = boundaryDropdown(levelLabel);
+        // The boundary section renders a loading spinner until its data arrives, which
+        // can take well past the default 30s timeout on this environment.
+        dropdown.waitFor(new Locator.WaitForOptions().setTimeout(90000));
+        dropdown.click(new Locator.ClickOptions().setForce(true));
+        page.locator("div.digit-dropdown-item").filter(new Locator.FilterOptions().setHasText(optionText)).first().click();
+    }
+
     public void selectCountry() {
-        countryDropdown.click();
-        wait(1000);
-        page.locator("div").filter(new Locator.FilterOptions().setHasText(Pattern.compile("^" + ConfigReader.get("COUNTRY") + "$"))).nth(3).click();
+        selectBoundaryOption("Country", ConfigReader.get("COUNTRY"));
     }
 
     public void selectState() {
-        stateDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("STATE")).click();
+        selectBoundaryOption("Province", ConfigReader.get("STATE"));
     }
 
     public void selectLGA() {
-        lgaDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("LGA")).click();
+        selectBoundaryOption("District", ConfigReader.get("LGA"));
     }
 
     public void selectWard() {
-        wardDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("WARD")).click();
+        selectBoundaryOption("Administrative Post", ConfigReader.get("WARD"));
     }
 
     public void selectVillage() {
-        villageDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("VILLAGE")).click();
+        selectBoundaryOption("Locality", ConfigReader.get("VILLAGE"));
     }
 
     public void selectArea() {
-        areaDropdown.click();
-        wait(1000);
-        page.getByText(ConfigReader.get("AREA")).click();
+        selectBoundaryOption("Village", ConfigReader.get("AREA"));
     }
 
     public void selectComplainant() {
-        complainantRadio.check();
+        complainantRadio.click();
+        // Selecting "Myself" auto-fills these from the logged-in user's profile and
+        // disables them; only fill in manually if the app didn't do that for us.
+        if (!complainantNameInput.isDisabled()) {
+            complainantNameInput.fill("Automation Test");
+        }
+        if (!complainantContactInput.isDisabled()) {
+            complainantContactInput.fill(HRMSPage.generateMobile());
+        }
     }
 
     public void enterDescription(String description) {
@@ -225,7 +254,11 @@ public class ComplaintPage extends BasePage {
     }
 
     public void openComplaint(String complaintNumber) {
-        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(complaintNumber)).click();
+        // A freshly-created complaint can take a while to be searchable/indexed on
+        // this environment, well past the default 30s timeout.
+        Locator link = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(complaintNumber));
+        link.waitFor(new Locator.WaitForOptions().setTimeout(60000));
+        link.click();
     }
 
     public void takeAction() {
@@ -274,7 +307,7 @@ public class ComplaintPage extends BasePage {
     }
 
     public void selectRejectionReason() {
-        rejectionReasonDropdown.click();
+        rejectionReasonDropdown.click(new Locator.ClickOptions().setForce(true));
         wait(1000);
         String[] reasons = TestDataReader.get("REJECTION_REASON").split(",");
         String reason = reasons[new java.util.Random().nextInt(reasons.length)].trim();
@@ -315,7 +348,7 @@ public class ComplaintPage extends BasePage {
 
     public void selectEmployee() {
         waitForVisible(selectEmployeeDropdown);
-        selectEmployeeDropdown.click();
+        selectEmployeeDropdown.click(new Locator.ClickOptions().setForce(true));
         wait(500);
         String employeeName = TestDataReader.get("ASSIGN_EMPLOYEE");
         // Type to filter the dropdown to only matching employees, avoiding false matches

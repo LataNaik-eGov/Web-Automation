@@ -39,12 +39,21 @@
       <version>${aspectj.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Apache POI: fills the microplan template downloaded at runtime -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${poi.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <allure.version>2.27.0</allure.version>
     <aspectj.version>1.9.22</aspectj.version>
+    <poi.version>5.2.5</poi.version>
   </properties>
   <build>
     <plugins>

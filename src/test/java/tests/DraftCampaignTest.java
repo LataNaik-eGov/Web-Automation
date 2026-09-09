@@ -69,6 +69,28 @@ public class DraftCampaignTest extends BaseTest {
                 "Should remain in the create campaign flow after submitting the full draft form");
     }
 
+    // ==================== Boundary Hierarchy Test Cases ====================
+
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyBoundaryHierarchySelection_BEDNET() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        // goToBoundaryHierarchy() selects and submits the configured hierarchy.
+        DraftCampaignPage draftPage = nav.goToBoundaryHierarchy();
+
+        Assert.assertTrue(draftPage.isHierarchyShownOnCampaignDetails(),
+                "Selected boundary hierarchy should be reflected after submitting");
+    }
+
+    @Test(groups = { "workbench-ui", "sanity"})
+    public void verifyBoundaryHierarchySelection_MR_DN() {
+        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        // goToBoundaryHierarchy() selects and submits the configured hierarchy.
+        DraftCampaignPage draftPage = nav.goToBoundaryHierarchy();
+
+        Assert.assertTrue(draftPage.isHierarchyShownOnCampaignDetails(),
+                "Selected boundary hierarchy should be reflected after submitting");
+    }
+
     // ==================== Campaign Name Negative Test Cases ====================
 
 //     @Test(groups = { "workbench-ui"})
@@ -84,20 +106,32 @@ public class DraftCampaignTest extends BaseTest {
     public void verifyCampaignNameTooLong_BEDNET() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
-        draftPage.enterCampaignName("ThisCampaignNameIsWayTooLong123"); // 31 chars - above maximum of 30
-        draftPage.clickNext();
-        Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
-                "Error should be shown for campaign name longer than 30 characters");
+
+        // The field now stops accepting input at the cap instead of taking a long
+        // name and rejecting it, so there is no guideline message to assert —
+        // the guard is that an over-length name cannot be entered at all.
+        String kept = draftPage.typeCampaignNameAndGetValue(
+                "ThisCampaignNameIsWayTooLong123456789");
+
+        Assert.assertEquals(kept.length(), DraftCampaignPage.CAMPAIGN_NAME_MAX_LENGTH,
+                "Campaign name field should stop accepting input at "
+                        + DraftCampaignPage.CAMPAIGN_NAME_MAX_LENGTH + " characters");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
     public void verifyCampaignNameTooLong_MR_DN() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
         DraftCampaignPage draftPage = nav.goToCampaignNameStep();
-        draftPage.enterCampaignName("ThisCampaignNameIsWayTooLong123"); // 31 chars - above maximum of 30
-        draftPage.clickNext();
-        Assert.assertTrue(draftPage.isCampaignNameErrorVisible(),
-                "Error should be shown for campaign name longer than 30 characters");
+
+        // The field now stops accepting input at the cap instead of taking a long
+        // name and rejecting it, so there is no guideline message to assert —
+        // the guard is that an over-length name cannot be entered at all.
+        String kept = draftPage.typeCampaignNameAndGetValue(
+                "ThisCampaignNameIsWayTooLong123456789");
+
+        Assert.assertEquals(kept.length(), DraftCampaignPage.CAMPAIGN_NAME_MAX_LENGTH,
+                "Campaign name field should stop accepting input at "
+                        + DraftCampaignPage.CAMPAIGN_NAME_MAX_LENGTH + " characters");
     }
 
     @Test(groups = {"negative", "workbench-ui"})

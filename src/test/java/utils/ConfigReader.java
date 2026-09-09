@@ -46,11 +46,4 @@ public class ConfigReader {
         String value = config.get(key);
         return value != null ? value : System.getenv(key);
     }
-
-    public static String getTemplateFileName() {
-        String baseUrl = get("BASE_URL");
-        String prefix = baseUrl != null && baseUrl.contains("demo") ? "demo" : "uat";
-        String campaignType = get("CAMPAIGN_TYPE");
-        return prefix + "_" + campaignType + "-unifiedtemplate.xlsx";
-    }
 }

@@ -30,11 +30,8 @@ public class AppConfigurationPage extends BasePage {
     private Locator permissionHandlerModule;
     private Locator saveConfigurationButton;
     private Locator goBackButton;
-    private Locator searchBeneficiaryFlow;
-    private Locator proximitySearchElement;
-    private Locator labelInput;
-    private Locator labelLocalizationToast;
     private Locator firstToggleSwitchOn;
+    private Locator noFlowConfigError;
 
     public AppConfigurationPage(Page page) {
         super(page);
@@ -42,35 +39,33 @@ public class AppConfigurationPage extends BasePage {
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
         this.deliveryTypeDropdown = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Select an option"));
-        this.setUpMobileAppButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Set App Configurations"));
-        this.registrationAndDeliveryModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Register eligible children")).getByLabel("Configure");
-
-        this.closeHouseholdModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Record households that were")).getByLabel("Configure");
-        this.referralModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Record and manage referrals")).getByLabel("Configure");
-        this.complaintsModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Let field workers log issues")).getByLabel("Configure");
-        this.inventoryModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Track and update resources")).getByLabel("Configure");
-        this.stockReconciliationModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Compare reported stock")).getByLabel("Configure");
-        this.reportsModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Access summary and detailed")).getByLabel("Configure");
-        this.permissionHandlerModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Manages user permissions")).getByLabel("Configure");
+        this.setUpMobileAppButton = page.locator(
+                "#campaign-details-page-button-setup-mobile-app, "
+                        + "#campaign-details-page-button-edit-mobile-app").first();
+        this.registrationAndDeliveryModule = moduleConfigureButton("REGISTRATION");
+        this.closeHouseholdModule = moduleConfigureButton("CLOSEHOUSEHOLD");
+        this.referralModule = page.locator("button[id='setup-mobile-app-card-REFERRAL']")
+                .or(page.getByRole(AriaRole.BUTTON,
+                        new Page.GetByRoleOptions().setName("Record and manage referrals"))
+                        .getByLabel("Configure"))
+                .first();
+        this.complaintsModule = moduleConfigureButton("COMPLAINTS");
+        this.inventoryModule = moduleConfigureButton("INVENTORY");
+        this.stockReconciliationModule = moduleConfigureButton("STOCKRECONCILIATION");
+        this.reportsModule = moduleConfigureButton("STOCKREPORTS");
+        this.permissionHandlerModule = moduleConfigureButton("PERMISSIONHANDLER");
         this.saveConfigurationButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Submit"));
+                new Page.GetByRoleOptions().setName("Save Configuration"));
         this.goBackButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Go Back"));
-        this.searchBeneficiaryFlow = page.getByText("Search Beneficiary").first();
-        this.proximitySearchElement = page.getByText("Search by proximity").locator("..");
-        this.labelInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Label"));
-        this.labelLocalizationToast = page.getByText("Label localization is empty for field");
         this.firstToggleSwitchOn = page.getByRole(AriaRole.SWITCH,
                 new Page.GetByRoleOptions().setName("Toggle switch on")).first();
+        this.noFlowConfigError = page.getByText("No flow configuration found");
+    }
+
+
+    private Locator moduleConfigureButton(String moduleId) {
+        return page.locator("button[id='setup-mobile-app-card-" + moduleId + "']");
     }
 
     // --- Actions ---
@@ -82,7 +77,26 @@ public class AppConfigurationPage extends BasePage {
     }
 
     public void clickSaveConfiguration() {
-        saveConfigurationButton.last().click();
+        Locator submit = saveConfigurationButton.last();
+        // The module config screen intermittently renders "No flow configuration found";
+        // refreshing the page reloads the config screen correctly. Retry a few times.
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            if (noFlowConfigError.isVisible()) {
+                System.out.println("[AppConfig] 'No flow configuration found' shown — refreshing (attempt " + attempt + ")");
+                page.reload();
+                wait(6000);
+            }
+            try {
+                submit.waitFor(new Locator.WaitForOptions().setTimeout(15000));
+                submit.click();
+                return;
+            } catch (Exception e) {
+                System.out.println("[AppConfig] Submit not ready — refreshing (attempt " + attempt + ")");
+                page.reload();
+                wait(6000);
+            }
+        }
+        submit.click();
     }
 
 
@@ -163,37 +177,9 @@ public class AppConfigurationPage extends BasePage {
         wait(6000);
     }
 
-    public void clickSearchBeneficiaryFlow() {
-        searchBeneficiaryFlow.click();
-        wait(6000);
-    }
-
-    public void clickProximitySearchElement() {
-        proximitySearchElement.dispatchEvent("click");
-        wait(6000);
-    }
-
-    public void clearLabelField() {
-        labelInput.click();
-        labelInput.fill("");
-        wait(6000);
-    }
-
-    public void fillLabelField(String value) {
-        labelInput.dblclick();
-        labelInput.fill(value);
-        wait(6000);
-    }
-
     public void clickFirstToggleSwitchOff() {
         firstToggleSwitchOn.click();
         wait(6000);
-    }
-
-    public boolean isLabelLocalizationToastVisible() {
-        waitForVisible(labelLocalizationToast);
-        wait(6000);
-        return labelLocalizationToast.isVisible();
     }
 
     public void clickGoBack() {

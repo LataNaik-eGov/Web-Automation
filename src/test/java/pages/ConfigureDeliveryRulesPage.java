@@ -29,7 +29,9 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     public ConfigureDeliveryRulesPage(Page page) {
         super(page);
         this.campaignType = TestDataReader.getSessionValue("CAMPAIGN_TYPE");
-        this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Configure Delivery").setExact(true));
+        this.configureDeliveryButton = page.locator(
+                "#campaign-details-page-button-delivery-strategy, "
+                        + "#campaign-details-page-button-edit-delivery-strategy").first();
         this.startDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
         this.endDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
@@ -38,8 +40,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
         this.cycleDateToast = page.getByText("Please fill the cycle dates to move ahead.");
         this.deliveryErrorToast = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
-
-    }
+  }
 
     // --- Actions ---
 
@@ -55,6 +56,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     }
 
     private void selectDate(Locator textbox, LocalDate date) {
+
         waitForVisible(textbox);
        wait(3000);
         textbox.click();
@@ -108,6 +110,36 @@ public class ConfigureDeliveryRulesPage extends BasePage {
             fillEndDate();
         }
     }
+
+    /**
+     * Whether the screen currently shown is the cycle-date screen.
+     * campaign type (e.g. BEDNET) goes straight from the cycles / deliveries
+     * screen to the delivery-conditions screen with no cycle-date screen in
+     * between, so callers walking the flow must not assume it is there.
+     */
+    public boolean hasCycleDateStep() {
+        try {
+            startDateTextbox.first().waitFor(new Locator.WaitForOptions().setTimeout(8000));
+            return startDateTextbox.first().isVisible();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Fills the cycle dates and advances, but only when the cycle-date screen is
+     * actually part of this campaign type's flow. Returns true if it advanced.
+     */
+    public boolean fillDatesAndNextIfPresent() {
+        if (!hasCycleDateStep()) {
+            System.out.println("[DeliveryRules] No cycle-date step in this flow — skipping");
+            return false;
+        }
+        fillDates();
+        clickNext();
+        return true;
+    }
+
 
     public boolean isConfigureDeliveryButtonVisible() {
         configureDeliveryButton.waitFor(new Locator.WaitForOptions().setTimeout(5000));

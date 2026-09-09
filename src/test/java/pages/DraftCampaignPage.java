@@ -3,6 +3,7 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import utils.TestDataReader;
 
 import java.time.LocalDate;
@@ -29,8 +30,13 @@ public class DraftCampaignPage extends BasePage {
     private Locator currentMonthLabel;
     private Locator nextMonthButton;
 
+    /** Boundary hierarchy to select on the "Select Boundary Hierarchy" step. */
+    private static final String HIERARCHY_NAME = "CHAD - ITN";
+
     private final String campaignType;
     private final String campaignDisplayName;
+
+    private String selectedHierarchyName;
 
     private static final Map<String, String> CAMPAIGN_DISPLAY_NAMES = Map.of(
             "BEDNET", "Bednet Distribution",
@@ -55,9 +61,9 @@ public class DraftCampaignPage extends BasePage {
         this.dateToastError = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
-        // Boundary hierarchy step: search field renders as a searchbox (search icon)
-        this.hierarchySearchInput = page.getByRole(AriaRole.SEARCHBOX)
-                .or(page.getByRole(AriaRole.TEXTBOX)).first();
+        this.hierarchySearchInput = page.locator(
+                ".select-hierarchy-search-bar input, input[placeholder='Search by hierarchy name']")
+                .first();
         this.hierarchySubmitButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Submit").setExact(true));
     }
@@ -96,10 +102,18 @@ public class DraftCampaignPage extends BasePage {
     // --- Boundary hierarchy step ---
 
     /**
+     * Search for and select {@link #HIERARCHY_NAME}. Prefer this over the String
+     * overload so callers carry no hierarchy data.
+     */
+    public void searchAndSelectHierarchy() {
+        searchAndSelectHierarchy(HIERARCHY_NAME);
+    }
+
+    /**
      * On the "Select Boundary Hierarchy" step, type a hierarchy name into the
      * "Search by Hierarchy Name" search bar and select the matching card.
      *
-     * @param hierarchyName name of the hierarchy to search and select (e.g. "NIGERIA")
+     * @param hierarchyName name of the hierarchy to search and select (e.g. "CHAD - ITN")
      */
     public void searchAndSelectHierarchy(String hierarchyName) {
         waitForVisible(hierarchySearchInput);
@@ -110,23 +124,52 @@ public class DraftCampaignPage extends BasePage {
         Locator card = hierarchyCard(hierarchyName);
         waitForVisible(card);
         card.click();
+        this.selectedHierarchyName = hierarchyName;
        wait(2000);
     }
 
-    public boolean isHierarchyCardVisible(String hierarchyName) {
-        Locator card = hierarchyCard(hierarchyName);
-        waitForVisible(card);
-        return card.isVisible();
+    public boolean isHierarchyShownOnCampaignDetails() {
+        return isHierarchyShownOnCampaignDetails(HIERARCHY_NAME);
+    }
+
+    public boolean isHierarchyShownOnCampaignDetails(String hierarchyName) {
+        Locator label = page.getByText(hierarchyName).first();
+        label.waitFor(new Locator.WaitForOptions().setTimeout(30000));
+        return label.isVisible();
     }
 
     public void clickHierarchySubmit() {
         waitForVisible(hierarchySubmitButton);
        wait(3000);
-        hierarchySubmitButton.click();
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            if (selectedHierarchyName != null && !isHierarchySelected(selectedHierarchyName)) {
+                hierarchyCard(selectedHierarchyName).click();
+                wait(2000);
+            }
+            hierarchySubmitButton.click();
+            try {
+                hierarchySubmitButton.waitFor(new Locator.WaitForOptions()
+                        .setState(WaitForSelectorState.HIDDEN)
+                        .setTimeout(30000));
+                return;
+            } catch (Exception e) {
+                System.out.println("[DraftCampaign] Hierarchy submit did not advance — retry " + attempt);
+            }
+        }
     }
 
     private Locator hierarchyCard(String hierarchyName) {
-        return page.getByText(hierarchyName, new Page.GetByTextOptions().setExact(true)).first();
+        return page.locator(".select-hierarchy-campaign-selection-card")
+                .filter(new Locator.FilterOptions().setHas(
+                        page.locator(".select-hierarchy-campaign-selection-card-name",
+                                new Page.LocatorOptions().setHasText(hierarchyName))))
+                .first();
+    }
+
+    /** The step marks the chosen card with a "selected" class once the click commits. */
+    private boolean isHierarchySelected(String hierarchyName) {
+        String cls = (String) hierarchyCard(hierarchyName).getAttribute("class");
+        return cls != null && cls.contains("selected");
     }
 
     public void clearAndEnterDynamicCampaignName() {

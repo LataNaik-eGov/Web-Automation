@@ -43,25 +43,21 @@ public class AppConfigurationPage extends BasePage {
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
         this.deliveryTypeDropdown = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Select an option"));
-        this.setUpMobileAppButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Set Up Mobile App"));
-        this.registrationAndDeliveryModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Register eligible children")).getByLabel("Configure");
-
-        this.closeHouseholdModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Record households that were")).getByLabel("Configure");
-        this.referralModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Record and manage referrals")).getByLabel("Configure");
-        this.complaintsModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Let field workers log issues")).getByLabel("Configure");
-        this.inventoryModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Track and update resources")).getByLabel("Configure");
-        this.stockReconciliationModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Compare reported stock")).getByLabel("Configure");
-        this.reportsModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Access summary and detailed")).getByLabel("Configure");
-        this.permissionHandlerModule = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Manages user permissions")).getByLabel("Configure");
+        this.setUpMobileAppButton = page.locator(
+                "#campaign-details-page-button-setup-mobile-app, "
+                        + "#campaign-details-page-button-edit-mobile-app").first();
+        this.registrationAndDeliveryModule = moduleConfigureButton("REGISTRATION");
+        this.closeHouseholdModule = moduleConfigureButton("CLOSEHOUSEHOLD");
+        this.referralModule = page.locator("button[id='setup-mobile-app-card-REFERRAL']")
+                .or(page.getByRole(AriaRole.BUTTON,
+                        new Page.GetByRoleOptions().setName("Record and manage referrals"))
+                        .getByLabel("Configure"))
+                .first();
+        this.complaintsModule = moduleConfigureButton("COMPLAINTS");
+        this.inventoryModule = moduleConfigureButton("INVENTORY");
+        this.stockReconciliationModule = moduleConfigureButton("STOCKRECONCILIATION");
+        this.reportsModule = moduleConfigureButton("STOCKREPORTS");
+        this.permissionHandlerModule = moduleConfigureButton("PERMISSIONHANDLER");
         this.saveConfigurationButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Save Configuration"));
         this.goBackButton = page.getByRole(AriaRole.BUTTON,
@@ -73,6 +69,11 @@ public class AppConfigurationPage extends BasePage {
         this.firstToggleSwitchOn = page.getByRole(AriaRole.SWITCH,
                 new Page.GetByRoleOptions().setName("Toggle switch on")).first();
         this.noFlowConfigError = page.getByText("No flow configuration found");
+    }
+
+
+    private Locator moduleConfigureButton(String moduleId) {
+        return page.locator("button[id='setup-mobile-app-card-" + moduleId + "']");
     }
 
     // --- Actions ---

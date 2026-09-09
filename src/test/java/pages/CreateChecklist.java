@@ -2,6 +2,7 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
 public class CreateChecklist extends BasePage {
 
@@ -17,7 +18,8 @@ public class CreateChecklist extends BasePage {
     public CreateChecklist(Page page) {
         super(page);
         this.createChecklistButton = page.locator("#campaign-details-page-button-checklist");
-        this.configureList = page.locator(".digit-button-secondary.medium").first();
+        this.configureList = page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Configure").setExact(true)).first();
         this.configureChecklist = page.locator("#campaign-checklist-create-standalone-form-field-primary");
         this.confirmChecklist = page.locator(".digit-button-primary.large");
         this.backToHomepage = page.locator(".digit-button-primary.large");

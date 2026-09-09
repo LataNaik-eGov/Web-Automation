@@ -74,29 +74,21 @@ public class DraftCampaignTest extends BaseTest {
     @Test(groups = { "workbench-ui", "sanity"})
     public void verifyBoundaryHierarchySelection_BEDNET() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
+        // goToBoundaryHierarchy() selects and submits the configured hierarchy.
         DraftCampaignPage draftPage = nav.goToBoundaryHierarchy();
 
-        draftPage.searchAndSelectHierarchy("NIGERIA");
-        Assert.assertTrue(draftPage.isHierarchyCardVisible("NIGERIA"),
-                "NIGERIA hierarchy card should be visible after searching");
-
-        draftPage.clickHierarchySubmit();
-        Assert.assertTrue(page.url().contains("create-campaign"),
-                "Should remain in the create campaign flow after selecting a boundary hierarchy and submitting");
+        Assert.assertTrue(draftPage.isHierarchyShownOnCampaignDetails(),
+                "Selected boundary hierarchy should be reflected after submitting");
     }
 
     @Test(groups = { "workbench-ui", "sanity"})
     public void verifyBoundaryHierarchySelection_MR_DN() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
+        // goToBoundaryHierarchy() selects and submits the configured hierarchy.
         DraftCampaignPage draftPage = nav.goToBoundaryHierarchy();
 
-        draftPage.searchAndSelectHierarchy("NIGERIA");
-        Assert.assertTrue(draftPage.isHierarchyCardVisible("NIGERIA"),
-                "NIGERIA hierarchy card should be visible after searching");
-
-        draftPage.clickHierarchySubmit();
-        Assert.assertTrue(page.url().contains("create-campaign"),
-                "Should remain in the create campaign flow after selecting a boundary hierarchy and submitting");
+        Assert.assertTrue(draftPage.isHierarchyShownOnCampaignDetails(),
+                "Selected boundary hierarchy should be reflected after submitting");
     }
 
     // ==================== Campaign Name Negative Test Cases ====================

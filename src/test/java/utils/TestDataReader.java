@@ -58,14 +58,6 @@ public class TestDataReader {
         sessionCache.get().put(key, value);
     }
 
-    /** Returns the upload template filename for the current session's campaign type. */
-    public static String getTemplateFileName() {
-        String baseUrl = ConfigReader.get("BASE_URL");
-        String prefix = baseUrl != null && baseUrl.contains("demo") ? "demo" : "uat";
-        String campaignType = getSessionValue("CAMPAIGN_TYPE");
-        return prefix + "_" + campaignType + "-unifiedtemplate.xlsx";
-    }
-
     /** Call once per test (in BaseTest.setup) to reset session-scoped picks. */
     public static void clearSession() {
         sessionCache.get().clear();

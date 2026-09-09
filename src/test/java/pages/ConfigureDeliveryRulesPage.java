@@ -20,7 +20,6 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     private Locator nextButton;
     private Locator submitButton;
     private Locator cycleDateToast;
-    private Locator deliveryErrorToast;
 
     // Date picker elements
     private Locator currentMonthLabel;
@@ -39,7 +38,6 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
         this.cycleDateToast = page.getByText("Please fill the cycle dates to move ahead.");
-        this.deliveryErrorToast = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
   }
 
     // --- Actions ---
@@ -152,18 +150,51 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         return cycleDateToast.isVisible();
     }
 
-    public boolean isDeliveryErrorToastVisible() {
-        wait(3000);
-        deliveryErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return deliveryErrorToast.isVisible();
+    /**
+     * Value input of the Nth delivery condition, 0-based.
+     *
+     * Each condition renders as a .attribute-container holding an attribute
+     * dropdown, an operator dropdown and this value input. Scoping to the
+     * container is what makes the index mean the same thing for every campaign
+     * type — a page-wide getByRole(TEXTBOX).nth(n) does not, because the number
+     * and order of conditions differs per type, so index 3 was an attribute
+     * dropdown for BEDNET rather than a value field.
+     */
+    private Locator conditionValue(int index) {
+        return page.locator(".attribute-container .digit-employeeCard-input").nth(index);
     }
 
-    public void fillNthTextbox(int index, String value) {
-        Locator textbox = page.getByRole(AriaRole.TEXTBOX).nth(index);
-        waitForVisible(textbox);
-        // dispatchEvent bypasses pointer-interception from overlapping DIGIT UI elements
-        textbox.dispatchEvent("click");
-        textbox.fill(value, new Locator.FillOptions().setForce(true));
+    /**
+     * Types into a delivery condition's value field and returns what the field kept.
+     *
+     * Typing rather than filling is deliberate: the field refuses non-numeric
+     * characters per keystroke (so "abc" is kept as ""), and strips a leading
+     * minus. Verified on hcm-demo 2026-09-09.
+     */
+    public String typeConditionValueAndGetValue(int index, String value) {
+        Locator input = conditionValue(index);
+        waitForVisible(input);
+        wait(1000);
+        input.click();
+        input.fill("");
+        if (!value.isEmpty()) {
+            input.type(value);
+        }
+        wait(1000);
+        return input.inputValue();
+    }
+
+    /**
+     * Whether the delivery-conditions step is still displayed.
+     *
+     * An unacceptable condition value is refused silently — Next simply does not
+     * advance, with no toast, card or inline message — so "was it rejected?" can
+     * only be answered by whether this step is still on screen. The summary step
+     * that follows renders no condition rows.
+     */
+    public boolean isOnDeliveryConditionsStep() {
+        wait(2000);
+        return page.locator(".attribute-container").count() > 0;
     }
 
     public void clickNext() {

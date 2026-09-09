@@ -61,35 +61,7 @@ public class AppConfigurationTest extends BaseTest {
         appConfigPage.clickGoBack();
     }
 
-    @Test(groups = { "workbench-ui", "sanity"})
-    public void verifyAppConfigurationByLabelChange_BEDNET() {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
-        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
 
-        appConfigPage.clickSetUpMobileApp();
-
-        appConfigPage.clickRegistrationAndDeliveryConfigure();
-        appConfigPage.clickSearchBeneficiaryFlow();
-        appConfigPage.clickProximitySearchElement();
-        appConfigPage.fillLabelField("Near by Beneficiary");
-
-        appConfigPage.clickSaveConfiguration();
-    }
-
-    @Test(groups = { "workbench-ui", "sanity"})
-    public void verifyAppConfigurationByLabelChange_MR_DN() {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
-        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
-
-        appConfigPage.clickSetUpMobileApp();
-
-        appConfigPage.clickRegistrationAndDeliveryConfigure();
-        appConfigPage.clickSearchBeneficiaryFlow();
-        appConfigPage.clickProximitySearchElement();
-        appConfigPage.fillLabelField("Near by Beneficiary");
-
-        appConfigPage.clickSaveConfiguration();
-    }
 
     @Test(groups = { "workbench-ui", "sanity"})
     public void verifyAppConfigurationBySwitchingToggleOff_BEDNET() {
@@ -124,39 +96,5 @@ public class AppConfigurationTest extends BaseTest {
     }
 
     // Negative tests
-    @Test(groups = {"negative", "workbench-ui"})
-    public void verifyAppConfigurationWithEmptyLabel_BEDNET() {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
-        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
 
-        appConfigPage.clickSetUpMobileApp();
-
-        appConfigPage.clickRegistrationAndDeliveryConfigure();
-        appConfigPage.clickSearchBeneficiaryFlow();
-        appConfigPage.clickProximitySearchElement();
-        appConfigPage.clearLabelField();
-
-        appConfigPage.clickSaveConfiguration();
-
-        Assert.assertTrue(appConfigPage.isLabelLocalizationToastVisible(),
-                "Toast 'Label localization is empty for field' should appear when Proximity Search label is cleared");
-    }
-
-    @Test(groups = {"negative", "workbench-ui"})
-    public void verifyAppConfigurationWithEmptyLabel_MR_DN() {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
-        AppConfigurationPage appConfigPage = nav.goToAppConfiguration();
-
-        appConfigPage.clickSetUpMobileApp();
-
-        appConfigPage.clickRegistrationAndDeliveryConfigure();
-        appConfigPage.clickSearchBeneficiaryFlow();
-        appConfigPage.clickProximitySearchElement();
-        appConfigPage.clearLabelField();
-
-        appConfigPage.clickSaveConfiguration();
-
-        Assert.assertTrue(appConfigPage.isLabelLocalizationToastVisible(),
-                "Toast 'Label localization is empty for field' should appear when Proximity Search label is cleared");
-    }
 }

@@ -30,10 +30,6 @@ public class AppConfigurationPage extends BasePage {
     private Locator permissionHandlerModule;
     private Locator saveConfigurationButton;
     private Locator goBackButton;
-    private Locator searchBeneficiaryFlow;
-    private Locator proximitySearchElement;
-    private Locator labelInput;
-    private Locator labelLocalizationToast;
     private Locator firstToggleSwitchOn;
     private Locator noFlowConfigError;
 
@@ -62,10 +58,6 @@ public class AppConfigurationPage extends BasePage {
                 new Page.GetByRoleOptions().setName("Save Configuration"));
         this.goBackButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Go Back"));
-        this.searchBeneficiaryFlow = page.getByText("Search Beneficiary").first();
-        this.proximitySearchElement = page.getByText("Search by proximity").locator("..");
-        this.labelInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Label"));
-        this.labelLocalizationToast = page.getByText("Label localization is empty for field");
         this.firstToggleSwitchOn = page.getByRole(AriaRole.SWITCH,
                 new Page.GetByRoleOptions().setName("Toggle switch on")).first();
         this.noFlowConfigError = page.getByText("No flow configuration found");
@@ -185,37 +177,9 @@ public class AppConfigurationPage extends BasePage {
         wait(6000);
     }
 
-    public void clickSearchBeneficiaryFlow() {
-        searchBeneficiaryFlow.click();
-        wait(6000);
-    }
-
-    public void clickProximitySearchElement() {
-        proximitySearchElement.dispatchEvent("click");
-        wait(6000);
-    }
-
-    public void clearLabelField() {
-        labelInput.click();
-        labelInput.fill("");
-        wait(6000);
-    }
-
-    public void fillLabelField(String value) {
-        labelInput.dblclick();
-        labelInput.fill(value);
-        wait(6000);
-    }
-
     public void clickFirstToggleSwitchOff() {
         firstToggleSwitchOn.click();
         wait(6000);
-    }
-
-    public boolean isLabelLocalizationToastVisible() {
-        waitForVisible(labelLocalizationToast);
-        wait(6000);
-        return labelLocalizationToast.isVisible();
     }
 
     public void clickGoBack() {

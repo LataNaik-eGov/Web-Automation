@@ -184,6 +184,30 @@ public class DraftCampaignPage extends BasePage {
         campaignName.press("Tab");
     }
 
+    /**
+     * Characters the campaign-name field accepts. Enforced by the app's keystroke
+     * handler, not by an HTML maxlength (the input reports maxLength -1).
+     */
+    public static final int CAMPAIGN_NAME_MAX_LENGTH = 30;
+
+    /**
+     * Types a name one keystroke at a time and returns what the field kept.
+     *
+     * Typing is required to observe the cap: the handler truncates keystrokes at
+     * {@link #CAMPAIGN_NAME_MAX_LENGTH}, but rejects a value that arrives all at
+     * once — a fill() longer than the cap leaves the field EMPTY rather than
+     * truncated, and shows no validation message. Verified on hcm-demo 2026-09-09.
+     */
+    public String typeCampaignNameAndGetValue(String name) {
+        waitForVisible(campaignName);
+        wait(3000);
+        campaignName.click();
+        campaignName.fill("");
+        campaignName.type(name);
+        wait(1500);
+        return campaignName.inputValue();
+    }
+
     public void enterCampaignName(String name) {
         waitForVisible(campaignName);
        wait(3000);

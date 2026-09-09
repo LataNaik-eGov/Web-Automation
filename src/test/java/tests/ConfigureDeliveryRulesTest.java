@@ -102,12 +102,17 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
 
-        deliveryRulesPage.fillNthTextbox(2, "30");
+        // The value field is numeric-only and refuses letters as they are typed,
+        // so a non-numeric entry leaves it empty rather than showing a message.
+        String kept = deliveryRulesPage.typeConditionValueAndGetValue(0, "abc");
+
+        Assert.assertEquals(kept, "",
+                "Delivery condition value should refuse non-numeric input");
 
         deliveryRulesPage.clickNext();
 
-        Assert.assertTrue(deliveryRulesPage.isDeliveryErrorToastVisible(),
-                "Toast error should appear when invalid value '30' is entered in the second step");
+        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
+                "Should not advance past the delivery conditions with a non-numeric value");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
@@ -115,12 +120,17 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
 
-        deliveryRulesPage.fillNthTextbox(2, "30");
+        // The value field is numeric-only and refuses letters as they are typed,
+        // so a non-numeric entry leaves it empty rather than showing a message.
+        String kept = deliveryRulesPage.typeConditionValueAndGetValue(0, "abc");
+
+        Assert.assertEquals(kept, "",
+                "Delivery condition value should refuse non-numeric input");
 
         deliveryRulesPage.clickNext();
 
-        Assert.assertTrue(deliveryRulesPage.isDeliveryErrorToastVisible(),
-                "Toast error should appear when invalid value '30' is entered in the second step");
+        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
+                "Should not advance past the delivery conditions with a non-numeric value");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
@@ -128,12 +138,13 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
 
-        deliveryRulesPage.fillNthTextbox(3, "0");
+        deliveryRulesPage.typeConditionValueAndGetValue(0, "0");
 
         deliveryRulesPage.clickNext();
 
-        Assert.assertTrue(deliveryRulesPage.isDeliveryErrorToastVisible(),
-                "Toast error should appear when invalid value '30' is entered in the second step");
+        // Rejection is silent — Next simply does not advance.
+        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
+                "Should not advance past the delivery conditions with a value of 0");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
@@ -141,39 +152,38 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
 
-        deliveryRulesPage.fillNthTextbox(3, "0");
+        deliveryRulesPage.typeConditionValueAndGetValue(0, "0");
 
         deliveryRulesPage.clickNext();
 
-        Assert.assertTrue(deliveryRulesPage.isDeliveryErrorToastVisible(),
-                "Toast error should appear when invalid value '30' is entered in the second step");
+        // Rejection is silent — Next simply does not advance.
+        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
+                "Should not advance past the delivery conditions with a value of 0");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
     public void verifyDeliveryRulesWithEmptyInput_BEDNET() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
-        deliveryRulesPage.fillNthTextbox(2, "");
 
-        deliveryRulesPage.fillNthTextbox(3, "");
+        deliveryRulesPage.typeConditionValueAndGetValue(0, "");
 
         deliveryRulesPage.clickNext();
 
-        Assert.assertTrue(deliveryRulesPage.isDeliveryErrorToastVisible(),
-                "Toast error should appear when invalid value '30' is entered in the second step");
+        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
+                "Should not advance past the delivery conditions with an empty value");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
     public void verifyDeliveryRulesWithEmptyInput_MR_DN() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
-        deliveryRulesPage.fillNthTextbox(2, "");
 
-        deliveryRulesPage.fillNthTextbox(3, "");
+        deliveryRulesPage.typeConditionValueAndGetValue(0, "");
 
         deliveryRulesPage.clickNext();
 
-        Assert.assertTrue(deliveryRulesPage.isDeliveryErrorToastVisible(),
-                "Toast error should appear when invalid value '30' is entered in the second step");
+        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
+                "Should not advance past the delivery conditions with an empty value");
     }
 }

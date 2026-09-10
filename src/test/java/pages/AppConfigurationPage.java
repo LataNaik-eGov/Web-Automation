@@ -100,21 +100,6 @@ public class AppConfigurationPage extends BasePage {
         submit.click();
     }
 
-
-    /**
-     * Waits for the module list to come back after a module has been saved.
-     *
-     * Saving navigates config screen -> app-config-save -> module list, and the
-     * click alone does not wait for that round trip. Without this, the next
-     * configureX() starts waiting for its module card while the browser is still
-     * mid-transition, and only succeeds because the transition usually finishes
-     * inside that wait.
-     *
-     * That made the chain quietly dependent on unrelated timing: configureReferral()
-     * is a no-op for BEDNET, so BEDNET lost the settle time MR-DN got from that
-     * extra save cycle, and its module waits timed out while MR-DN's did not.
-     * Waiting here makes the sequence deterministic for every campaign type.
-     */
     private void waitForModuleListToReturn() {
         try {
             page.locator("div[id^='setup-mobile-app-card-']").first()

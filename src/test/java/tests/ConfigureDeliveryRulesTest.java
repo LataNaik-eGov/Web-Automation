@@ -134,6 +134,12 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
     }
 
     @Test(groups = {"negative", "workbench-ui"})
+    /**
+     * BEDNET only. Its first condition is a count ("Number of individuals per bed
+     * net"), so 0 is meaningless and refused. MR-DN's conditions are age ranges
+     * ("Age (in months) in between 3 and 11"), where 0 is a legitimate value and
+     * is accepted — so there is no MR-DN counterpart to this case.
+     */
     public void verifyDeliveryRulesWithZeroInput_BEDNET() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
@@ -147,19 +153,6 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Should not advance past the delivery conditions with a value of 0");
     }
 
-    @Test(groups = {"negative", "workbench-ui"})
-    public void verifyDeliveryRulesWithZeroInput_MR_DN() {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
-        ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
-
-        deliveryRulesPage.typeConditionValueAndGetValue(0, "0");
-
-        deliveryRulesPage.clickNext();
-
-        // Rejection is silent — Next simply does not advance.
-        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
-                "Should not advance past the delivery conditions with a value of 0");
-    }
 
     @Test(groups = {"negative", "workbench-ui"})
     public void verifyDeliveryRulesWithEmptyInput_BEDNET() {

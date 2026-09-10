@@ -65,6 +65,7 @@ public class MicroplanTemplateFiller {
     private static final String EMPLOYMENT_TYPE = "Permanent";
     private static final String ACTIVE = "Active";
     private static final String DEFAULT_ROLE = "DISTRIBUTOR";
+    private static final String ROLE_WAREHOUSE_MANAGER = "WAREHOUSE_MANAGER";
     /** One campaign user is enough to satisfy the User List; it must not be empty. */
     private static final int USER_COUNT = 1;
 
@@ -87,7 +88,10 @@ public class MicroplanTemplateFiller {
                                 + "were not carried into the template, so there is nothing to target.");
             }
             activateFacilities(wb);
-            addUsers(wb, boundaries, USER_COUNT);
+            Map<String, String> codeByPath = harvestBoundaryCodes(wb);
+            addUsers(wb, boundaries.get(0), codeByPath, USER_COUNT);
+            addWarehouseManagerPerLevel(wb, boundaries.get(0), codeByPath,
+                    FIRST_DATA_ROW + USER_COUNT);
 
             Files.createDirectories(filled.toAbsolutePath().getParent());
             try (FileOutputStream out = new FileOutputStream(filled.toFile())) {
@@ -156,20 +160,35 @@ public class MicroplanTemplateFiller {
      * boundary the campaign selected. Phone numbers are generated per run so
      * repeated runs do not collide on an already-registered number.
      */
-    private static void addUsers(Workbook wb, List<Map<String, String>> boundaries, int userCount) {
+    /**
+     * Appends the campaign's distributor users at the deepest boundary level.
+     *
+     * The level is resolved with the same contiguous-path walk the warehouse
+     * managers use, so the distributor always sits at exactly the level the
+     * deepest warehouse manager does. Copying whichever boundary cells happened to
+     * be non-empty could straddle a gap in the path and put the two on different
+     * levels.
+     *
+     * Phone numbers are generated per run so repeated runs do not collide on an
+     * already-registered number.
+     */
+    private static void addUsers(Workbook wb, Map<String, String> boundary,
+                                 Map<String, String> codeByPath, int userCount) {
         Sheet sheet = requireSheet(wb, SHEET_USERS);
         Map<String, Integer> cols = keyToColumn(sheet);
-        Map<String, String> boundary = boundaries.get(0);
+        List<String> levels = orderedLevelKeys(cols);
+        List<String> path = levelPath(boundary, levels, levels.size());
 
         long stamp = System.currentTimeMillis() % 100000L;
         for (int i = 0; i < userCount; i++) {
             Row row = sheet.createRow(FIRST_DATA_ROW + i);
 
-            for (Map.Entry<String, String> e : boundary.entrySet()) {
-                Integer col = cols.get(e.getKey());
-                if (col != null && e.getValue() != null && !e.getValue().isEmpty()) {
-                    row.createCell(col).setCellValue(e.getValue());
-                }
+            for (int d = 0; d < path.size(); d++) {
+                setIfPresent(row, cols, levels.get(d), path.get(d));
+            }
+            String code = codeByPath.get(String.join("|", path));
+            if (code != null) {
+                setIfPresent(row, cols, KEY_BOUNDARY_CODE, code);
             }
 
             // 10-digit number starting with 9, unique per run and per row.
@@ -183,6 +202,120 @@ public class MicroplanTemplateFiller {
             Integer rowId = cols.get(KEY_ROW_ID);
             if (rowId != null) row.createCell(rowId).setCellValue("");
         }
+        System.out.println("[Template] " + DEFAULT_ROLE + " placed at "
+                + (path.isEmpty() ? "(no boundary)" : String.join(" / ", path)));
+    }
+
+    /**
+     * Adds one WAREHOUSE_MANAGER per boundary level, each scoped to a successively
+     * deeper slice of the campaign's boundary path — a country-level manager, a
+     * province-level one, and so on down to the village.
+     *
+     * @param boundary    the deepest boundary row, as captured from Boundary List
+     * @param codeByPath  service boundary codes keyed by joined level path
+     * @param startRow    first free row index in the User List
+     */
+    private static void addWarehouseManagerPerLevel(Workbook wb, Map<String, String> boundary,
+                                                    Map<String, String> codeByPath, int startRow) {
+        Sheet sheet = requireSheet(wb, SHEET_USERS);
+        Map<String, Integer> cols = keyToColumn(sheet);
+        List<String> levels = orderedLevelKeys(cols);
+
+        long stamp = System.currentTimeMillis() % 100000L;
+        int written = 0;
+        for (int depth = 1; depth <= levels.size(); depth++) {
+            List<String> path = levelPath(boundary, levels, depth);
+            // Hierarchy is shallower than this depth, so there is no level to scope to.
+            if (path.size() < depth) continue;
+
+            Row row = sheet.createRow(startRow + written);
+            for (int i = 0; i < depth; i++) {
+                setIfPresent(row, cols, levels.get(i), path.get(i));
+            }
+
+            // Boundary List only carries the deepest boundary's code, so the codes for
+            // shallower levels come from whichever sheet happens to list them.
+            String code = codeByPath.get(String.join("|", path));
+            if (code != null) {
+                setIfPresent(row, cols, KEY_BOUNDARY_CODE, code);
+            } else {
+                System.out.println("[Template] no service boundary code found for "
+                        + String.join(" / ", path) + " — leaving it blank");
+            }
+
+            // Offset the phone series so it cannot collide with the distributor's.
+            String phone = "9" + String.format("%05d", stamp) + String.format("%04d", 50 + written);
+            setIfPresent(row, cols, KEY_USER_NAME, "AutoWhMgrL" + depth + stamp);
+            setIfPresent(row, cols, KEY_USER_PHONE, phone);
+            setIfPresent(row, cols, KEY_USER_ROLE_1, ROLE_WAREHOUSE_MANAGER);
+            setIfPresent(row, cols, KEY_USER_EMPLOYMENT, EMPLOYMENT_TYPE);
+            setIfPresent(row, cols, KEY_USER_USAGE, ACTIVE);
+            Integer rowId = cols.get(KEY_ROW_ID);
+            if (rowId != null) row.createCell(rowId).setCellValue("");
+            written++;
+        }
+        System.out.println("[Template] added " + written
+                + " " + ROLE_WAREHOUSE_MANAGER + " user(s), one per boundary level");
+    }
+
+    /**
+     * Service boundary codes keyed by their joined level path, harvested from every
+     * sheet that lists them. Boundary List holds only the campaign's target
+     * boundaries, while Facilities List carries rows at several depths, so the two
+     * together cover more levels than either alone.
+     */
+    private static Map<String, String> harvestBoundaryCodes(Workbook wb) {
+        Map<String, String> byPath = new LinkedHashMap<>();
+        for (String sheetName : new String[]{SHEET_BOUNDARY, SHEET_FACILITIES}) {
+            Sheet sheet = wb.getSheet(sheetName);
+            if (sheet == null) continue;
+            Map<String, Integer> cols = keyToColumn(sheet);
+            Integer codeCol = cols.get(KEY_BOUNDARY_CODE);
+            if (codeCol == null) continue;
+            List<String> levels = orderedLevelKeys(cols);
+
+            for (int r = FIRST_DATA_ROW; r <= sheet.getLastRowNum(); r++) {
+                Row row = sheet.getRow(r);
+                if (row == null) continue;
+                String code = readString(row, codeCol);
+                if (code.isEmpty()) continue;
+
+                List<String> path = new ArrayList<>();
+                for (String key : levels) {
+                    String value = readString(row, cols.get(key));
+                    if (value.isEmpty()) break;
+                    path.add(value);
+                }
+                if (!path.isEmpty()) byPath.putIfAbsent(String.join("|", path), code);
+            }
+        }
+        return byPath;
+    }
+
+    /**
+     * The boundary path as a contiguous list of level values, shallowest first,
+     * truncated to {@code depth}. Stops at the first empty level so a caller can
+     * never straddle a gap in the path.
+     */
+    private static List<String> levelPath(Map<String, String> boundary,
+                                          List<String> levels, int depth) {
+        List<String> path = new ArrayList<>();
+        for (int i = 0; i < depth && i < levels.size(); i++) {
+            String value = boundary.get(levels.get(i));
+            if (value == null || value.isEmpty()) break;
+            path.add(value);
+        }
+        return path;
+    }
+
+    /** Boundary-level column keys in sheet order, shallowest level first. */
+    private static List<String> orderedLevelKeys(Map<String, Integer> cols) {
+        List<String> keys = new ArrayList<>();
+        cols.entrySet().stream()
+                .filter(e -> e.getKey().startsWith(BOUNDARY_LEVEL_PREFIX))
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(e -> keys.add(e.getKey()));
+        return keys;
     }
 
     // --- helpers ---

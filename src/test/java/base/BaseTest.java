@@ -101,7 +101,14 @@ public class BaseTest {
         }
         context = browser.newContext(contextOptions);
         page = context.newPage();
-        page.setDefaultTimeout(30000);
+        // 30s was too tight for this app: the campaign setup chain drives eight
+        // mobile-app module screens, each a save-and-return round trip, and demo
+        // latency intermittently pushed individual steps past the ceiling. That
+        // produced repeated failures on locators proven correct by passing runs
+        // (STOCKREPORTS, PERMISSIONHANDLER, the delivery Submit, and login itself),
+        // none of them assertion failures. Every wait that actually gates a result
+        // is explicit elsewhere, so this only affects how long a step may take.
+        page.setDefaultTimeout(60000);
 
         // Initialize helpers
         nav = new NavigationHelper(page);

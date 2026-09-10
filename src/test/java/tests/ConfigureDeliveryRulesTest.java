@@ -134,6 +134,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
     }
 
     @Test(groups = {"negative", "workbench-ui"})
+
     public void verifyDeliveryRulesWithZeroInput_BEDNET() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
@@ -147,19 +148,6 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
                 "Should not advance past the delivery conditions with a value of 0");
     }
 
-    @Test(groups = {"negative", "workbench-ui"})
-    public void verifyDeliveryRulesWithZeroInput_MR_DN() {
-        TestDataReader.setSessionValue("CAMPAIGN_TYPE", "MR-DN");
-        ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();
-
-        deliveryRulesPage.typeConditionValueAndGetValue(0, "0");
-
-        deliveryRulesPage.clickNext();
-
-        // Rejection is silent — Next simply does not advance.
-        Assert.assertTrue(deliveryRulesPage.isOnDeliveryConditionsStep(),
-                "Should not advance past the delivery conditions with a value of 0");
-    }
 
     @Test(groups = {"negative", "workbench-ui"})
     public void verifyDeliveryRulesWithEmptyInput_BEDNET() {

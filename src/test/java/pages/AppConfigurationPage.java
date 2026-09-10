@@ -89,6 +89,7 @@ public class AppConfigurationPage extends BasePage {
             try {
                 submit.waitFor(new Locator.WaitForOptions().setTimeout(15000));
                 submit.click();
+                waitForModuleListToReturn();
                 return;
             } catch (Exception e) {
                 System.out.println("[AppConfig] Submit not ready — refreshing (attempt " + attempt + ")");
@@ -99,6 +100,15 @@ public class AppConfigurationPage extends BasePage {
         submit.click();
     }
 
+    private void waitForModuleListToReturn() {
+        try {
+            page.locator("div[id^='setup-mobile-app-card-']").first()
+                    .waitFor(new Locator.WaitForOptions().setTimeout(60000));
+        } catch (Exception e) {
+            // Let the next module's own wait report the failure, with its own name.
+            System.out.println("[AppConfig] module list did not return after save");
+        }
+    }
 
     public void selectDeliveryType() {
         deliveryTypeDropdown.click();

@@ -134,12 +134,7 @@ public class ConfigureDeliveryRulesTest extends BaseTest {
     }
 
     @Test(groups = {"negative", "workbench-ui"})
-    /**
-     * BEDNET only. Its first condition is a count ("Number of individuals per bed
-     * net"), so 0 is meaningless and refused. MR-DN's conditions are age ranges
-     * ("Age (in months) in between 3 and 11"), where 0 is a legitimate value and
-     * is accepted — so there is no MR-DN counterpart to this case.
-     */
+
     public void verifyDeliveryRulesWithZeroInput_BEDNET() {
         TestDataReader.setSessionValue("CAMPAIGN_TYPE", "BEDNET");
         ConfigureDeliveryRulesPage deliveryRulesPage = nav.goToDeliveryRulesSecondStep();

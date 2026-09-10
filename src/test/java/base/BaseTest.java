@@ -101,7 +101,7 @@ public class BaseTest {
         }
         context = browser.newContext(contextOptions);
         page = context.newPage();
-        page.setDefaultTimeout(60000);
+        page.setDefaultTimeout(30000);
 
         // Initialize helpers
         nav = new NavigationHelper(page);

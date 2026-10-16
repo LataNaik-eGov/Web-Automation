@@ -50,7 +50,7 @@ on:
       threads:
         description: 'Test classes to run in parallel (higher is faster but can cause timeouts)'
         required: false
-        default: '5'
+        default: '10'
       environment:
         description: 'Environment to use (UAT, DEMO, or Demo 2.0)'
         required: true
@@ -220,7 +220,7 @@ jobs:
           echo ""
 
       - name: Run tests
-        run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}" -Dtest.threads=${{ github.event.inputs.threads || 5 }}
+        run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}" -Dtest.threads=${{ github.event.inputs.threads || 10 }}
         continue-on-error: true
         env:
           CI: true

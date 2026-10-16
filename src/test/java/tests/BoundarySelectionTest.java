@@ -19,6 +19,8 @@ public class BoundarySelectionTest extends BaseTest {
         boundaryPage.clickSecondLevel();
         boundaryPage.clickThirdLevel();
         boundaryPage.clickFourthLevel();
+        boundaryPage.clickFifthLevel();
+        boundaryPage.clickSixthLevel();
         boundaryPage.clickNextButton();
         boundaryPage.clickSubmitButton();
 
@@ -36,6 +38,8 @@ public class BoundarySelectionTest extends BaseTest {
         boundaryPage.clickSecondLevel();
         boundaryPage.clickThirdLevel();
         boundaryPage.clickFourthLevel();
+        boundaryPage.clickFifthLevel();
+        boundaryPage.clickSixthLevel();
         boundaryPage.clickNextButton();
         boundaryPage.clickSubmitButton();
 

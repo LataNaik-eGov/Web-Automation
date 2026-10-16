@@ -2,6 +2,7 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import utils.FormHelper;
 
 /**
@@ -23,6 +24,31 @@ public abstract class BasePage {
     public BasePage(Page page) {
         this.page = page;
         this.form = new FormHelper(page);
+    }
+
+    // ==================== DIGIT DROPDOWNS ====================
+
+    /**
+     * Clickable trigger of a DIGIT "Select an option" dropdown.
+     * Older UI builds expose it as a button; newer builds render an
+     * input[role=combobox] whose wrapper div intercepts clicks, so the
+     * wrapper is what has to be clicked.
+     */
+    protected Locator selectOptionDropdown() {
+        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"))
+                .or(page.locator("div.digit-dropdown-select:has(input[role='combobox'])"))
+                .first();
+    }
+
+    /**
+     * First dropdown input on the page — input[role=combobox] on newer
+     * DIGIT UI builds, a plain textbox on older ones.
+     */
+    protected Locator firstDropdownInput() {
+        Locator combobox = page.getByRole(AriaRole.COMBOBOX);
+        Locator textbox = page.getByRole(AriaRole.TEXTBOX);
+        combobox.or(textbox).first().waitFor();
+        return combobox.count() > 0 ? combobox.first() : textbox.first();
     }
 
     // ==================== NAVIGATION ====================

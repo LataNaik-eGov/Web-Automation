@@ -20,7 +20,6 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     private Locator nextButton;
     private Locator submitButton;
     private Locator cycleDateToast;
-    private Locator deliveryErrorToast;
 
     // Date picker elements
     private Locator currentMonthLabel;
@@ -29,7 +28,9 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     public ConfigureDeliveryRulesPage(Page page) {
         super(page);
         this.campaignType = TestDataReader.getSessionValue("CAMPAIGN_TYPE");
-        this.configureDeliveryButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Start Planning Deliveries"));
+        this.configureDeliveryButton = page.locator(
+                "#campaign-details-page-button-delivery-strategy, "
+                        + "#campaign-details-page-button-edit-delivery-strategy").first();
         this.startDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Start date"));
         this.endDateTextbox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("End date"));
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
@@ -37,9 +38,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         this.currentMonthLabel = page.locator(".react-datepicker__current-month");
         this.nextMonthButton = page.locator(".react-datepicker__navigation--next");
         this.cycleDateToast = page.getByText("Please fill the cycle dates to move ahead.");
-        this.deliveryErrorToast = page.locator(".digit-toast-error, [class*='toast'][class*='error'], [role='alert']").first();
-
-    }
+  }
 
     // --- Actions ---
 
@@ -55,6 +54,7 @@ public class ConfigureDeliveryRulesPage extends BasePage {
     }
 
     private void selectDate(Locator textbox, LocalDate date) {
+
         waitForVisible(textbox);
        wait(3000);
         textbox.click();
@@ -109,6 +109,36 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         }
     }
 
+    /**
+     * Whether the screen currently shown is the cycle-date screen.
+     * campaign type (e.g. BEDNET) goes straight from the cycles / deliveries
+     * screen to the delivery-conditions screen with no cycle-date screen in
+     * between, so callers walking the flow must not assume it is there.
+     */
+    public boolean hasCycleDateStep() {
+        try {
+            startDateTextbox.first().waitFor(new Locator.WaitForOptions().setTimeout(8000));
+            return startDateTextbox.first().isVisible();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Fills the cycle dates and advances, but only when the cycle-date screen is
+     * actually part of this campaign type's flow. Returns true if it advanced.
+     */
+    public boolean fillDatesAndNextIfPresent() {
+        if (!hasCycleDateStep()) {
+            System.out.println("[DeliveryRules] No cycle-date step in this flow — skipping");
+            return false;
+        }
+        fillDates();
+        clickNext();
+        return true;
+    }
+
+
     public boolean isConfigureDeliveryButtonVisible() {
         configureDeliveryButton.waitFor(new Locator.WaitForOptions().setTimeout(5000));
         return configureDeliveryButton.isVisible();
@@ -120,18 +150,51 @@ public class ConfigureDeliveryRulesPage extends BasePage {
         return cycleDateToast.isVisible();
     }
 
-    public boolean isDeliveryErrorToastVisible() {
-        wait(3000);
-        deliveryErrorToast.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-        return deliveryErrorToast.isVisible();
+    /**
+     * Value input of the Nth delivery condition, 0-based.
+     *
+     * Each condition renders as a .attribute-container holding an attribute
+     * dropdown, an operator dropdown and this value input. Scoping to the
+     * container is what makes the index mean the same thing for every campaign
+     * type — a page-wide getByRole(TEXTBOX).nth(n) does not, because the number
+     * and order of conditions differs per type, so index 3 was an attribute
+     * dropdown for BEDNET rather than a value field.
+     */
+    private Locator conditionValue(int index) {
+        return page.locator(".attribute-container .digit-employeeCard-input").nth(index);
     }
 
-    public void fillNthTextbox(int index, String value) {
-        Locator textbox = page.getByRole(AriaRole.TEXTBOX).nth(index);
-        waitForVisible(textbox);
-        // dispatchEvent bypasses pointer-interception from overlapping DIGIT UI elements
-        textbox.dispatchEvent("click");
-        textbox.fill(value, new Locator.FillOptions().setForce(true));
+    /**
+     * Types into a delivery condition's value field and returns what the field kept.
+     *
+     * Typing rather than filling is deliberate: the field refuses non-numeric
+     * characters per keystroke (so "abc" is kept as ""), and strips a leading
+     * minus. Verified on hcm-demo 2026-09-09.
+     */
+    public String typeConditionValueAndGetValue(int index, String value) {
+        Locator input = conditionValue(index);
+        waitForVisible(input);
+        wait(1000);
+        input.click();
+        input.fill("");
+        if (!value.isEmpty()) {
+            input.type(value);
+        }
+        wait(1000);
+        return input.inputValue();
+    }
+
+    /**
+     * Whether the delivery-conditions step is still displayed.
+     *
+     * An unacceptable condition value is refused silently — Next simply does not
+     * advance, with no toast, card or inline message — so "was it rejected?" can
+     * only be answered by whether this step is still on screen. The summary step
+     * that follows renders no condition rows.
+     */
+    public boolean isOnDeliveryConditionsStep() {
+        wait(2000);
+        return page.locator(".attribute-container").count() > 0;
     }
 
     public void clickNext() {

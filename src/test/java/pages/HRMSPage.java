@@ -113,7 +113,7 @@ public class HRMSPage extends BasePage {
         // Department — textbox-based dropdown; options appear in #jk-dropdown-unique
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Department"))
                 .click(new Locator.ClickOptions().setForce(true));
-        page.locator("#jk-dropdown-unique").getByText(department).click();
+        page.locator("#jk-dropdown-unique").getByText(department).first().click();
 
         // Designation — textbox-based dropdown
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Designation"))
@@ -170,7 +170,7 @@ public class HRMSPage extends BasePage {
             .fillEmploymentDetails(
                 TestDataReader.get("HRMS_TYPE"),
                 TestDataReader.get("HRMS_DOA"),
-                TestDataReader.get("HRMS_DEPARTMENT"),
+                TestDataReader.getSessionValue("HRMS_DEPARTMENT"),
                 TestDataReader.get("HRMS_DESIGNATION"),
                 role,
                 ConfigReader.get("COUNTRY"));

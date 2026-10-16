@@ -51,7 +51,10 @@ public class DraftCampaignPage extends BasePage {
         }
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
 
-        this.campaignTypeDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));
+        // The combobox input is overlaid by its .digit-dropdown-select wrapper, which takes the click;
+        // anchor on the input's stable app id and click the wrapper that owns it.
+        this.campaignTypeDropdown = page.locator(
+                ".digit-dropdown-select:has(#campaign-create-campaign-standalone-hcm_select_campaign_type-field)");
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.campaignName = page.locator("input[placeholder='CampaignName_Month_Year']");

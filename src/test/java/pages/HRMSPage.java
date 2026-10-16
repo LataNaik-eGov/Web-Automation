@@ -49,7 +49,7 @@ public class HRMSPage extends BasePage {
     // ==================== STEP 1: HIERARCHY TYPE ====================
 
     public HRMSPage selectHierarchyType(String searchText, String optionText) {
-        Locator hierarchyDropdown = page.getByRole(AriaRole.TEXTBOX).first();
+        Locator hierarchyDropdown = firstDropdownInput();
         hierarchyDropdown.click(new Locator.ClickOptions().setForce(true));
         hierarchyDropdown.fill(searchText);
         page.getByText(optionText.trim()).click();
@@ -98,11 +98,18 @@ public class HRMSPage extends BasePage {
 
     // ==================== STEP 5: EMPLOYMENT DETAILS ====================
 
+    // Newer DIGIT builds label the combobox "Select an option", so fall back to its field id
+    private Locator employmentDropdown(String label, String idKey) {
+        return page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName(label))
+                .or(page.locator("#hrms-create-standalone-hr_employment_" + idKey + "_label-field"))
+                .first();
+    }
+
     public HRMSPage fillEmploymentDetails(String empType, String doa,
             String department, String designation, String roleName, String jurisdiction) {
 
         // Employment Type — textbox-based dropdown
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Employment Type"))
+        employmentDropdown("Employment Type", "type")
                 .click(new Locator.ClickOptions().setForce(true));
         page.getByText(empType).first().click();
 
@@ -111,12 +118,12 @@ public class HRMSPage extends BasePage {
         doaInput.fill(doa);
 
         // Department — textbox-based dropdown; options appear in #jk-dropdown-unique
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Department"))
+        employmentDropdown("Department", "department")
                 .click(new Locator.ClickOptions().setForce(true));
         page.locator("#jk-dropdown-unique").getByText(department).first().click();
 
         // Designation — textbox-based dropdown
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Designation"))
+        employmentDropdown("Designation", "designation")
                 .click(new Locator.ClickOptions().setForce(true));
         page.getByText(designation).first().click();
 
@@ -398,7 +405,7 @@ public class HRMSPage extends BasePage {
         page.getByText("Deactivate Employee").click();
 
         // Select deactivation reason — pick randomly from comma-separated list
-        page.getByRole(AriaRole.TEXTBOX).first().dispatchEvent("click");
+        firstDropdownInput().dispatchEvent("click");
         String[] deactivationReasons = TestDataReader.get("HRMS_DEACTIVATION_REASON").split(",");
         String deactivationReason = deactivationReasons[ThreadLocalRandom.current().nextInt(deactivationReasons.length)].trim();
         System.out.println("[HRMS] Selected deactivation reason: " + deactivationReason);
@@ -440,7 +447,7 @@ public class HRMSPage extends BasePage {
         page.getByText("Activate Employee").click();
 
         // Select reactivation reason — pick randomly from comma-separated list
-        page.getByRole(AriaRole.TEXTBOX).first().dispatchEvent("click");
+        firstDropdownInput().dispatchEvent("click");
         String[] reactivationReasons = TestDataReader.get("HRMS_REACTIVATION_REASON").split(",");
         String reactivationReason = reactivationReasons[ThreadLocalRandom.current().nextInt(reactivationReasons.length)].trim();
         System.out.println("[HRMS] Selected reactivation reason: " + reactivationReason);

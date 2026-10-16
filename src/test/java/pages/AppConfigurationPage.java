@@ -37,8 +37,7 @@ public class AppConfigurationPage extends BasePage {
         super(page);
         this.campaignType = TestDataReader.getSessionValue("CAMPAIGN_TYPE");
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
-        this.deliveryTypeDropdown = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Select an option"));
+        this.deliveryTypeDropdown = selectOptionDropdown();
         this.setUpMobileAppButton = page.locator(
                 "#campaign-details-page-button-setup-mobile-app, "
                         + "#campaign-details-page-button-edit-mobile-app").first();

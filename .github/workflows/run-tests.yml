@@ -128,6 +128,7 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           BROWSER: ${{ vars.BROWSER || secrets.BROWSER }}
           HEADLESS: ${{ vars.HEADLESS || secrets.HEADLESS }}
+          HIERARCHY_TYPE: ${{ vars.HIERARCHY_TYPE || secrets.HIERARCHY_TYPE }}
           COUNTRY: ${{ vars.COUNTRY || secrets.COUNTRY }}
           STATE: ${{ vars.STATE || secrets.STATE }}
           LGA: ${{ vars.LGA || secrets.LGA }}
@@ -144,6 +145,7 @@ jobs:
             echo "HEADLESS=${HEADLESS:-true}"
             echo "USERNAME=$USERNAME"
             echo "PASSWORD=$PASSWORD"
+            [ -n "$HIERARCHY_TYPE" ] && echo "HIERARCHY_TYPE=$HIERARCHY_TYPE"
             echo "COUNTRY=$COUNTRY"
             echo "STATE=$STATE"
             echo "LGA=$LGA"
@@ -209,7 +211,7 @@ jobs:
           echo ""
 
       - name: Run tests
-        run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}"
+        run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}" -Dtest.threads=3
         continue-on-error: true
         env:
           CI: true

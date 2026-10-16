@@ -51,7 +51,7 @@ public class DraftCampaignPage extends BasePage {
         }
         this.campaignDisplayName = CAMPAIGN_DISPLAY_NAMES.getOrDefault(campaignType, campaignType);
 
-        this.campaignTypeDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Select an option"));
+        this.campaignTypeDropdown = selectOptionDropdown();
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.campaignName = page.locator("input[placeholder='CampaignName_Month_Year']");

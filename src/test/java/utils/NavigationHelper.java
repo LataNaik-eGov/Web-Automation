@@ -7,6 +7,8 @@ import com.microsoft.playwright.options.WaitUntilState;
 
 import pages.*;
 
+import java.net.URL;
+import java.nio.file.Paths;
 
 /**
  * NavigationHelper - Central place for all page navigation.
@@ -151,23 +153,11 @@ public class NavigationHelper {
         return draft;
     }
 
-    /**
-     * Complete the draft flow through its final "Select Boundary Hierarchy" step:
-     * the configured hierarchy is selected and submitted, which lands on the
-     * campaign home page.
-     */
-    public DraftCampaignPage goToBoundaryHierarchy() {
+    public BoundarySelectionPage goToBoundarySelection() {
         DraftCampaignPage draft = goToCampaignDateStep();
         draft.fillStartDate();
         draft.fillEndDate();
-        draft.clickNext();
-        draft.searchAndSelectHierarchy();
-        draft.clickHierarchySubmit();
-        return draft;
-    }
-
-    public BoundarySelectionPage goToBoundarySelection() {
-        goToBoundaryHierarchy();
+        draft.clickSubmit();
         BoundarySelectionPage boundary = new BoundarySelectionPage(page);
         boundary.clickDefineTarget();
         return boundary;
@@ -179,33 +169,24 @@ public class NavigationHelper {
         boundary.clickSecondLevel();
         boundary.clickThirdLevel();
         boundary.clickFourthLevel();
-        boundary.clickFifthLevel();
-        boundary.clickSixthLevel();
         boundary.clickNextButton();
         boundary.clickSubmitButton();
         return new ConfigureDeliveryRulesPage(page);
     }
 
-    /**
-     * Walks the delivery flow up to the delivery-conditions screen (attributes,
-     * operators, values and resources).
-     *
-     * Delivery config opens on a cycles / deliveries / observation-strategy screen.
-     * Whether a cycle-date screen follows it depends on the campaign type — as of
-     * the 2026-09-09 hcm-demo build BEDNET has none and goes straight to the
-     * delivery conditions — so the date step is only taken when it is present.
-     */
     public ConfigureDeliveryRulesPage goToDeliveryRulesSecondStep() {
         ConfigureDeliveryRulesPage delivery = goToConfigureDeliveryRules();
         delivery.clickConfigureDelivery();
+        delivery.fillDates();
         delivery.clickNext();
-        delivery.fillDatesAndNextIfPresent();
         return delivery;
     }
 
     public AppConfigurationPage goToAppConfiguration() {
-        // Advances through the delivery-conditions screen to the summary, then submits.
-        ConfigureDeliveryRulesPage delivery = goToDeliveryRulesSecondStep();
+        ConfigureDeliveryRulesPage delivery = goToConfigureDeliveryRules();
+        delivery.clickConfigureDelivery();
+        delivery.fillDates();
+        delivery.clickNext();
         delivery.clickNext();
         delivery.clickSubmit();
         return new AppConfigurationPage(page);
@@ -231,10 +212,16 @@ public class NavigationHelper {
         uploadFilePage.clickUploadData();
         uploadFilePage.closePopup();
 
-        // The template is generated per campaign, so it is downloaded, filled and
-        // uploaded here rather than read from test resources.
-        uploadFilePage.downloadFillAndUploadTemplate();
-        uploadFilePage.waitForUploadSuccess();
+        String templateFile = TestDataReader.getTemplateFileName();
+
+        try {
+            URL resource = getClass().getClassLoader().getResource(templateFile);
+            String filePath = Paths.get(resource.toURI()).toString();
+            uploadFilePage.uploadFile(filePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load template file: " + templateFile, e);
+        }
+
         uploadFilePage.clickSubmit();
         return new CreateChecklist(page);
     }

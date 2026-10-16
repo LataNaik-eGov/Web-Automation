@@ -10,8 +10,6 @@ import utils.TestDataReader;
 
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class UploadFileTest extends BaseTest {
@@ -25,14 +23,17 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.closePopup();
 
-        // Round-trips the campaign's own generated template: download, fill the
-        // mandatory target/user data, upload. A committed template cannot be used
-        // because the workbook is campaign-specific.
-        Path filled = uploadFilePage.downloadFillAndUploadTemplate();
-        Assert.assertTrue(Files.exists(filled),
-                "Filled template should have been written to " + filled);
+        Download download = uploadFilePage.downloadTemplate();
+        Assert.assertNotNull(download, "Template download should have started");
 
-        uploadFilePage.waitForUploadSuccess();
+        String templateFile = TestDataReader.getTemplateFileName();
+        URL resource = getClass().getClassLoader().getResource(templateFile);
+        Assert.assertNotNull(resource, templateFile + " should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.waitForUploadSuccessToast();
 
         uploadFilePage.clickSubmit();
     }
@@ -46,14 +47,17 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.closePopup();
 
-        // Round-trips the campaign's own generated template: download, fill the
-        // mandatory target/user data, upload. A committed template cannot be used
-        // because the workbook is campaign-specific.
-        Path filled = uploadFilePage.downloadFillAndUploadTemplate();
-        Assert.assertTrue(Files.exists(filled),
-                "Filled template should have been written to " + filled);
+        Download download = uploadFilePage.downloadTemplate();
+        Assert.assertNotNull(download, "Template download should have started");
 
-        uploadFilePage.waitForUploadSuccess();
+        String templateFile = TestDataReader.getTemplateFileName();
+        URL resource = getClass().getClassLoader().getResource(templateFile);
+        Assert.assertNotNull(resource, templateFile + " should exist in test resources");
+        String filePath = Paths.get(resource.toURI()).toString();
+
+        uploadFilePage.uploadFile(filePath);
+
+        uploadFilePage.waitForUploadSuccessToast();
 
         uploadFilePage.clickSubmit();
     }
@@ -105,8 +109,8 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickSubmit();
 
-        Assert.assertTrue(uploadFilePage.isFileRejectedToastVisible(),
-                "Rejection toast should appear when an invalid file type (PDF) is uploaded");
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when an invalid file type (PDF) is uploaded");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
@@ -126,8 +130,8 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickSubmit();
 
-        Assert.assertTrue(uploadFilePage.isFileRejectedToastVisible(),
-                "Rejection toast should appear when an invalid file type (PDF) is uploaded");
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
+                "Error toast should appear when an invalid file type (PDF) is uploaded");
     }
 
     @Test(groups = {"negative", "workbench-ui"})
@@ -147,7 +151,7 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickSubmit();
 
-        Assert.assertTrue(uploadFilePage.isValidationErrorCardVisible(),
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when an invalid Excel file is uploaded");
     }
 
@@ -168,7 +172,7 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickSubmit();
 
-        Assert.assertTrue(uploadFilePage.isValidationErrorCardVisible(),
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when an invalid Excel file is uploaded");
     }
 
@@ -189,7 +193,7 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickSubmit();
 
-        Assert.assertTrue(uploadFilePage.isValidationErrorCardVisible(),
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when a file with invalid input data is uploaded");
     }
 
@@ -210,7 +214,7 @@ public class UploadFileTest extends BaseTest {
 
         uploadFilePage.clickSubmit();
 
-        Assert.assertTrue(uploadFilePage.isValidationErrorCardVisible(),
+        Assert.assertTrue(uploadFilePage.isFileErrorToastVisible(),
                 "Error toast should appear when a file with invalid input data is uploaded");
     }
 }

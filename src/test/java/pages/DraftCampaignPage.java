@@ -53,11 +53,10 @@ public class DraftCampaignPage extends BasePage {
 
         // The combobox input is overlaid by its .digit-dropdown-select wrapper, which takes the click;
         // anchor on the input's stable app id and click the wrapper that owns it.
-        // Falls back to the generic "Select an option" dropdown for older UI builds.
+        consoleLocators
         this.campaignTypeDropdown = page.locator(
-                ".digit-dropdown-select:has(#campaign-create-campaign-standalone-hcm_select_campaign_type-field)")
-                .or(selectOptionDropdown())
-                .first();
+                ".digit-dropdown-select:has(#campaign-create-campaign-standalone-hcm_select_campaign_type-field)");
+        DEMO
         this.nextButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next"));
         this.campaignName = page.locator("input[placeholder='CampaignName_Month_Year']");

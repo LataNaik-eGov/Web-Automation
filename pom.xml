@@ -54,6 +54,7 @@
     <allure.version>2.27.0</allure.version>
     <aspectj.version>1.9.22</aspectj.version>
     <poi.version>5.2.5</poi.version>
+    <test.threads>10</test.threads>
   </properties>
   <build>
     <plugins>
@@ -66,7 +67,7 @@
         <configuration>
           <groups>${test.groups}</groups>
           <parallel>classes</parallel>
-          <threadCount>10</threadCount>
+          <threadCount>${test.threads}</threadCount>
           <argLine>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine>
           <systemPropertyVariables>
             <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>

@@ -1,8 +1,8 @@
 name: Run Web Automation Tests
 
 on:
-  push:
-    branches: [ main ]
+  # Scheduled runs always use the workflow file on the default branch (main);
+  # the job below checks out DEMO and targets the DEMO environment for them.
   schedule:
     - cron: '30 5 * * 1-5'  # 11:00 AM IST (UTC+5:30), Mon–Fri
   workflow_dispatch:
@@ -47,6 +47,10 @@ on:
         description: 'Specific test method to run (e.g., verifyUserCanLogin)'
         required: false
         default: ''
+      threads:
+        description: 'Test classes to run in parallel (higher is faster but can cause timeouts)'
+        required: false
+        default: '10'
       environment:
         description: 'Environment to use (UAT, DEMO, or Demo 2.0)'
         required: true
@@ -61,14 +65,19 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    # workflow_dispatch uses the selected environment; push/repository_dispatch uses UAT
-    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'UAT' }}
+    # workflow_dispatch uses the selected environment; schedule uses DEMO; repository_dispatch uses UAT
+    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || github.event_name == 'schedule' && 'DEMO' || 'UAT' }}
+    env:
+      TARGET_ENV: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || github.event_name == 'schedule' && 'DEMO' || 'UAT' }}
     permissions:
       contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Scheduled runs test the DEMO branch; other events use the triggering ref
+          ref: ${{ github.event_name == 'schedule' && 'DEMO' || '' }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v4
@@ -116,7 +125,7 @@ jobs:
           [ "${{ github.event.inputs.group_negative }}"     == "true" ] && add_group "negative"
           [ "${{ github.event.inputs.group_hrms }}"         == "true" ] && add_group "HRMS"
           [ "${{ github.event.inputs.group_complaint }}"    == "true" ] && add_group "Complaint"
-          # push to main (non-dispatch) always runs the default groups
+          # schedule / repository_dispatch (no inputs) runs the default groups
           if [ -z "$groups" ]; then groups="payments-ui,workbench-ui"; fi
           echo "groups=$groups" >> $GITHUB_OUTPUT
           echo "Test groups to run: $groups"
@@ -128,6 +137,7 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           BROWSER: ${{ vars.BROWSER || secrets.BROWSER }}
           HEADLESS: ${{ vars.HEADLESS || secrets.HEADLESS }}
+          HIERARCHY_TYPE: ${{ vars.HIERARCHY_TYPE || secrets.HIERARCHY_TYPE }}
           COUNTRY: ${{ vars.COUNTRY || secrets.COUNTRY }}
           STATE: ${{ vars.STATE || secrets.STATE }}
           LGA: ${{ vars.LGA || secrets.LGA }}
@@ -137,13 +147,14 @@ jobs:
         run: |
           echo "Debug: BASE_URL is set: $([ -n "$BASE_URL" ] && echo 'YES' || echo 'NO')"
 
-          echo "Using ${{ github.event.inputs.environment || 'UAT' }} environment"
+          echo "Using $TARGET_ENV environment"
           {
             echo "BASE_URL=$BASE_URL"
             echo "BROWSER=${BROWSER:-chromium}"
             echo "HEADLESS=${HEADLESS:-true}"
             echo "USERNAME=$USERNAME"
             echo "PASSWORD=$PASSWORD"
+            [ -n "$HIERARCHY_TYPE" ] && echo "HIERARCHY_TYPE=$HIERARCHY_TYPE"
             echo "COUNTRY=$COUNTRY"
             echo "STATE=$STATE"
             echo "LGA=$LGA"
@@ -182,7 +193,7 @@ jobs:
           echo "=========================================="
           echo "  TEST EXECUTION ENVIRONMENT"
           echo "=========================================="
-          echo "Environment  : ${{ github.event.inputs.environment || 'UAT' }}"
+          echo "Environment  : $TARGET_ENV"
           echo "Test Groups  : ${{ steps.test-config.outputs.groups }}"
           if [ -n "${{ github.event.inputs.test_class }}" ]; then
             echo "Test Class   : ${{ github.event.inputs.test_class }}"
@@ -209,7 +220,7 @@ jobs:
           echo ""
 
       - name: Run tests
-        run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}"
+        run: mvn test -Dtest.groups="${{ steps.test-config.outputs.groups }}" -Dtest.threads=${{ github.event.inputs.threads || 10 }}
         continue-on-error: true
         env:
           CI: true

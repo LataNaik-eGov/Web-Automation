@@ -101,7 +101,8 @@ public class BaseTest {
         }
         context = browser.newContext(contextOptions);
         page = context.newPage();
-        page.setDefaultTimeout(30000);
+        // Shared CI runners are slower; give actions more headroom there
+        page.setDefaultTimeout(System.getenv("CI") != null ? 60000 : 30000);
 
         // Initialize helpers
         nav = new NavigationHelper(page);

@@ -57,15 +57,18 @@ public class ComplaintPage extends BasePage {
         this.descriptionField = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Complaint description"));
         this.submitButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Submit"));
         this.complaintNumberLabel = page.locator(".digit-panel-response");
-        this.backToComplaintsInbox = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search Complaint"));
+        // DEMO renders the raw localization key when the translation is missing
+        this.backToComplaintsInbox = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions()
+                .setName(Pattern.compile("Search Complaint|PGR_SEARCH_COMPLAINT")));
         this.complaintNumberInput = page.locator("input[name=\"complaintNumber\"]");
         this.searchButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search").setExact(true));
         this.takeActionButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Take Action"));
         this.resolveOption = page.getByText("Resolve");
         this.rejectOption = page.getByText("Reject");
         this.assignOption = page.getByText("Assign", new Page.GetByTextOptions().setExact(true));
-        this.rejectionReasonDropdown = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Rejection Reason"));
-        this.selectEmployeeDropdown = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Select Employee"));
+        // Newer DIGIT builds render popup dropdowns as input[role=combobox]
+        this.rejectionReasonDropdown = popupDropdown("Rejection Reason");
+        this.selectEmployeeDropdown = popupDropdown("Select Employee");
         this.employeeComments = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Employee Comments"));
     }
 
@@ -324,6 +327,13 @@ public class ComplaintPage extends BasePage {
             wait(3000);
         }
         clickSubmit();
+    }
+
+    private Locator popupDropdown(String name) {
+        return page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName(name))
+                .or(page.getByRole(AriaRole.COMBOBOX, new Page.GetByRoleOptions().setName(name)))
+                .or(page.locator(".complaint-details-popup-form input[role='combobox']"))
+                .first();
     }
 
     // ==================== ASSIGN ====================

@@ -50,10 +50,9 @@ public class AppConfigurationPage extends BasePage {
                         + "#campaign-details-page-button-edit-mobile-app").first();
         this.registrationAndDeliveryModule = moduleConfigureButton("REGISTRATION");
         this.closeHouseholdModule = moduleConfigureButton("CLOSEHOUSEHOLD");
-        this.referralModule = page.locator("button[id='setup-mobile-app-card-REFERRAL']")
-                .or(page.getByRole(AriaRole.BUTTON,
-                        new Page.GetByRoleOptions().setName("Record and manage referrals"))
-                        .getByLabel("Configure"))
+        // Card id is HFREFERRAL on current builds; older builds used REFERRAL.
+        this.referralModule = page.locator(
+                "button[id='setup-mobile-app-card-HFREFERRAL'], button[id='setup-mobile-app-card-REFERRAL']")
                 .first();
         this.complaintsModule = moduleConfigureButton("COMPLAINTS");
         this.inventoryModule = moduleConfigureButton("INVENTORY");

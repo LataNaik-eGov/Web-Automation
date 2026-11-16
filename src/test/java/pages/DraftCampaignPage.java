@@ -83,14 +83,20 @@ public class DraftCampaignPage extends BasePage {
     }
 
     public void selectCampaignType() {
-        Locator option = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true));
+        Locator option = campaignTypeOption();
         waitForVisible(option);
        wait(3000);
         option.click();
     }
 
     public boolean isCampaignTypeVisible() {
-        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true)).isVisible();
+        return campaignTypeOption().isVisible();
+    }
+
+    // Campaign-type dropdown options render as div.digit-dropdown-item[role=option].
+    private Locator campaignTypeOption() {
+        return page.getByRole(AriaRole.OPTION,
+                new Page.GetByRoleOptions().setName(campaignDisplayName).setExact(true));
     }
 
     public void clickNext() {
